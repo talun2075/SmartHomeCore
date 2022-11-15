@@ -1,0 +1,50 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <UserSecretsId>7bb84b2e-492c-46ad-9e03-5b49a4c85f84</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+    <Folder Include="wwwroot\lib\jquery\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\Colo\index.html" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.WebApiCompatShim" Version="2.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.114" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="DeconzInnerCore.API">
+      <HintPath>..\CommonCore\HomeCommon\DeconzInnerCore.API\bin\Debug\net6.0\DeconzInnerCore.API.dll</HintPath>
+    </Reference>
+    <Reference Include="ExternalDevices">
+      <HintPath>..\CommonCore\HomeCommon\ExternalDevices\bin\Debug\net6.0\ExternalDevices.dll</HintPath>
+    </Reference>
+    <Reference Include="HomeLoggingCore">
+      <HintPath>..\CommonCore\HomeCommon\HomeLoggingCore\bin\Debug\net6.0\HomeLoggingCore.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Configuration\Buttons.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Configuration\DeconzConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Configuration\Shellys.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Configuration\Timer.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

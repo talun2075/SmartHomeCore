@@ -1,0 +1,22 @@
+﻿body {
+    font-size: 1.5em;
+}
+.topNavigation {
+    height: 50px;
+    width: 100%;
+    display: inline-flex;
+    margin-bottom: 30px;
+}
+a{
+    color:white;
+}
+.topNavigation > DIV {
+    width: 50%;
+    text-align: center;
+
+}
+.navigationImage {
+    width: 50px;
+    height: 50px;
+    margin-right: 10px;
+}

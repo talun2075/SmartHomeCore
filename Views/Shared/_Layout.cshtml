@@ -1,0 +1,24 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="icon" type="image/svg+xml" href="/images/@ViewBag.svg" sizes="any">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/@ViewBag.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/@ViewBag.png32">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/@ViewBag.png16">
+    <link rel="mask-icon" href="/images/@ViewBag.svg" color="#5bbad5">
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="/css/shared.css" media="all" />
+</head>
+<body>
+    <div class="topNavigation"><div><b><img class="navigationImage" src="/images/led-lamp.svg" /><a href="/">Deconz</a>
+</b></div><div><img class="navigationImage" src="/images/power.svg" /><a href="/Shelly">Shellys</a>
+</div><div><img class="navigationImage" src="/images/buttons.svg" /><a href="/Buttons">Buttons</a></div></div>
+    <div class="content">
+        @RenderBody()
+    </div>
+</body>
+</html>

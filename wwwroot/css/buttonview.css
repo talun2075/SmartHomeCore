@@ -1,0 +1,33 @@
+﻿body {
+    background-color: #39315a;
+}
+.button_ring {
+    background-color: chartreuse;
+    border-radius: 50%;
+    width: 350px;
+    height: 350px;
+    float: left;
+    margin: 10px;
+}
+.button_Inner {
+    position: relative;
+    top: 60px;
+    left: 25px;
+}
+.smallFont {
+    font-size: small;
+}
+.button {
+    border-radius: 50%;
+    background-color: white;
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin: 25px auto;
+}
+.red {
+    color: red;
+}
+.yellow {
+    color: orange;
+}

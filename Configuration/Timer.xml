@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Times>
+	<!--Erlaubte Attribute: 
+  Name: Uniqe Name
+  Class: Class of Method to call if Type INTERNAL
+  Method: Methode to call if Type INTERNAL
+  Repeat: Repeat or once. Repeat will start instantly if not runned
+  When: Time when it starts or on Repeat each xx minutes but written as timestamp hh:mm:ss it will start.
+  Type: INTERNAL or URL (default)
+  Uri: Url if Type URL
+  Async: Is this a Async Method you need to wait for, default true;
+  Arguments: as String array, ||| as separator
+  Logging Boolean for logg a trace, default false
+  -->
+	<Time Name="GardenON" Class="SmartHome.Classes.SmartHomeHelper" Method ="DeconzGardenOn" Repeat="false" When="16:30:00" Type="INTERNAL" Logging="false" />
+	<Time Name="GardenOff" Class="SmartHome.Classes.SmartHomeHelper" Method ="DeconzGardenOff" Repeat="false" When="22:00:00" Type="INTERNAL" Logging="false"/>
+	<Time Name="AuroraKeepAlive" Uri="http://aurora.tami/aurora/RefreshAuroraProperties" Repeat="true" When="00:20:00" Type="URL" />
+	<Time Name="SonosTimeStuff" Uri="http://sonos.tami/settings/FillSonosTimeSettingStuff" Repeat="true" When="12:00:00" Type="URL" />
+	<Time Name="SetPlaylists" Uri="http://sonos.tami/zone/SetPlaylists" Repeat="true" When="00:30:00" Type="URL" />
+	<Time Name="CheckDevicesToPlayer" Uri="http://sonos.tami/zone/CheckDevicesToPlayer" Repeat="true" When="01:00:00" Type="URL" />
+	<Time Name="FillAllPlayerProperties" Uri="http://sonos.tami/zone/FillAllPlayerProperties" Repeat="true" Async="false" When="00:30:00" Type="URL" />
+	<Time Name="FillGenreListWithTimeAndHashes" Uri="http://sonos.tami/SmartHome/FillTimeToChildGenreList" Repeat="true" Async="false" When="01:30:00" Type="URL" />
+	<Time Name="IpCheckReachablePlayer" Uri="http://sonos.tami/Devices/CheckPlayerReachable" Repeat="true" Async="false" When="00:30:00" Type="URL" />
+	<Time Name="CheckPlayersForHashImages" Uri="http://sonos.tami/zone/CheckPlayersForHashImages" Repeat="true" Async="false" When="00:15:00" Type="URL" />
+</Times>

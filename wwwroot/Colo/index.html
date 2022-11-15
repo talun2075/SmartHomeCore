@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <script src="/js/ColoLight.js"></script>
+    <link rel="stylesheet" href="/css/colo.css" media="all" />
+
+    <title>ColoLight</title>
+</head>
+<body>
+    <div id="Header">
+        <div class="headerCenter">
+            <div class="headerWrapper">
+                <div id="PowerOn" onclick="colo.On()" class="cLButton shadow heiwi"><img class="heiwi" src="/images/power-off.png" /></div>
+                <div id="PowerOff" onclick="colo.Off()" class="cLButton shadow heiwi"><img class="heiwi" src="/images/power-off.png" /></div>
+                <div id="BrightnessUp" onclick="colo.Brighness(20)" class="cLButton heiwi"></div>
+                <div id="BrightnessDown" onclick="colo.Brighness(100)" class="cLButton heiwi"></div>
+            </div>
+        </div>
+    </div>
+    <div class="spaceer"></div>
+    <div class="headerCenter">
+        <div id="CLColors">
+            <div class="colors shadow heiwi aqua" onclick="colo.SetColor('00ffff')"></div>
+            <div class="colors shadow heiwi blue" onclick="colo.SetColor('0000ff')"></div>
+            <div class="colors shadow heiwi darkblue" onclick="colo.SetColor('00008b')"></div>
+            <div class="colors shadow heiwi lightpink" onclick="colo.SetColor('990033')"></div>
+            <div class="colors shadow heiwi green" onclick="colo.SetColor('00FF00')"></div>
+            <div class="colors shadow heiwi lightcyan" onclick="colo.SetColor('E0FFFF')"></div>
+            <div class="colors shadow heiwi orangered" onclick="colo.SetColor('ff4500')"></div>
+            <div class="colors shadow heiwi red" onclick="colo.SetColor('ff0000')"></div>
+            <div class="colors shadow heiwi white" onclick="colo.SetColor('ffffff')"></div>
+            <div class="colors shadow heiwi yellow" onclick="colo.SetColor('ffff00')"></div>
+        </div>
+    </div>
+    <div class="spaceer"></div>
+    <div class="headerCenter">
+        <div id="CLEffects">
+            <div class="effects shadow heiwi" style="background: radial-gradient(circle, rgba(238,174,202,1) 0%, rgba(148,187,233,1) 100%);" onclick="colo.SetEffect('Club80s')"></div>
+            <div class="effects shadow heiwi" style="background: radial-gradient(circle, rgba(238,174,202,1) 13%, rgba(235,235,235,1) 86%);" onclick="colo.SetEffect('CherryBlossom')"></div>
+            <div class="effects shadow heiwi insta" onclick="colo.SetEffect('CocktailParade')"></div>
+            <div class="effects shadow heiwi insta" onclick="colo.SetEffect('Instagrammer')">&#8694;</div>
+            <div class="effects shadow heiwi" style="background: radial-gradient(circle, rgba(23,50,230,1) 13%, rgba(29,213,39,1) 99%);" onclick="colo.SetEffect('Pensieve')">&#10227;</div>
+            <div class="effects shadow heiwi" style="background: radial-gradient(circle, rgba(23,147,230,1) 13%, rgba(221,226,221,1) 99%);" onclick="colo.SetEffect('Savasana')">&#10227;</div>
+            <div class="effects shadow heiwi" style="background: URL('/images/alphablending.png'); background-repeat: no-repeat; background-size: contain; background-color: gray;" onclick="colo.SetEffect('Sunrise')"></div>
+            <div class="effects shadow heiwi insta" onclick="colo.SetEffect('TheCircus')">&#10227;</div>
+            <div class="effects shadow heiwi insta" onclick="colo.SetEffect('Unicorns')">&#10227;</div>
+            <div class="effects shadow heiwi" style="background: linear-gradient(90deg, rgba(23,230,42,1) 13%, rgba(240,239,0,1) 55%);" onclick="colo.SetEffect('Christmas')">&#8644;</div>
+            <div class="effects shadow heiwi insta" onclick="colo.SetEffect('RainbowFlow')">&#8694;</div>
+            <div class="effects shadow heiwi" style="line-height: 1.2;" onclick="colo.SetEffect('MusicMode')">&#128266;</div>
+        </div>
+    </div>
+    <script>
+        window.colo = new ColoLight();
+    </script>
+</body>
+</html>

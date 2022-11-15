@@ -1,0 +1,63 @@
+body {
+    color: white;
+    -webkit-box-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    justify-content: center;
+    background-color: #39315a;
+    min-width: 315px;
+}
+#Bodydiv{
+    display: inline-block;
+    width: 99%;
+    margin: 5px;
+}
+#DeconzContent {
+    min-height: 150px;
+    width: 100%;
+}
+.room {
+    background: rgb(78,78,83);
+    background: linear-gradient(90deg, rgba(78,78,83,1) 0%, rgba(20,20,24,1) 21%, rgba(81,72,120,1) 100%);
+    border: 1px solid white;
+    border-radius: 25px 25px 25px 25px;
+    padding: 0.25em 0.25em 0.25em 1em;
+    margin: 0.25em;
+}
+.room.lightGroup {
+    border: 1px solid grey;
+}
+.roomLightsWrapper{
+    display:none;
+}
+.roomEveryTimeShowed {
+    display: inline-flex;
+    width: 100%;
+}
+.light {
+    background: rgb(78,78,83);
+    background: linear-gradient(90deg, rgba(78,78,83,1) 0%, rgba(20,20,24,1) 21%, rgba(81,72,120,1) 100%);
+    border: 1px solid white;
+    border-radius: 25px 25px 25px 25px;
+    padding: 0.25em 0.25em 0.25em 1em;
+    margin: 0.25em;
+    width: 90%;
+}
+.lightWrapperNoColor {
+    display: inline-flex;
+    width: 100%;
+}
+.iroColor{
+    width: 160px;
+}
+.roomName,.lightName {
+    width: 80%;
+}
+.roomNameSpan {
+    vertical-align: sub;
+    vertical-align: -webkit-baseline-middle;
+    vertical-align: -moz-middle-with-baseline;
+}
+.roomPowerState {
+    
+}
