@@ -12,7 +12,6 @@ using InnerCore.Api.DeConz.Models.Lights;
 using InnerCore.Api.DeConz.Models.Sensors;
 using InnerCore.Api.DeConz.ColorConverters;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
-using InnerCore.Api.DeConz.ColorConverters.HSB;
 
 namespace SmartHome.Classes
 {
