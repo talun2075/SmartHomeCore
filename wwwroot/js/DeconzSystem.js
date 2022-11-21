@@ -48,6 +48,8 @@ function DeconzSystem() {
             let light = this.Lights.find(x => x.id === lightid);
             var lvalue = light.hexColor;
             var cp = new iro.ColorPicker('#color_' + lightid, { color: lvalue });
+
+
             if (typeof this.ColorPickers[lightid] === "undefined") {
                 this.ColorPickers[lightid] = cp;
             }
@@ -61,7 +63,7 @@ function DeconzSystem() {
     this.UpdateColor = function (id) {
         console.log(id);
         var color = this.ColorPickers[id].color.hexString
-        Send("SetColor/" + id, color,"POST");
+        Send("SetColor/" + id, color, "POST");
     }
 
     this.RenderDeconzSystem = function () {
@@ -70,7 +72,7 @@ function DeconzSystem() {
             return;
         }
         for (let roomGroups of this.MergedRoomLights) {
-            if (roomGroups.hide === true || roomGroups.room.hidden ===true || roomGroups.room.lights.length === 0) {
+            if (roomGroups.hide === true || roomGroups.room.hidden === true || roomGroups.room.lights.length === 0) {
                 console.log("room Wird übersprungen:" + roomGroups.room.name);
                 continue;
             }
@@ -92,12 +94,12 @@ function DeconzSystem() {
                         disclass = " disabledCheckbox";
                     }
                     let colorbox = "";
-                    if (itemLight.hasColor && itemLight.state.colorCoordinates !== null && itemLight.state.isReachable && itemLight.state.hue !==null) {
+                    if (itemLight.hasColor && itemLight.state.colorCoordinates !== null && itemLight.state.isReachable) {
                         this.ColorLights.push(itemLight.id);
                         colorbox = '<DIV id="color_' + itemLight.id + '" class="iroColor"></DIV>';
                     }
                     let lbox = '<div class="switch' + disclass + '"><input type="checkbox" onClick="DS.TogglePowerState(\'l\',' + itemLight.id + ', this.checked, ' + item.id + ');" name="LightCheckbox_' + itemLight.id + '" ' + check + ' ' + dis + '><label for="LightCheckbox_' + itemLight.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label></div>';
-                    lightsDOM += '<DIV id="light_' + itemLight.id + '" class="light"><DIV class="lightWrapperNoColor"><div class="lightName">' + itemLight.name + '</div>' + lbox + '</DIV>'+colorbox+'</DIV>';
+                    lightsDOM += '<DIV id="light_' + itemLight.id + '" class="light"><DIV class="lightWrapperNoColor"><div class="lightName">' + itemLight.name + '</div>' + lbox + '</DIV>' + colorbox + '</DIV>';
                 }
                 lightsDOM += '</div>';
                 var check = "";
@@ -118,7 +120,7 @@ function DeconzSystem() {
                 if (item.type === "LightGroup") {
                     itemclass = " lightGroup";
                 }
-                var box = '<div class="switch'+disclass + anyClass + '"><input type="checkbox" onClick="DS.TogglePowerState(\'r\',' + item.id + ',this.checked,' + item.id + ');" name="RoomCheckbox_' + item.id + '" ' + check + dis + '><label for="RoomCheckbox_' + item.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label></div>';
+                var box = '<div class="switch' + disclass + anyClass + '"><input type="checkbox" onClick="DS.TogglePowerState(\'r\',' + item.id + ',this.checked,' + item.id + ');" name="RoomCheckbox_' + item.id + '" ' + check + dis + '><label for="RoomCheckbox_' + item.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label></div>';
                 $('<div id="room_' + item.id + '" class="room' + itemclass + '"><div class="roomEveryTimeShowed"><div class="roomName" onClick="DS.ShowRoomChilds(' + item.id + ')"><span class="roomNameSpan">' + item.name + '</span></div><div class="roomPowerState" data-all="' + item.state.allOn + '" data-any="' + item.state.anyOn + '">' + box + '</div></div>' + lightsDOM + '</div>').appendTo(SV.DeconzContentWrapper);
                 this.DOM["r" + item.id] = $("#room_" + item.id);
             }
@@ -173,7 +175,7 @@ function DeconzSystem() {
             case "r":
                 console.log("Room");
                 room.state.allOn = powerstate;
-                Send("ToggleGroupPowerStateTo/"+ id+"/"+ powerstate);
+                Send("ToggleGroupPowerStateTo/" + id + "/" + powerstate);
                 //Alle Lampen auch ändern.
                 for (let light of room.lightsMerged) {
                     light.state.on = room.state.allOn;
@@ -206,7 +208,7 @@ function DeconzSystem() {
     this.UpdateRendering = function () {
         for (let item of this.MergedRoomLights) {
             try {
-                if (item.hide === true || item.room.lights.length ===0) {
+                if (item.hide === true || item.room.lights.length === 0) {
                     continue;
                 }
                 var room = item.room;
@@ -283,7 +285,7 @@ function DeconzSystem() {
                 console.log("Fehler beim Update.")
                 console.log(item);
                 continue;
-            }    
+            }
         }
     }
     this.RefreshData = function () {

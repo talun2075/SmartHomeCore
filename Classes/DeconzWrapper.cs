@@ -12,6 +12,7 @@ using InnerCore.Api.DeConz.Models.Lights;
 using InnerCore.Api.DeConz.Models.Sensors;
 using InnerCore.Api.DeConz.ColorConverters;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
+using InnerCore.Api.DeConz.ColorConverters.HSB;
 
 namespace SmartHome.Classes
 {
@@ -238,11 +239,8 @@ namespace SmartHome.Classes
         {
             var light = await GetLightById(id);
             RGBColor rGBColor = new RGBColor(color);
-            if (light.State.Hue != null && light.State.Saturation != null)
-            {
-                await ChangeLightState(DeconzWrapper.LightCommand.TurnOn().SetColor(rGBColor), id);
-            }
-         }
+            await ChangeLightState(DeconzWrapper.LightCommand.TurnOn().SetColor(rGBColor,(light.State.Hue == null && light.State.Saturation == null)), id);
+        }
         #endregion public Methods
         #region private Methoden
         private static void ReadDeconzDataConfig()
