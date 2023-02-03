@@ -199,7 +199,9 @@ function DeconzSystem() {
             lastRoomChildShowedid = -1;
             return;
         }
-        if ((this.MergedRoomLights.find(x => x.room.id == id)).room.lightsMerged.length < 2) {
+        var temproom = (this.MergedRoomLights.find(x => x.room.id == id)).room;
+        if (temproom.lightsMerged.length < 2 && temproom.lightsMerged[0].hasClass === false) {
+            
             return;
         }
         lastRoomChildShowedid = id;

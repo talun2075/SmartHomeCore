@@ -21,17 +21,17 @@ namespace SmartHome.Classes
         /// <summary>
         /// Alle bekannten Buttons
         /// </summary>
-        public static List<Button> KnowingButtons = new ();
+        public static List<Button> KnowingButtons = new();
         /// <summary>
         /// Liste aller Shellys1
         /// </summary>
         public static List<Shelly1> Shelly1 = new();
         public static DateTime ShellyLastChange = DateTime.Now;
-        public static AuroraConstants Aurora { get; private set; } = new ();
-        public static MarantzConstants Marantz { get; private set; } = new ();
-        public static SonosConstants Sonos { get; private set; } = new ();
-        public static DeconZConstants Deconz { get; private set; } = new ();
-        public static IWebHostEnvironment Env {get;set;}
+        public static AuroraConstants Aurora { get; private set; } = new();
+        public static MarantzConstants Marantz { get; private set; } = new();
+        public static SonosConstants Sonos { get; private set; } = new();
+        public static DeconZConstants Deconz { get; private set; } = new();
+        public static IWebHostEnvironment Env { get; set; }
         /// <summary>
         /// Request Typen, die Supportet werden
         /// </summary>
@@ -62,7 +62,7 @@ namespace SmartHome.Classes
         }
 
         #region WebServerCalls
-        private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromMinutes(5)};
+        private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromMinutes(5) };
         /// <summary>
         /// Verbindet sich mit den anderen Webs um befehle abzugeben.
         /// </summary>
@@ -77,14 +77,13 @@ namespace SmartHome.Classes
                 _httpClient.DefaultRequestHeaders.ExpectContinue = false;
 
                 if (string.IsNullOrEmpty(value)) value = "";
-                Uri urlstate = new (call);
+                Uri urlstate = new(call);
                 HttpResponseMessage result;
                 string returnValue;
                 if (nr == SmartHomeConstants.RequestEnums.GET)
                 {
 
-                        result = await _httpClient.GetAsync(urlstate);
-
+                    result = await _httpClient.GetAsync(urlstate);
                     returnValue = await result.Content.ReadAsStringAsync();
                 }
                 else
@@ -116,8 +115,8 @@ namespace SmartHome.Classes
             catch (TaskCanceledException ex) when (ex.InnerException is TimeoutException)
             {
                 // Its a timeout issue
-                SmartHomeConstants.log.ServerErrorsAdd("ConnectToWeb:TimeoutException:Url:" + call, ex);
-                return String.Empty;
+                //SmartHomeConstants.log.ServerErrorsAdd("ConnectToWeb:TimeoutException:Url:" + call, ex);
+                return "ok";
             }
             catch (TaskCanceledException ex)
             {
@@ -127,7 +126,7 @@ namespace SmartHome.Classes
             }
             catch (Exception ex)
             {
-                SmartHomeConstants.log.ServerErrorsAdd("ConnectToWeb:Url:"+call, ex);
+                SmartHomeConstants.log.ServerErrorsAdd("ConnectToWeb:Url:" + call, ex);
                 return String.Empty;
             }
         }
@@ -135,23 +134,30 @@ namespace SmartHome.Classes
     }
     public class DeconZConstants
     {
-        public RGBColor RandomRGBColor { get {
-                Random random = new ();
+        public RGBColor RandomRGBColor
+        {
+            get
+            {
+                Random random = new();
                 var color = String.Format("#{0:X6}", random.Next(0x1000000)); // = "#A197B9"
                 return new RGBColor(color);
                 //Random rnd = new Random();
                 //return new RGBColor(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
-            } }
-        public byte RandomBrightness { get
+            }
+        }
+        public byte RandomBrightness
+        {
+            get
             {
-                Random rnd = new ();
+                Random rnd = new();
                 return (byte)rnd.Next(50, 255);
-            } }
+            }
+        }
         public byte RandomSaturation
         {
             get
             {
-                Random rnd = new ();
+                Random rnd = new();
                 return (byte)rnd.Next(0, 255);
             }
         }
@@ -160,7 +166,7 @@ namespace SmartHome.Classes
         {
             get
             {
-                Random rnd = new ();
+                Random rnd = new();
                 return rnd.Next(2000, 6500);
             }
         }

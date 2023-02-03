@@ -311,8 +311,8 @@ namespace SmartHome.Classes
             try
             {
                 await SmartHomeHelper.SonosStoppAllPlayer();
-                await SmartHomeHelper.PowerOffAuroras();
-                await SmartHomeHelper.PowerOffMarantz(true);
+                _ = SmartHomeHelper.PowerOffAuroras();
+                _ = SmartHomeHelper.PowerOffMarantz(true);
                 await SmartHomeHelper.DeconzAllLightsOff();
                 return true;
             }
