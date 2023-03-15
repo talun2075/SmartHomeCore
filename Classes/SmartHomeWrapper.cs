@@ -334,7 +334,7 @@ namespace SmartHome.Classes
             {
                 await SmartHomeHelper.DeconzGroundFloorOff();
                 await SmartHomeHelper.PowerOffAurora("Esszimmer");
-                await SmartHomeHelper.PowerOnAurora("Wohnzimmer");
+                await SmartHomeHelper.PowerOnAuroras("Wohnzimmer");
                 await SmartHomeHelper.PowerOnMarantz();
             }
             catch (Exception ex)
@@ -379,7 +379,7 @@ namespace SmartHome.Classes
             try
             {
                 await SmartHomeHelper.PowerOffMarantz();
-                await SmartHomeHelper.PowerOffAuroras();
+                //await SmartHomeHelper.PowerOffAuroras();
             }
             catch (Exception ex)
             {

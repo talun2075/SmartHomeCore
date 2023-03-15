@@ -20,11 +20,11 @@ namespace SmartHome.Classes
         /// <summary>
         /// Auroras einschalten
         /// </summary>
-        public static async Task<bool> PowerOnAuroras()
+        public static async Task<bool> PowerOnAuroras(string room)
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetGroupPowerState + "/true");
+                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetGroupPowerState +"/"+room+ "/true");
                 if (Boolean.TryParse(retval, out Boolean retvalchecked))
                 {
                     return retvalchecked;
