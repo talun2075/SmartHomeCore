@@ -10,5 +10,4 @@
 	<Button Name="Gästezimmer" Mac="5CCF7FF0D13F" Aktiv="true"/>
 	<Button Name="Shelly1" Mac="483FDA6EBD7D" Aktiv="true" Visible="false"/>
 	<Button Name="Weiß Ian" Mac="BCFF4D4B1034" Aktiv="true" Visible="true"/>
-	<Button Name="Ersatz" Mac="F4CFA2E946D7" Aktiv="false" Visible="true"/>
 </Buttons>

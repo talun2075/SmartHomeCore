@@ -175,22 +175,19 @@ namespace SmartHome.Classes
                 if (!SmartHomeConstants.KnowingButtons.Any()) await ReadButtonXML();
                 Button b = SmartHomeConstants.KnowingButtons.FirstOrDefault(x => x.Mac == br.Mac);
                 if (b == null) return false;
-                b.Batterie = Convert.ToInt32(br.Battery);
+                
+                if(Int32.TryParse(br.Battery, out int brbattery)){
+                    b.Batterie = brbattery;
+                }
                 if (Enum.TryParse(br.Action, out ButtonAction ba))
                 {
                     b.LastAction = ba;
                 }
+                b.IP = br.IP;
                 b.LastClick = DateTime.Now;
                 try
                 {
-                    if (b.LastAction != ButtonAction.BATTERY)
-                    {
-                        await DatabaseWrapper.UpdateButton(b.Mac, b.Name, b.Batterie, b.LastAction.ToString());
-                    }
-                    else
-                    {
-                        await DatabaseWrapper.UpdateBattery(b.Mac, b.Batterie);
-                    }
+                   await DatabaseWrapper.UpdateButton(b);
                 }
                 catch (Exception ex)
                 {

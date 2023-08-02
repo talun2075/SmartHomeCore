@@ -84,13 +84,7 @@ namespace SmartHome.Controllers
             {
                 br.Action = HttpContext.Request.Query["action"].ToString();
             }
-            //return new ButtonRequest()
-            //{
-            //    Mac = HttpContext.Current.Request["mac"],
-            //    Battery = HttpContext.Current.Request["battery"],
-            //    Wheel = HttpContext.Current.Request["wheel"],
-            //    Action = HttpContext.Current.Request["action"]
-            //};
+            br.IP = HttpContext.Connection.RemoteIpAddress.ToString();
             return br;
         }
     }

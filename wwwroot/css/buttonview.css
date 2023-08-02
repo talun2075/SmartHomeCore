@@ -1,6 +1,7 @@
 ﻿body {
     background-color: #39315a;
 }
+
 .button_ring {
     background-color: chartreuse;
     border-radius: 50%;
@@ -9,14 +10,34 @@
     float: left;
     margin: 10px;
 }
+
 .button_Inner {
     position: relative;
     top: 60px;
-    left: 25px;
+}
+
+.button_Inner div:nth-child(2) {
+    padding-left: 15px;
+}
+
+.button_Inner div:nth-child(3) {
+   padding-left: 10px;
+}
+
+.button_Inner div:nth-child(4) {
+    padding-left: 10px;
+}
+
+.button_Inner div:nth-child(5) {
+    padding-left: 15px;
+}
+.button_Inner div:nth-child(6) {
+    padding-left: 20px;
 }
 .smallFont {
-    font-size: small;
+    font-size:initial;
 }
+
 .button {
     border-radius: 50%;
     background-color: white;
@@ -25,9 +46,15 @@
     display: block;
     margin: 25px auto;
 }
+
 .red {
     color: red;
 }
+
 .yellow {
     color: orange;
+}
+
+.name {
+    text-align: center;
 }

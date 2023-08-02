@@ -19,7 +19,7 @@ namespace SmartHome.Classes
                 await conn.OpenAsync();
                 cmd = new SQLiteCommand(conn)
                 {
-                    CommandText = "CREATE TABLE IF NOT EXISTS buttons (id text PRIMARY KEY,name text NOT NULL,battery integer default 100, lastaction text, lastclick text);"
+                    CommandText = "CREATE TABLE IF NOT EXISTS buttons (id text PRIMARY KEY,name text NOT NULL,battery integer default 100, lastaction text, lastclick text, ip text);"
                 };
                 await cmd.ExecuteNonQueryAsync();
                 return true;
@@ -38,27 +38,27 @@ namespace SmartHome.Classes
                 conn.Close();
                 
         }
-        /// <summary>
-        /// Update Batterie Wert
-        /// </summary>
-        /// <param name="mac"></param>
-        /// <param name="batteryvalue"></param>
-        /// <returns></returns>
-        public static async Task<Boolean> UpdateBattery(string mac,  int batteryvalue)
-        {
-            try
-            {
-                if (cmd == null || conn == null || conn.State != System.Data.ConnectionState.Open) await Open();
-                cmd.CommandText = "Update buttons set battery=" + batteryvalue + " where id ='" + mac + "'";
-                await cmd.ExecuteNonQueryAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateButton", ex);
-                return false;
-            }
-        }
+        ///// <summary>
+        ///// Update Batterie Wert
+        ///// </summary>
+        ///// <param name="mac"></param>
+        ///// <param name="batteryvalue"></param>
+        ///// <returns></returns>
+        //public static async Task<Boolean> UpdateBattery(Button button)
+        //{
+        //    try
+        //    {
+        //        if (cmd == null || conn == null || conn.State != System.Data.ConnectionState.Open) await Open();
+        //        cmd.CommandText = "Update buttons set battery=" + button.Batterie + " where id ='" + button.Mac + "'";
+        //        await cmd.ExecuteNonQueryAsync();
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateButton", ex);
+        //        return false;
+        //    }
+        //}
         /// <summary>
         /// Aktualisiert ein Button in die DB
         /// </summary>
@@ -67,12 +67,12 @@ namespace SmartHome.Classes
         /// <param name="batteryvalue"></param>
         /// <param name="lastaction"></param>
         /// <returns></returns>
-        public static async Task<Boolean> UpdateButton(string mac, string name, int batteryvalue, string lastaction = "")
+        public static async Task<Boolean> UpdateButton(Button button)
         {
             try
             {
                 if (cmd == null || conn == null || conn.State != System.Data.ConnectionState.Open) await Open();
-                cmd.CommandText = "REPLACE INTO buttons(id,name, battery,lastaction, lastclick) VALUES('" + mac + "','" + name + "'," + batteryvalue + ",'" + lastaction + "','" + DateTime.Now.ToString() + "')";
+                cmd.CommandText = "REPLACE INTO buttons(id,name, battery,lastaction, lastclick,ip) VALUES('" + button.Mac + "','" + button.Name + "'," + button.Batterie + ",'" + button.LastAction + "','" + DateTime.Now.ToString() + "','" + button.IP + "')";
                 await cmd.ExecuteNonQueryAsync();
                 return true;
             }
@@ -104,6 +104,7 @@ namespace SmartHome.Classes
                     var battery = rdr.GetInt32(2);
                     var last = rdr.GetString(3);
                     var date = rdr.GetString(4);
+                    var ip = rdr.GetString(5);
                     Button b = SmartHomeConstants.KnowingButtons.FirstOrDefault(x => x.Mac == id);
                     if (b != null)
                     {
@@ -114,6 +115,7 @@ namespace SmartHome.Classes
                         {
                             b.LastAction = action;
                         }
+                        b.IP = ip;
                     }
                 }
                 return true;

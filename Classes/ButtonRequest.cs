@@ -9,6 +9,7 @@ namespace SmartHome.Classes
         public String Battery { get; set; }
         public String Action { get; set; }
         public String Wheel { get; set; }
+        public String IP { get; set; }
 
     }
 }
