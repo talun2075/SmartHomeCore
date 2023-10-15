@@ -1,6 +1,7 @@
 ﻿using System;
+using SmartHome.Classes;
 
-namespace SmartHome.Classes
+namespace SmartHome.DataClasses
 {
     /// <summary>
     /// Interne Timer Klasse
@@ -10,12 +11,12 @@ namespace SmartHome.Classes
         /// <summary>
         /// Name of this specific Timer
         /// </summary>
-        public String Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// Is the Time a dedicated Time or a Repeat Time
         /// If true the Timer will start instantly and then repeat after the time
         /// </summary>
-        public Boolean Repeat { get; set; } = false;
+        public bool Repeat { get; set; } = false;
         /// <summary>
         /// The Time when the Timer starts or after which time it will restart. 
         /// </summary>
@@ -24,11 +25,11 @@ namespace SmartHome.Classes
         /// The Class where the Method is stored
         /// With complete Namespace
         /// </summary>
-        public String Class { get; set; }
+        public string Class { get; set; }
         /// <summary>
         /// The Method to call
         /// </summary>
-        public String Method { get; set; }
+        public string Method { get; set; }
         /// <summary>
         /// Optional Arguments to invoke the Method
         /// </summary>
@@ -44,15 +45,19 @@ namespace SmartHome.Classes
         /// <summary>
         /// The URI if Timertype is URL
         /// </summary>
-        public String URI { get; set; }
+        public string URI { get; set; }
         /// <summary>
         /// Only for ReflectionCall important. All other will Be Async
         /// </summary>
-        public Boolean Async { get; set; } = true;
+        public bool Async { get; set; } = true;
         /// <summary>
         /// Should we log the run?
         /// </summary>
-        public Boolean Logging { get; set; } = false;
+        public bool Logging { get; set; } = false;
+        /// <summary>
+        /// is the Timer Active
+        /// </summary>
+        public bool Active { get; set; } = true;
         public SmartHomeConstants.RequestEnums RequestTypeUrlCalls { get; set; } = SmartHomeConstants.RequestEnums.GET;
     }
 }

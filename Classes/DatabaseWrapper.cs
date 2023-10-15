@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Data.SQLite;
 using System.Threading.Tasks;
+using SmartHome.DataClasses;
 
 namespace SmartHome.Classes
 {

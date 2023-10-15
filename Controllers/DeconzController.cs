@@ -1,17 +1,15 @@
-﻿using InnerCore.Api.DeConz.ColorConverters;
-using InnerCore.Api.DeConz.Models;
+﻿using InnerCore.Api.DeConz.Models;
 using InnerCore.Api.DeConz.Models.Lights;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Web.Http;
 
 namespace SmartHome.Controllers
 {
     [Route("/[controller]")]
-    public class DeconzController : ApiController
+    public class DeconzController : ApiControllerAttribute
     {
         public DeconzController(IWebHostEnvironment env)
         {

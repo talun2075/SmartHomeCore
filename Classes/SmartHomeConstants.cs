@@ -1,6 +1,7 @@
 ﻿using HomeLogging;
 using InnerCore.Api.DeConz.ColorConverters;
 using Microsoft.AspNetCore.Hosting;
+using SmartHome.DataClasses;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -29,6 +30,7 @@ namespace SmartHome.Classes
         public static DateTime ShellyLastChange = DateTime.Now;
         public static AuroraConstants Aurora { get; private set; } = new();
         public static MarantzConstants Marantz { get; private set; } = new();
+        public static DenonConstants Denon { get; private set; } = new();
         public static SonosConstants Sonos { get; private set; } = new();
         public static DeconZConstants Deconz { get; private set; } = new();
         public static IWebHostEnvironment Env { get; set; }
@@ -198,6 +200,10 @@ namespace SmartHome.Classes
                 return "463608DCF3";
             }
         }
+    }
+    public class DenonConstants
+    {
+        public String BaseURL { get; private set; } = "http://denon.tami";
     }
     public class MarantzConstants
     {

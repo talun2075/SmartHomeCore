@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
+using SmartHome.DataClasses;
 
 namespace SmartHome.Classes
 {
@@ -20,6 +21,7 @@ namespace SmartHome.Classes
             {
                 foreach (SmartHomeTimer st in timers)
                 {
+                    if(!st.Active) continue;
                     if (CheckTime(st))
                     {
                         if (st.Logging)
@@ -168,6 +170,7 @@ namespace SmartHome.Classes
                         URI = item.Attributes["Uri"]?.Value ?? String.Empty,
                         Async = item.Attributes["Async"]?.Value == null || item.Attributes["Async"]?.Value == "true",
                         Logging = item.Attributes["Logging"]?.Value == "true",
+                        Active = item.Attributes["Active"]?.Value == "true",
                         Arguments = argsu,
                         RequestTypeUrlCalls = rtuc
 

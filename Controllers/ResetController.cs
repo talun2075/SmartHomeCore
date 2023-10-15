@@ -7,7 +7,7 @@ namespace SmartHome.Controllers
     [ApiController]
     public class ResetController : Controller
     {
-        IHostApplicationLifetime applicationLifetime;
+        readonly IHostApplicationLifetime applicationLifetime;
 
         public ResetController(IHostApplicationLifetime appLifetime)
         {

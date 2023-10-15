@@ -9,7 +9,7 @@ using System.Net.Http;
 using InnerCore.Api.DeConz.Models.Lights;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
 using InnerCore.Api.DeConz.ColorConverters;
-using System.Web.Http;
+
 
 namespace SmartHome.Classes
 {
@@ -125,57 +125,106 @@ namespace SmartHome.Classes
             }
         }
         #endregion Auroras
+        #region Denon
+        public static async Task<Boolean> PowerOffDenon(bool ignoreinput = false)
+        {
+            try
+            {
+                //Daten vom Denon ermitteln
+                await Denon.Initialisieren(SmartHomeConstants.Denon.BaseURL);
+                //Ist auf Sonos?
+                if ((Denon.SelectedInput == DenonInputs.Sonos || ignoreinput) && Denon.PowerOn)
+                {
+                    //Denon ausschalten.
+                    Denon.PowerOn = false;
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// Schaltet den Denon ein und setzt ihn auf Sonos falls nicht schon eingestellt.
+        /// </summary>
+        public static async Task<Boolean> PowerOnDenon()
+        {
+            try
+            {
+                //Denon Verarbeiten.
+                await Denon.Initialisieren(SmartHomeConstants.Denon.BaseURL); 
+                if (Denon.SelectedInput != DenonInputs.Sonos)
+                {
+                    Denon.SelectedInput = DenonInputs.Sonos;
+                }
+                if (!Denon.PowerOn)
+                {
+                    Denon.PowerOn = true;
+                }
+                if (Denon.Volume != "-40.0")
+                {
+                    Denon.Volume = "40";
+                }
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+        #endregion Denon
         #region Marantz
         /// <summary>
         /// Schaltet den Marantz aus, wenn auf Sonos geschaltet
         /// </summary>
-        public static async Task<Boolean> PowerOffMarantz(bool ignoreinput = false)
-        {
-            try
-            {
-                //Daten vom Marantz ermitteln
-                await Marantz.Initialisieren(SmartHomeConstants.Marantz.BaseURL);
-                //Ist auf Sonos?
-                if ((Marantz.SelectedInput == MarantzInputs.Sonos || ignoreinput) && Marantz.PowerOn)
-                {
-                    //Marantz ausschalten.
-                    Marantz.PowerOn = false;
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        //public static async Task<Boolean> PowerOffMarantz(bool ignoreinput = false)
+        //{
+        //    try
+        //    {
+        //        //Daten vom Marantz ermitteln
+        //        await Marantz.Initialisieren(SmartHomeConstants.Marantz.BaseURL);
+        //        //Ist auf Sonos?
+        //        if ((Marantz.SelectedInput == MarantzInputs.Sonos || ignoreinput) && Marantz.PowerOn)
+        //        {
+        //            //Marantz ausschalten.
+        //            Marantz.PowerOn = false;
+        //        }
+        //        return true;
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //}
         /// <summary>
         /// Schaltet den Marantz ein und setzt ihn auf Sonos falls nicht schon eingestellt.
         /// </summary>
-        public static async Task<Boolean> PowerOnMarantz()
-        {
-            try
-            {
-                //Marantz Verarbeiten.
-                await Marantz.Initialisieren(SmartHomeConstants.Marantz.BaseURL);
-                if (Marantz.SelectedInput != MarantzInputs.Sonos)
-                {
-                    Marantz.SelectedInput = MarantzInputs.Sonos;
-                }
-                if (!Marantz.PowerOn)
-                {
-                    Marantz.PowerOn = true;
-                }
-                if (Marantz.Volume != "-40.0")
-                {
-                    Marantz.Volume = "-40.0";
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
-        }
+        //public static async Task<Boolean> PowerOnMarantz()
+        //{
+        //    try
+        //    {
+        //        //Marantz Verarbeiten.
+        //        await Marantz.Initialisieren(SmartHomeConstants.Marantz.BaseURL);
+        //        if (Marantz.SelectedInput != MarantzInputs.Sonos)
+        //        {
+        //            Marantz.SelectedInput = MarantzInputs.Sonos;
+        //        }
+        //        if (!Marantz.PowerOn)
+        //        {
+        //            Marantz.PowerOn = true;
+        //        }
+        //        if (Marantz.Volume != "-40.0")
+        //        {
+        //            Marantz.Volume = "-40.0";
+        //        }
+        //        return true;
+        //    }
+        //    catch
+        //    {
+        //        return false;
+        //    }
+        //}
         #endregion Marantz
         #region Deconz
         /// <summary>
@@ -195,6 +244,22 @@ namespace SmartHome.Classes
             }
         }
 
+        public static async Task<DeConzResults> DeconzLightsPower(string id, Boolean PowerOn = true)
+        {
+            return await DeconzLightsPower(new List<string> { id }, PowerOn);
+        }
+        public static async Task<DeConzResults> DeconzLightsPower(List<string> ids, Boolean PowerOn = true)
+        {
+            LightCommand lw = new();
+            if (PowerOn) {
+                lw.TurnOn();
+            }
+            else
+            {
+                lw.TurnOff();
+            }
+            return await ChangeGroupState(lw, ids);
+        }
         internal async static Task<Boolean> CupeLiving(int id)
         {
             /*
@@ -206,14 +271,14 @@ namespace SmartHome.Classes
             {
                 case 3:
                     //90°
-                    Random ran = new Random();
+                    Random ran = new();
                     SmartHomeRoom wz = await DeconzWrapper.GetGroup("Wohnzimmer");
                     await ChangeGroupState(DeconzWrapper.LightCommand.TurnOn(), wz);
                     foreach (string item in wz.Room.Lights)
                     {
                         if(item == "30")
                         {
-                            LightCommand l = new LightCommand();
+                            LightCommand l = new();
                             l.SetColor(RGBColor.Random());
                             l.TransitionTime = new TimeSpan(0, 0, 9);
                             await ChangeGroupState(l, item);
@@ -221,13 +286,15 @@ namespace SmartHome.Classes
                         else
                         {
                             
-                            LightCommand l = new LightCommand();
+                            LightCommand l = new();
                             l.SetColor(ran.NextDouble(), ran.NextDouble());
                             await ChangeGroupState(l, item);
                         }
 
-                        LightCommand lb = new LightCommand();
-                        lb.Brightness = (byte)ran.Next(100, 255);
+                        LightCommand lb = new()
+                        {
+                            Brightness = (byte)ran.Next(100, 255)
+                        };
                         await ChangeGroupState(lb, item);
 
                     }
@@ -251,9 +318,9 @@ namespace SmartHome.Classes
             {
                 //id 9 & 22
                 _ = await ChangeGroupState(DeconzWrapper.LightCommand.TurnOn().SetColor(SmartHomeConstants.Deconz.RandomRGBColor), "9");
-                LightCommand lw = new LightCommand();
+                LightCommand lw = new();
                 lw.TurnOn();
-                Random rand = new Random();
+                Random rand = new();
                 lw.SetColor(SmartHomeConstants.Deconz.RandomRGBColor);
                 lw.Brightness = (byte)rand.Next(31, 150);
                 var retval = await ChangeGroupState(lw, "22");
@@ -788,15 +855,19 @@ namespace SmartHome.Classes
         {
             return await ShellyWorker.PowerGuestRoom(powerOn);
         }
+        public static async Task<bool> PowerShellysGuestRoomRight(Boolean powerOn)
+        {
+            return await ShellyWorker.PowerGuestRoomRight(powerOn);
+        }
         #endregion Shellys
         #region ErrorHandling
-        public static HttpResponseException ReturnWebError(string message, HttpStatusCode hsc = HttpStatusCode.BadRequest)
+        public static Exception ReturnWebError(string message, HttpStatusCode hsc = HttpStatusCode.BadRequest)
         {
             var response = new HttpResponseMessage(hsc)
             {
                 Content = new StringContent(message, System.Text.Encoding.UTF8, "text/plain")
             };
-            return new HttpResponseException(response);
+            return new Exception(message);//todo: Exception Handling korrigieren.
         }
         #endregion ErrorHandling
         public static async Task<String> Test()

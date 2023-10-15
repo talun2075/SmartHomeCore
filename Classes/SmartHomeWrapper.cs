@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
 using HomeLogging;
 using InnerCore.Api.DeConz.Models;
+using SmartHome.DataClasses;
 
 namespace SmartHome.Classes
 {
@@ -16,7 +18,7 @@ namespace SmartHome.Classes
         {
             if (!await CheckButton(mac))
             {
-                SmartHomeConstants.log.ServerErrorsAdd("Touch", new Exception("Unbekannte MAC:" + mac), "SmartHomeWrapper");
+                SmartHomeConstants.log.ServerErrorsAdd("Touch", new Exception("Unbekannte MAC:" + mac+" IP:"+br.IP), "SmartHomeWrapper");
                 throw SmartHomeHelper.ReturnWebError("Unbekannte MAC:" + mac);
             }
             switch (mac)
@@ -72,11 +74,16 @@ namespace SmartHome.Classes
                 case "483FDA6EBD7D":
                     return await GroundFloorOn("Foo Fighters");
                 case "60019427EFA7":
-                    DeConzResults retv = await SmartHomeHelper.DeconzEating(DeconzSwitch.On);
-                    if (retv[0].Error == null) return true;
-                    throw SmartHomeHelper.ReturnWebError("Fehler aufgetreten beim Licht einschalten");
+                    return await GuestRoom("zzz Regen Neu");
                 case "5CCF7FF0D1CA":
                     return await AllOff();
+                case "68C63AD1624E":
+                    var result = await SmartHomeHelper.DeconzLightsPower("28");
+                    if (!result.HasErrors())
+                    {
+                        return true;
+                    }
+                    return false;
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Single:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
                     throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
@@ -100,6 +107,15 @@ namespace SmartHome.Classes
                     return await GroundFloorOn("Gelegenheit Party");
                 case "5CCF7F0CC51A":
                     return await SmartHomeHelper.SonosIanRoomOff();
+                case "60019427EFA7":
+                    return await GuestRoomOff() && await SmartHomeHelper.PowerShellysGuestRoomRight(false);
+                case "68C63AD1624E":
+                    var result = await SmartHomeHelper.DeconzLightsPower(new List<string>() { "8", "28" });
+                    if (!result.HasErrors())
+                    {
+                        return true;
+                    }
+                    return false;
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Double:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
                     throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
@@ -132,9 +148,14 @@ namespace SmartHome.Classes
                 case "2C3AE8018316":
                     return await AllOff();
                 case "60019427EFA7":
-                    DeConzResults retv = await SmartHomeHelper.DeconzEating(DeconzSwitch.Off);
-                    if (retv[0].Error == null) return true;
-                    throw SmartHomeHelper.ReturnWebError("Fehler aufgetreten beim Lichtausschalten");
+                    return await GuestRoom("zzz tempsleep", 6);
+                case "68C63AD1624E":
+                    var result = await SmartHomeHelper.DeconzLightsPower(new List<string>(){"8","28" },false);
+                    if (!result.HasErrors())
+                    {
+                        return true;
+                    }
+                    return false;
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Long:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
                     throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
@@ -309,7 +330,7 @@ namespace SmartHome.Classes
             {
                 await SmartHomeHelper.SonosStoppAllPlayer();
                 _ = SmartHomeHelper.PowerOffAuroras();
-                _ = SmartHomeHelper.PowerOffMarantz(true);
+                _ = SmartHomeHelper.PowerOffDenon(true);
                 await SmartHomeHelper.DeconzAllLightsOff();
                 return true;
             }
@@ -332,7 +353,7 @@ namespace SmartHome.Classes
                 await SmartHomeHelper.DeconzGroundFloorOff();
                 await SmartHomeHelper.PowerOffAurora("Esszimmer");
                 await SmartHomeHelper.PowerOnAuroras("Wohnzimmer");
-                await SmartHomeHelper.PowerOnMarantz();
+                await SmartHomeHelper.PowerOnDenon();
             }
             catch (Exception ex)
             {
@@ -375,8 +396,7 @@ namespace SmartHome.Classes
             }
             try
             {
-                await SmartHomeHelper.PowerOffMarantz();
-                //await SmartHomeHelper.PowerOffAuroras();
+                await SmartHomeHelper.PowerOffDenon();
             }
             catch (Exception ex)
             {
@@ -395,7 +415,7 @@ namespace SmartHome.Classes
             {
                 try
                 {
-                    _ = SmartHomeHelper.PowerOnMarantz();
+                    _ = SmartHomeHelper.PowerOnDenon();
                 }
                 catch (Exception ex)
                 {

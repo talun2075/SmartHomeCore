@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes;
+using SmartHome.DataClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +32,9 @@ namespace SmartHome.Controllers
         [HttpGet("GetShellys")]
         public async Task<List<Shelly1>> GetShellys()
         {
+           if(SmartHomeConstants.Shelly1.Any()) 
+            { return SmartHomeConstants.Shelly1; }
+            
             return await ShellyWorker.Read();
         }
         
@@ -72,8 +76,8 @@ namespace SmartHome.Controllers
         /// <param name="mac"></param>
         /// <param name="power"></param>
         /// <returns></returns>
-        [HttpGet("UpdateShellyButton/{mac}/{power}")]
-        public async Task<ActionResult> UpdateShellyButton(string mac, Boolean power)
+        [HttpGet("UpdateShellyButton/{mac}")]
+        public async Task<ActionResult> UpdateShellyButton(string mac)
         {
             await UpdateShellys();
             UpdateIgnoreList();
@@ -102,10 +106,12 @@ namespace SmartHome.Controllers
             List<Dictionary<string, string>> retval = new();
             foreach (Shelly1 shelly in SmartHomeConstants.Shelly1)
             {
-                Dictionary<string, string> sv = new();
-                sv.Add("Name", shelly.Name);
-                sv.Add("Mac", shelly.Device.MacAdress);
-                sv.Add("IsOn", shelly.Relays.First().IsOn.ToString().ToLower());
+                Dictionary<string, string> sv = new()
+                {
+                    { "Name", shelly.Name },
+                    { "Mac", shelly.Device.MacAdress },
+                    { "IsOn", shelly.Relays.First().IsOn.ToString().ToLower() }
+                };
                 retval.Add(sv);
             }
 

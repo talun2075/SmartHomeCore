@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes;
+using SmartHome.DataClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -56,9 +57,9 @@ namespace SmartHome.Controllers
             return SmartHomeConstants.KnowingButtons;
         }
         [HttpGet("Test")]
-        public async void Test()
+        public void Test()
         {
-            var K = await SmartHomeHelper.DeconzGardenOn();
+           // var K = await SmartHomeHelper.DeconzGardenOn();
         }
         [HttpGet("CupeLiving/{id}")]
         public async Task<Boolean> CupeLiving(int id)

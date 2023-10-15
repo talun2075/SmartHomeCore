@@ -1,10 +1,10 @@
-﻿//using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
+using SmartHome.DataClasses;
 
 namespace SmartHome.Classes
 {
@@ -67,6 +67,7 @@ namespace SmartHome.Classes
             {
                 SmartHomeConstants.log.ServerErrorsAdd("ShellyWorker:Read:", ex);
             }
+            SmartHomeConstants.Shelly1 = _listOfShellys;
             return _listOfShellys;
         }
 
@@ -76,16 +77,41 @@ namespace SmartHome.Classes
             await Task.Delay(100);
             return true;
         }
-
         public static async Task<Boolean> PowerGuestRoom(Boolean PowerOn = false)
+        {
+            List<String> shellys = new() { "gastrechts.shelly.tami", "gastlinks.shelly.tami" };
+            return await PowerRooms(shellys, PowerOn);
+        }
+        public static async Task<Boolean> PowerGuestRoomRight(Boolean PowerOn = false)
+        {
+            List<String> shellys = new() { "gastrechts.shelly.tami" };
+            return await PowerRooms(shellys, PowerOn);
+        }
+        public static async Task<Boolean> PowerGuestRoomLeft(Boolean PowerOn = false)
+        {
+            List<String> shellys = new() { "gastlinks.shelly.tami" };
+            return await PowerRooms(shellys, PowerOn);
+        }
+        public static async Task<Boolean> PowerRoom(string room, Boolean PowerOn = false)
+        {
+            List<String> shellys = new()
+            {
+                room
+            };
+            return await PowerRooms(shellys, PowerOn);
+        }
+        public static async Task<Boolean> PowerRooms(List<String> shellys, Boolean PowerOn = false)
         {
             try
             {
-                if (!SmartHomeConstants.Shelly1.Any()) await Read();
-                List<String> shellys = new() { "gastrechts.shelly.tami", "gastlinks.shelly.tami" };
+                if (!SmartHomeConstants.Shelly1.Any())
+                      await Read();
+                
                 foreach (String item in shellys)
                 {
                     Shelly1 shelly = SmartHomeConstants.Shelly1.FirstOrDefault(x => x.Name.ToLower() == item.ToLower());
+                    if (shelly == null) return false;
+                    if (shelly.Relays.First().IsOn == PowerOn) return true;
                     shelly.Relays.First().IsOn = PowerOn;
 
                     string url = "http://" + item + "/relay/0?turn=";

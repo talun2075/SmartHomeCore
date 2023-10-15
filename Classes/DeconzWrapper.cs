@@ -144,10 +144,7 @@ namespace SmartHome.Classes
         /// <returns></returns>
         public static async Task<BridgeConfig> GetConfig()
         {
-            if (_bridgeConfig == null)
-            {
-                _bridgeConfig = await UseClient.GetConfigAsync();
-            }
+            _bridgeConfig ??= await UseClient.GetConfigAsync();
             return _bridgeConfig;
         }
         /// <summary>
@@ -237,7 +234,7 @@ namespace SmartHome.Classes
         public static async void SetLightColor(string id, string color)
         {
             var light = await GetLightById(id);
-            RGBColor rGBColor = new RGBColor(color);
+            RGBColor rGBColor = new (color);
             await ChangeLightState(DeconzWrapper.LightCommand.TurnOn().SetColor(rGBColor,(light.State.Hue == null && light.State.Saturation == null)), id);
         }
         #endregion public Methods

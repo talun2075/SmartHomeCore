@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartHome.Classes
+namespace SmartHome.DataClasses
 {
     public class Button
     {
@@ -26,15 +26,15 @@ namespace SmartHome.Classes
         /// <summary>
         /// Mac des Button
         /// </summary>
-        public String Mac { get; set; }
+        public string Mac { get; set; }
         /// <summary>
         /// Name des Button
         /// </summary>
-        public String Name { get; set; }
+        public string Name { get; set; }
         /// <summary>
         /// IP des Button
         /// </summary>
-        public String IP { get; set; }
+        public string IP { get; set; }
         /// <summary>
         /// Batteriestatus in Prozent
         /// </summary>
@@ -46,7 +46,7 @@ namespace SmartHome.Classes
         /// <summary>
         /// Ist dieser Button aktiv im Einsatz
         /// </summary>
-        public Boolean Aktiv { get; set; } = false;
+        public bool Aktiv { get; set; } = false;
         /// <summary>
         /// Wann wurde der Button das letzte mal gedrückt
         /// </summary>
@@ -54,7 +54,7 @@ namespace SmartHome.Classes
         /// <summary>
         /// soll der Button an der Oberfläche gerendert werden.
         /// </summary>
-        public Boolean Visible { get; set; }
+        public bool Visible { get; set; }
     }
     /// <summary>
     /// Enum, der die Action bei den Generic aufruf mitteilt. 

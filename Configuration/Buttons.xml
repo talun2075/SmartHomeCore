@@ -3,11 +3,12 @@
 <Buttons>
 	<Button Name="Weiß" Mac="60019427DE18" Aktiv="true"/>
 	<Button Name="Touch 1OG" Mac="2C3AE8018316" Aktiv="true"/>
-	<Button Name="Esszimmer" Mac="60019427EFA7" Aktiv="true"/>
+	<Button Name="Gästezimmer" Mac="60019427EFA7" Aktiv="true"/>
 	<Button Name="Flur Touch" Mac="2C3AE801C092" Aktiv="true"/>
 	<Button Name="Orange" Mac="68C63AD16455" Aktiv="true"/>
 	<Button Name="Esszimmer Flur" Mac="5CCF7FF0D1CA" Aktiv="true"/>
-	<Button Name="Gästezimmer" Mac="5CCF7FF0D13F" Aktiv="true"/>
+	<Button Name="Gästezimmer Touch" Mac="5CCF7FF0D13F" Aktiv="true"/>
 	<Button Name="Shelly1" Mac="483FDA6EBD7D" Aktiv="true" Visible="false"/>
 	<Button Name="Weiß Ian" Mac="BCFF4D4B1034" Aktiv="true" Visible="true"/>
+	<Button Name="Lila Arbeitszimmer" Mac="68C63AD1624E" Aktiv="true" Visible="true"/>
 </Buttons>

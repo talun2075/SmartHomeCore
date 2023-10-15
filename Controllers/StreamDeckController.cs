@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes;
+using SmartHome.DataClasses;
 using System;
 using System.Collections.Generic;
 using System.Linq;
