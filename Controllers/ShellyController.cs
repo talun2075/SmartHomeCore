@@ -27,6 +27,7 @@ namespace SmartHome.Controllers
             ViewBag.svg = "power.svg";
             ViewBag.png16 = "power.png";
             ViewBag.png32 = "power.png";
+            ViewBag.NavClass = "navSecond";
             return View();
         }
         [HttpGet("GetShellys")]

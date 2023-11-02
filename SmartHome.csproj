@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\lib\jquery\" />
   </ItemGroup>
 
@@ -16,12 +15,18 @@
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="System.Data.SQLite" Version="1.0.114" />
+    <PackageReference Include="SharpModbus" Version="2.0.0" />
+    <PackageReference Include="System.Data.SQLite" Version="1.0.118" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0" />
+    <PackageReference Include="Zeroconf" Version="3.6.11" />
   </ItemGroup>
 
   <ItemGroup>
     <Reference Include="DeconzInnerCore.API">
       <HintPath>..\CommonCore\HomeCommon\DeconzInnerCore.API\bin\Debug\net6.0\DeconzInnerCore.API.dll</HintPath>
+    </Reference>
+    <Reference Include="EvtSource">
+      <HintPath>..\CommonCore\HomeCommon\EvtSource\bin\Debug\net6.0\EvtSource.dll</HintPath>
     </Reference>
     <Reference Include="ExternalDevices">
       <HintPath>..\CommonCore\HomeCommon\ExternalDevices\bin\Debug\net6.0\ExternalDevices.dll</HintPath>
@@ -32,10 +37,19 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Configuration\AuroraKnowingDevices.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="Configuration\Buttons.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Configuration\DeconzConfiguration.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Configuration\Links.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Configuration\OverViewConfig.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Configuration\Shellys.xml">

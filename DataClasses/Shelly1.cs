@@ -78,6 +78,9 @@ namespace SmartHome.DataClasses
         [JsonPropertyName("discoverable")]
         public bool Discoverable { get; set; }
 
+        //Own
+        public string Description {  get; set; }
+
     }
     #region Shelly Data Classes
     public class ShellyHardwareInfo

@@ -229,9 +229,9 @@ namespace SmartHome.Classes
                 throw SmartHomeHelper.ReturnWebError("SmartHomeWrapper:Generic:SQLitecall:" + ex.Message);
             }
         }
-        public async static Task<String> Test()
+        public static String Test()
         {
-            return await SmartHomeHelper.Test();
+            return SmartHomeHelper.Test();
         }
         #endregion ClickEvents
         #region private Methoden

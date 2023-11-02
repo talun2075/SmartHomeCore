@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Shellys>
-  <Shelly URL="NasKeller.shelly.tami"/>
-  <Shelly URL="Vorratsraum.shelly.tami"/>
-  <Shelly URL="waschkeller.shelly.tami"/>
-  <Shelly URL="gastrechts.shelly.tami"/>
-  <Shelly URL="gastlinks.shelly.tami"/>
+  <Shelly URL="NasKeller.shelly.tami" Description="Keller Server/Heizung"/>
+  <Shelly URL="Vorratsraum.shelly.tami" Description="Keller Mitte"/>
+  <Shelly URL="waschkeller.shelly.tami" Description="Keller Wäsche"/>
+  <Shelly URL="gastrechts.shelly.tami" Description="Marantz"/>
+  <Shelly URL="gastlinks.shelly.tami" Description="TV und Amazon TV"/>
 </Shellys>

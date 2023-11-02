@@ -9,7 +9,8 @@ using System.Net.Http;
 using InnerCore.Api.DeConz.Models.Lights;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
 using InnerCore.Api.DeConz.ColorConverters;
-
+using SmartHome.Classes.Aurora.Core;
+using System.Xml.Linq;
 
 namespace SmartHome.Classes
 {
@@ -24,17 +25,7 @@ namespace SmartHome.Classes
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetGroupPowerState +"/"+room+ "/true");
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
-                {
-                    return retvalchecked;
-                }
-                else
-                {
-                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "PowerOnAurora");
-                }
-
-                return true;
+                return await AuroraWrapper.GroupPowerOn(room, true);
             }
             catch (Exception ex)
             {
@@ -49,18 +40,7 @@ namespace SmartHome.Classes
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetGroupPowerStateAll + "/false");
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
-                {
-                    return retvalchecked;
-                }
-                else
-                {
-
-                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "PowerOffAuroras");
-                }
-
-                return true;
+                return await AuroraWrapper.GroupPowerOnAll(false);
             }
             catch (Exception ex)
             {
@@ -75,18 +55,11 @@ namespace SmartHome.Classes
         {
             try
             {
+               
                 if (string.IsNullOrEmpty(selectedaurora)) return false;
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetPowerStateByName + "/" + selectedaurora + "/false");
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
-                {
-                    return retvalchecked;
-                }
-                else
-                {
-
-                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "PowerOffAurora:" + selectedaurora);
-                }
-
+                    AuroraLigth a = await AuroraWrapper.GetAurorabyName(selectedaurora);
+                    if (a == null) return false;
+                    await a.SetPowerOn(false);
                 return true;
             }
             catch (Exception ex)
@@ -105,17 +78,10 @@ namespace SmartHome.Classes
             try
             {
                 if (string.IsNullOrEmpty(selectedaurora)) return false;
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetPowerStateByName + "/" + selectedaurora + "/true");
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
-                {
-                    return retvalchecked;
-                }
-                else
-                {
-
-                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "PowerOnAurora:" + selectedaurora);
-                }
-
+                if (string.IsNullOrEmpty(selectedaurora)) return false;
+                AuroraLigth a = await AuroraWrapper.GetAurorabyName(selectedaurora);
+                if (a == null) return false;
+                await a.SetPowerOn(true);
                 return true;
             }
             catch (Exception ex)
@@ -870,22 +836,11 @@ namespace SmartHome.Classes
             return new Exception(message);//todo: Exception Handling korrigieren.
         }
         #endregion ErrorHandling
-        public static async Task<String> Test()
+        public static  String Test()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Aurora.SetGroupPowerState + "/true");
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
-                {
-                    return "Retval war true";
-                }
-                else
-                {
-
-                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "PowerOnAurora");
-                }
-
-                return retval;
+                return "No Test implemented";
             }
             catch (Exception ex)
             {

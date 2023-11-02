@@ -1,0 +1,59 @@
+﻿.container{
+    margin: 20px;
+}
+.columWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 15px;
+    justify-content: center;
+}
+.colum {
+    min-width: 260px;
+}
+.link {
+    padding: 5px;
+    box-shadow: black 5px 10px 10px;
+    margin-bottom: 15px;
+    border-radius: 5px 5px 5px 5px;
+    background: #14B5CE;
+    background: linear-gradient(135deg, #14B5CE 0%, #4A9AC5 100%);
+}
+.linktext {
+    padding-left: 10px;
+    align-content: center;
+    display: grid;
+    width: 210px;
+    margin: 5px 0;
+}
+.linkwrapper {
+    display: inline-flex;
+    width: 100%;
+}
+.imagelink, .imagelink > IMG {
+    width: 50px;
+    height: 50px;
+}
+.typwrapper {
+    display: inline-flex;
+    border-bottom: 1px solid;
+}
+.imagetypwrapper {
+    width: 50px;
+    height: 50px;
+}
+.imagetypwrapper > img {
+    width: 50px;
+    height: 50px;
+}
+.typcontent {
+    align-content: center;
+    display: grid;
+    width: 210px;
+    text-align: center;
+}
+.links {
+    width: 260px;
+}
+.linktext > a, .linktext > a:visited, .linktext > a:hover {
+    color: white;
+}

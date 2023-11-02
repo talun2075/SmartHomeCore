@@ -21,6 +21,7 @@ namespace SmartHome.Controllers
             ViewBag.svg = "buttons.svg";
             ViewBag.png16 = "buttons16.png";
             ViewBag.png32 = "buttons32.png";
+            ViewBag.NavClass = "navThird";
             return View();
         }
     }

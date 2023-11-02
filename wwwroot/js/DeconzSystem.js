@@ -17,7 +17,7 @@ function DeconzSystem() {
     this.Init = function (update = false) {
         //Lade Räume und Lichter
         clearTimeout(UpdateID)
-        UpdateID = window.setTimeout("DS.RefreshData()", 10000)
+        //UpdateID = window.setTimeout("DS.RefreshData()", 10000)
         try {
             Send("GetGroups").then(function (data) {
                 if (data === null) {
@@ -47,7 +47,7 @@ function DeconzSystem() {
             let lightid = this.ColorLights[i];
             let light = this.Lights.find(x => x.id === lightid);
             var lvalue = light.hexColor;
-            var cp = new iro.ColorPicker('#color_' + lightid, { color: lvalue });
+            var cp = new iro.ColorPicker('#color_' + lightid, { color: lvalue, width:250 });
 
 
             if (typeof this.ColorPickers[lightid] === "undefined") {
@@ -221,7 +221,7 @@ function DeconzSystem() {
                     if (light.state.isReachable === true && light.state.on === true) {
                         tempStateAny = true;
                     }
-                    if ((light.state.isReachable === false && light.type !== SV.PowerUnit) || light.state.on === false) {
+                    if (light.state.isReachable === true && light.state.on === false) {
                         tempState = false;
                     }
                     //colorPicker Update

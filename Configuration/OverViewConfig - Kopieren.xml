@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<OverView>
+	<Room Name="Wohnzimmer">
+		<Controller Name="Alle" GetCurrentValue="http://sh.tami/deconz/GetRoomPowerOn/Wohnzimmer" On="http://sh.tami/deconz/ToggleGroupPowerStateTo/6/true;http://aurora.tami/aurora/SetGroupPowerState/Wohnzimmer/true" OnText="An" Off="http://sh.tami/deconz/ToggleGroupPowerStateTo/6/false;http://aurora.tami/aurora/SetGroupPowerState/Wohnzimmer/false" OffText="Aus"/>
+		<Controller Name="Low Board" GetCurrentValue="http://sh.tami/deconz/GetLightPowerOn/31" On="http://sh.tami/deconz/ToggleLightPowerStateTo/31/true" OnText="An" Off="http://sh.tami/deconz/ToggleLightPowerStateTo/31/false" OffText="Aus"/>
+		<Controller Name="Iris (links)" GetCurrentValue="http://sh.tami/deconz/GetLightPowerOn/30" On="http://sh.tami/deconz/ToggleLightPowerStateTo/30/true" OnText="An" Off="http://sh.tami/deconz/ToggleLightPowerStateTo/30/false" OffText="Aus"/>
+		<Controller Name="TV Licht" GetCurrentValue="http://sh.tami/deconz/GetLightPowerOn/32" On="http://sh.tami/deconz/ToggleLightPowerStateTo/32/true" OnText="An" Off="http://sh.tami/deconz/ToggleLightPowerStateTo/32/false" OffText="Aus"/>
+		<Controller Name="Turm" GetCurrentValue="http://sh.tami/deconz/GetLightPowerOn/7" On="http://sh.tami/deconz/ToggleLightPowerStateTo/7/true" OnText="An" Off="http://sh.tami/deconz/ToggleLightPowerStateTo/7/false" OffText="Aus"/>
+		<Controller Name="Aurora Links" GetCurrentValue="" On="http://aurora.tami/aurora/SetPowerState/S22170H7987/true" OnText="An" Off="http://aurora.tami/aurora/SetPowerState/S22170H7987/false" OffText="Aus"/>
+		<Controller Name="Aurora Rechts" GetCurrentValue="" On="http://aurora.tami/aurora/SetPowerState/S22150H3322/true" OnText="An" Off="http://aurora.tami/aurora/SetPowerState/S22150H3322/false" OffText="Aus"/>
+	</Room>
+		<Room Name="Esszimmer">
+		<Controller Name="Alle" GetCurrentValue="http://sh.tami/deconz/GetRoomPowerOn/Esszimmer" On="http://sh.tami/deconz/ToggleGroupPowerStateTo/6/true;http://aurora.tami/aurora/SetPowerState/S17122A4899/true" OnText="An" Off="http://sh.tami/deconz/ToggleGroupPowerStateTo/6/false;http://aurora.tami/aurora/SetPowerState/S17122A4899/false" OffText="Aus"/>
+		<Controller Name="Leiste" GetCurrentValue="http://sh.tami/deconz/GetLightPowerOn/24" On="http://sh.tami/deconz/ToggleLightPowerStateTo/24/true" OnText="An" Off="http://sh.tami/deconz/ToggleLightPowerStateTo/24/false" OffText="Aus"/>
+		<Controller Name="Block" GetCurrentValue="http://sh.tami/deconz/GetLightPowerOn/27" On="http://sh.tami/deconz/ToggleLightPowerStateTo/27/true" OnText="An" Off="http://sh.tami/deconz/ToggleLightPowerStateTo/27/false" OffText="Aus"/>
+		<Controller Name="Aurora" GetCurrentValue="" On="http://aurora.tami/aurora/SetPowerState/S17122A4899/true" OnText="An" Off="http://aurora.tami/aurora/SetPowerState/S17122A4899/false" OffText="Aus"/>
+	</Room>
+</OverView>

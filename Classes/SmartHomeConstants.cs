@@ -28,7 +28,7 @@ namespace SmartHome.Classes
         /// </summary>
         public static List<Shelly1> Shelly1 = new();
         public static DateTime ShellyLastChange = DateTime.Now;
-        public static AuroraConstants Aurora { get; private set; } = new();
+        //public static AuroraConstants Aurora { get; private set; } = new();
         public static MarantzConstants Marantz { get; private set; } = new();
         public static DenonConstants Denon { get; private set; } = new();
         public static SonosConstants Sonos { get; private set; } = new();
@@ -210,41 +210,41 @@ namespace SmartHome.Classes
         public String BaseURL { get; private set; } = "http://marantz.tami";
     }
 
-    /// <summary>
-    /// Alle Constanten im Kontext Aurora.
-    /// </summary>
-    public class AuroraConstants
-    {
-        /// <summary>
-        /// Base Pfad, IP, da DNS nicht geht.
-        /// </summary>
-        public static String BaseURL { get; private set; } = "http://aurora.tami/aurora";
-        /// <summary>
-        /// Grund Infos
-        /// </summary>
-        public String GroundInfos { get; private set; } = BaseURL + "/Get";
-        /// <summary>
-        /// Scenario Setzen
-        /// </summary>
-        public String SetSelectedScenario { get; private set; } = BaseURL + "/SetSelectedScenario";
-        /// <summary>
-        /// PowerState setzen mit Seriennummner
-        /// </summary>
-        public String SetPowerState { get; private set; } = BaseURL + "/SetPowerState";
-        /// <summary>
-        /// Powerstate einer einzelnen Aurora über Namen setzen
-        /// </summary>
-        public String SetPowerStateByName { get; private set; } = BaseURL + "/SetPowerStateByName";
-        /// <summary>
-        /// alle Aurora an bzw. aus schalten.
-        /// </summary>
-        public String SetGroupPowerState { get; private set; } = BaseURL + "/SetGroupPowerState";
-        public String SetGroupPowerStateAll { get; private set; } = BaseURL + "/SetGroupPowerStateAll";
-        /// <summary>
-        /// Zufälliges Scenario setzen.
-        /// </summary>
-        public String SetRandomScenario { get; private set; } = BaseURL + "/SetRandomScenario";
-    }
+    ///// <summary>
+    ///// Alle Constanten im Kontext Aurora.
+    ///// </summary>
+    //public class AuroraConstants
+    //{
+    //    /// <summary>
+    //    /// Base Pfad, IP, da DNS nicht geht.
+    //    /// </summary>
+    //    public static String BaseURL { get; private set; } = "http://aurora.tami/aurora";
+    //    /// <summary>
+    //    /// Grund Infos
+    //    /// </summary>
+    //    public String GroundInfos { get; private set; } = BaseURL + "/Get";
+    //    /// <summary>
+    //    /// Scenario Setzen
+    //    /// </summary>
+    //    public String SetSelectedScenario { get; private set; } = BaseURL + "/SetSelectedScenario";
+    //    /// <summary>
+    //    /// PowerState setzen mit Seriennummner
+    //    /// </summary>
+    //    public String SetPowerState { get; private set; } = BaseURL + "/SetPowerState";
+    //    /// <summary>
+    //    /// Powerstate einer einzelnen Aurora über Namen setzen
+    //    /// </summary>
+    //    public String SetPowerStateByName { get; private set; } = BaseURL + "/SetPowerStateByName";
+    //    /// <summary>
+    //    /// alle Aurora an bzw. aus schalten.
+    //    /// </summary>
+    //    public String SetGroupPowerState { get; private set; } = BaseURL + "/SetGroupPowerState";
+    //    public String SetGroupPowerStateAll { get; private set; } = BaseURL + "/SetGroupPowerStateAll";
+    //    /// <summary>
+    //    /// Zufälliges Scenario setzen.
+    //    /// </summary>
+    //    public String SetRandomScenario { get; private set; } = BaseURL + "/SetRandomScenario";
+    //}
 
     public class SonosConstants
     {

@@ -3,25 +3,29 @@
     var b = ViewBag.Shellys;
 }
 <link rel="stylesheet" href="/css/shelly.css" media="all" />
+<link rel="stylesheet" href="/css/Switch.css" media="all" />
 <script src="/js/Send.js" type="text/javascript"></script>
 <script src="/js/Shelly.js" type="text/javascript"></script>
 <div class="container">
-    @for (int i = 0; i < b.Count; i++)
-    {
-        var name = b[i].Name.Split(".");
-        var chec = "";
-        if (b[i].Relays[0].IsOn)
-            chec = "checked=checked";
-        <div class="switch-holder">
-            <div class="switch-label">
-                <a href="http://@b[i].Name"><img class="shellyImage" src="/images/power.png" /></a> <span>@name[0]</span>
+    <div id="BodyDIV">
+        @for (int i = 0; i < b.Count; i++)
+        {
+            var name = b[i].Name.Split(".");
+            var chec = "";
+            if (b[i].Relays[0].IsOn)
+                chec = "checked=checked";
+            <div class="switch-holder">
+                <div class="switch-label">
+                    <a href="http://@b[i].Name"><img class="shellyImage" src="/images/power.png" /></a><span onclick="ToggleDescription(this)">@name[0]</span>
+                    <div class="switch-description">@b[i].Description</div>
+                </div>
+                <div class="switch-toggle">
+                    <input class="powerinput" type="checkbox" id="sheylly_@b[i].Device.MacAdress" data-name="@b[i].Device.MacAdress" @chec>
+                    <label for="sheylly_@b[i].Device.MacAdress"></label>
+                </div>
             </div>
-            <div class="switch-toggle">
-                <input class="powerinput" type="checkbox" id="sheylly_@b[i].Device.MacAdress" data-name="@b[i].Device.MacAdress" @chec>
-                <label for="sheylly_@b[i].Device.MacAdress"></label>
-            </div>
-        </div>
 
-    }
+        }
+    </div>
 </div>
 <script type="text/javascript">Init();</script>

@@ -5,7 +5,7 @@ function TogglePower(v) {
 var updateid;
 function Update() {
     clearTimeout(updateid);
-    Send("/GetUpdates").then(function (data) {
+    Send("GetUpdates").then(function (data) {
         var shelly = data;
         for (var i = 0; i < shelly.length; i++) {
             var input = document.getElementById("sheylly_" + shelly[i].Mac);
@@ -28,4 +28,23 @@ function Init() {
     }
     Update();
 
+}
+var clicketName = "";
+var activeClass = "active"
+function ToggleDescription(domEle) {
+    let currentactive = document.getElementsByClassName(activeClass);
+    if (currentactive.length > 0) {
+        //HTML Collection no forEach
+        for (a of currentactive) {
+            a.classList.remove(activeClass);
+        }
+    }
+
+
+    if (clicketName === domEle) {
+        clicketName = "";
+        return;
+    }
+    clicketName = domEle;
+    domEle.nextElementSibling.classList.add(activeClass)
 }

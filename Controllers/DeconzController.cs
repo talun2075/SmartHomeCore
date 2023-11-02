@@ -1,21 +1,32 @@
 ﻿using InnerCore.Api.DeConz.Models;
 using InnerCore.Api.DeConz.Models.Lights;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace SmartHome.Controllers
 {
     [Route("/[controller]")]
-    public class DeconzController : ApiControllerAttribute
+    public class DeconzController : Controller
     {
         public DeconzController(IWebHostEnvironment env)
         {
             SmartHomeConstants.Env = env;
         }
-
+        public IActionResult Index()
+        {
+            ViewBag.Title = "Smart Home Deconz";
+            ViewBag.png = "led-lamp.png";
+            ViewBag.svg = "led-lamp.svg";
+            ViewBag.png16 = "led-lamp16.png";
+            ViewBag.png32 = "led-lamp32.png";
+            ViewBag.NavClass = "navFirst";
+            return View();
+        }
         [HttpGet("GetGroups")]
         public async Task<List<SmartHomeRoom>> GetGroups()
         {
@@ -63,6 +74,29 @@ namespace SmartHome.Controllers
         {
             return await DeconzWrapper.GetLightById(id);
         }
+        [HttpGet("GetLightPowerOn/{id}")]
+        public async Task<bool> GetLightPowerOn(string id)
+        {
+            return (await DeconzWrapper.GetLightById(id)).State.On;
+        }
+        [HttpGet("GetRoomPowerOn/{name}")]
+        public async Task<bool> GetRoomPowerOn(string name)
+        {
+            bool retval = false;
+            var room = await DeconzWrapper.GetGroup(name);
+            var lights =  await GetLights();
+            foreach (var item in room.Room.Lights)
+            {
+                var checkup = lights.FirstOrDefault(x => x.Id == item);
+                if (checkup != null && checkup.State.IsReachable == true&& !checkup.State.On)
+                {
+                    return retval;
+                }
+            }
+
+            return true;
+        }
+
         [HttpPost("SetColor/{id}")]
         public void SetColor(string id,[FromBody]string hexColor)
         {

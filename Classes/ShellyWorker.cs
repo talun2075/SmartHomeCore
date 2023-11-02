@@ -12,14 +12,14 @@ namespace SmartHome.Classes
     {
         private static readonly JsonSerializerOptions _jsonSerializerOptions = new ()
         { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IncludeFields= true};
-        private static readonly List<String> _listofShellyUrls = new ();
+        private static readonly Dictionary<String, String> _listofShellyUrls = new ();
         private static readonly List<Shelly1> _listOfShellys = new ();
         public static async Task<List<Shelly1>> Read()
         {
             try
             {
                 if (!ReadShellyXML()) return _listOfShellys;
-                foreach (String item in _listofShellyUrls)
+                foreach (String item in _listofShellyUrls.Keys)
                 {
                     String retv = String.Empty;
                     try
@@ -36,6 +36,7 @@ namespace SmartHome.Classes
                         var s = JsonSerializer.Deserialize<Shelly1>(retv, _jsonSerializerOptions);
                         if (s != null)
                         {
+                            s.Description = _listofShellyUrls[item];
                             if(_listOfShellys.Count > 0)
                             {
                                 var shelly = _listOfShellys.FirstOrDefault(x => x.Name == s.Name);
@@ -148,10 +149,11 @@ namespace SmartHome.Classes
                 if (buttonsconfig.Count == _listofShellyUrls.Count) return true;
                 foreach (XmlNode item in buttonsconfig)
                 {
-                    var v = item.Attributes["URL"].Value;
-                    if (!string.IsNullOrEmpty(v.ToString()) && !_listofShellyUrls.Contains(v))
+                    var url = item.Attributes["URL"].Value;
+                    var des = item.Attributes["Description"].Value;
+                    if (!string.IsNullOrEmpty(url.ToString()) && !_listofShellyUrls.ContainsKey(url))
                     {
-                        _listofShellyUrls.Add(v);
+                        _listofShellyUrls.Add(url,des);
                     }
                 }
                 return true;

@@ -13,13 +13,34 @@ namespace SmartHome.Controllers
 
         public IActionResult Index()
         {
-            ViewBag.Title = "Smart Home Deconz";
-            ViewBag.png = "led-lamp.png";
-            ViewBag.svg = "led-lamp.svg";
-            ViewBag.png16 = "led-lamp16.png";
-            ViewBag.png32 = "led-lamp32.png";
-            return View();
+          return  RedirectFromDomain();
         }
         
+        private IActionResult RedirectFromDomain()
+        {
+            var host = HttpContext.Request.Host.Host;
+            switch (host)
+            {
+                case "aurora.tami":
+                case "a.tami":
+                    return RedirectToAction("Index", "Aurora");
+
+                case "button.tami":
+                case "buttons.tami":
+                case "b.tami":
+                    return RedirectToAction("Index", "Buttons");
+
+                case "shelly.tami":
+                case "s.tami":
+                    return RedirectToAction("Index", "Shelly");
+                case "pv.tami":
+                    return RedirectToAction("Index", "PV");
+                case "l.tami":
+                case "links.tami":
+                case "link.tami":
+                    return RedirectToAction("Index", "Links");
+            }
+            return RedirectToAction("Index", "Deconz"); ;
+        }
     }
 }

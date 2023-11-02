@@ -1,0 +1,44 @@
+﻿@{
+    var links = ViewBag.Links;
+}
+<link rel="stylesheet" href="/css/link.css" media="all" />
+<div class="columWrapper">
+    @for (int col = 1; col < ViewBag.Columns + 1; col++)
+    {
+    <div class="colum">
+        @for (int i = 0; i < links.Count; i++)
+        {
+            var link = links[i];
+            if (link.Column != col)
+            {
+                continue;
+            }
+            <div class="link">
+                <div class="typwrapper">
+                    <div class="imagetypwrapper">
+                        @if (!string.IsNullOrEmpty(link.BildPfad))
+                        {
+                            <img src="@link.BildPfad">
+                        }
+                    </div>
+                    <div class="typcontent"><b>@link.Typ</b></div>
+                </div>
+                <div class="links">
+                    @for (int y = 0; y < link.Links.Count; y++)
+                    {
+                        var linkchild = links[i].Links[y];
+                        <div class="linkwrapper">
+                            <div class="imagelink">
+                                @if (!string.IsNullOrEmpty(linkchild.Bild))
+                                {<img src="@linkchild.Bild">}
+                        </div>
+                        <div class="linktext"><a target="_blank" href="@linkchild.Uri">@linkchild.Anzeige</a></div>
+                    </div>
+                }
+                </div>
+            </div>
+        }
+    </div>
+    }
+</div>
+
