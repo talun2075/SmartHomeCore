@@ -4,16 +4,18 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
-using SmartHome.DataClasses;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Util;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.SmartHome
 {
-    public class SmartHomeTimerWorker
+    public class SmartHomeTimerWorker : ISmartHomeTimerWorker
     {
         #region Klassenvariablen
         private static List<SmartHomeTimer> timers = new();
         #endregion Klassenvariablen
-        public static async Task<Boolean> CheckTimer()
+        public async Task<bool> CheckTimer()
         {
             //SmartHomeConstants.log.TraceLog("CheckTimer", "Start");
             timers = ReadTimerXml();
@@ -21,7 +23,7 @@ namespace SmartHome.Classes
             {
                 foreach (SmartHomeTimer st in timers)
                 {
-                    if(!st.Active) continue;
+                    if (!st.Active) continue;
                     if (CheckTime(st))
                     {
                         if (st.Logging)
@@ -45,7 +47,7 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="st"></param>
         /// <returns></returns>
-        private static Boolean CheckTime(SmartHomeTimer st)
+        private bool CheckTime(SmartHomeTimer st)
         {
             try
             {
@@ -82,9 +84,9 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="st"></param>
         /// <returns></returns>
-        private static async Task<Boolean> CallTimer(SmartHomeTimer st)
+        private async Task<bool> CallTimer(SmartHomeTimer st)
         {
-           
+
             st.LastRuntime = DateTime.Now;
             return st.TimerType switch
             {
@@ -98,13 +100,14 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="st"></param>
         /// <returns></returns>
-        private static async Task<Boolean> ReflectionCall(SmartHomeTimer st)
+        private async Task<bool> ReflectionCall(SmartHomeTimer st)
         {
             try
             {
                 if (st.Logging)
                     SmartHomeConstants.log.TraceLog("ReflectionCall", "Start:" + st.Name);
                 if (string.IsNullOrEmpty(st.Class) || string.IsNullOrEmpty(st.Method)) return false;
+                //change
                 var myclass = Type.GetType(st.Class);
                 MethodInfo method = myclass.GetMethod(st.Method);
                 if (st.Async)
@@ -129,7 +132,7 @@ namespace SmartHome.Classes
         /// Einlesen der Timer XML. Vorhandene Einträge werden nicht überschrieben sondern aktualisiert.
         /// </summary>
         /// <returns></returns>
-        private static List<SmartHomeTimer> ReadTimerXml()
+        private List<SmartHomeTimer> ReadTimerXml()
         {
             try
             {
@@ -141,7 +144,7 @@ namespace SmartHome.Classes
                 XmlNodeList timersconfig = myXmlDocument.SelectNodes("/Times/Time");
                 foreach (XmlNode item in timersconfig)
                 {
-                    String[] argsu = Array.Empty<string>();
+                    string[] argsu = Array.Empty<string>();
                     string ar = item.Attributes["Arguments"]?.Value;
                     if (!string.IsNullOrEmpty(ar))
                     {
@@ -158,16 +161,16 @@ namespace SmartHome.Classes
                     SmartHomeConstants.RequestEnums rtuc = SmartHomeConstants.RequestEnums.GET;
                     if (!string.IsNullOrEmpty(rtucs))
                     {
-                        Enum.TryParse<SmartHomeConstants.RequestEnums>(rtucs, out rtuc);
+                        Enum.TryParse(rtucs, out rtuc);
                     }
                     SmartHomeTimer st = new()
                     {
                         Name = item.Attributes["Name"].Value,
                         Time = TimeSpan.Parse(item.Attributes["When"].Value),
                         Repeat = item.Attributes["Repeat"]?.Value == "true",
-                        Class = item.Attributes["Class"]?.Value ?? String.Empty,
-                        Method = item.Attributes["Method"]?.Value ?? String.Empty,
-                        URI = item.Attributes["Uri"]?.Value ?? String.Empty,
+                        Class = item.Attributes["Class"]?.Value ?? string.Empty,
+                        Method = item.Attributes["Method"]?.Value ?? string.Empty,
+                        URI = item.Attributes["Uri"]?.Value ?? string.Empty,
                         Async = item.Attributes["Async"]?.Value == null || item.Attributes["Async"]?.Value == "true",
                         Logging = item.Attributes["Logging"]?.Value == "true",
                         Active = item.Attributes["Active"]?.Value == "true",
@@ -222,10 +225,10 @@ namespace SmartHome.Classes
             return timers;
         }
 
-        private static async Task<Boolean> WebCall(SmartHomeTimer st)
+        private async Task<bool> WebCall(SmartHomeTimer st)
         {
-            if(st.Logging)
-            SmartHomeConstants.log.TraceLog("WebCall", "Start:" + st.Name);
+            if (st.Logging)
+                SmartHomeConstants.log.TraceLog("WebCall", "Start:" + st.Name);
             string value = "";
             if (string.IsNullOrEmpty(st.URI)) return false;
             if (st.Arguments.Length > 0)
@@ -252,7 +255,7 @@ namespace SmartHome.Classes
                 else
                 {
                     if (st.Logging)
-                        SmartHomeConstants.log.TraceLog("WebCall", "Ende mit Fehlern:" + st.Name+ " Retval:"+retval);
+                        SmartHomeConstants.log.TraceLog("WebCall", "Ende mit Fehlern:" + st.Name + " Retval:" + retval);
                     SmartHomeConstants.log.ServerErrorsAdd("TimerWorker", new Exception("Timer:" + st.Name + " URL:" + st.URI + " Wert:" + retval), "WebCall");
                 }
             }

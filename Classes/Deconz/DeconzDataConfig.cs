@@ -1,16 +1,16 @@
 ﻿using System;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.Deconz
 {
-   /// <summary>
-   /// Dient dazu um die Oberfläche Anzupassen
-   /// </summary>
+    /// <summary>
+    /// Dient dazu um die Oberfläche Anzupassen
+    /// </summary>
     public class DeconzDataConfig
     {
         /// <summary>
         /// Ausblenden
         /// </summary>
-        public Boolean Hide { get; set; } = false;
+        public bool Hide { get; set; } = false;
         /// <summary>
         /// Raum um ´den es geht.
         /// </summary>
@@ -22,10 +22,10 @@ namespace SmartHome.Classes
         /// <summary>
         /// Gibt die Möglichkeit, den namen zu überschreiben. 
         /// </summary>
-        public Boolean OverWriteName { get; set; } = false;
+        public bool OverWriteName { get; set; } = false;
         /// <summary>
         /// Neuer Name
         /// </summary>
-        public String OverWrittenName { get; set; } = String.Empty;
+        public string OverWrittenName { get; set; } = string.Empty;
     }
 }

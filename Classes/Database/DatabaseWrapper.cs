@@ -2,22 +2,34 @@
 using System.Linq;
 using System.Data.SQLite;
 using System.Threading.Tasks;
-using SmartHome.DataClasses;
+using Microsoft.Extensions.Options;
+using Domain;
+using SmartHome.Classes.SmartHome.Util;
+using SmartHome.Classes.SmartHome.Data;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.Database
 {
-    public static class DatabaseWrapper
+    public class DatabaseWrapper : IDatabaseWrapper
     {
-        private static SQLiteConnection conn;
-        private static SQLiteCommand cmd;
-        private static SQLiteCommand rcmd;
-        private static readonly string cs =@"URI=file:E:\talun\buttonsbatteryLevel.db";//todo: move to configuration
-        public static async Task<Boolean> Open()
+        private SQLiteConnection conn;
+        private SQLiteCommand cmd;
+        private SQLiteCommand rcmd;
+        private readonly string cs = @"URI=file:E:\talun\buttonsbatteryLevel.db";//todo: move to configuration
+        public DatabaseWrapper(IOptionsMonitor<DatabaseOptions> options)
+        {
+            if (!string.IsNullOrEmpty(options.CurrentValue.Path))
+            {
+                cs = options.CurrentValue.Path;
+            }
+            conn = new SQLiteConnection(cs);
+        }
+
+        public async Task<bool> Open()
         {
             try
             {
-                conn = new SQLiteConnection(cs);
-                await conn.OpenAsync();
+                if (conn.State == System.Data.ConnectionState.Open) return true;
+                    await conn.OpenAsync();
                 cmd = new SQLiteCommand(conn)
                 {
                     CommandText = "CREATE TABLE IF NOT EXISTS buttons (id text PRIMARY KEY,name text NOT NULL,battery integer default 100, lastaction text, lastclick text, ip text);"
@@ -33,11 +45,11 @@ namespace SmartHome.Classes
 
         }
 
-        public static void Close()
+        public async void Close()
         {
             if (conn != null || conn.State != System.Data.ConnectionState.Closed)
-                conn.Close();
-                
+               await conn.CloseAsync();
+
         }
         ///// <summary>
         ///// Update Batterie Wert
@@ -68,7 +80,7 @@ namespace SmartHome.Classes
         /// <param name="batteryvalue"></param>
         /// <param name="lastaction"></param>
         /// <returns></returns>
-        public static async Task<Boolean> UpdateButton(Button button)
+        public async Task<bool> UpdateButton(Button button)
         {
             try
             {
@@ -77,17 +89,18 @@ namespace SmartHome.Classes
                 await cmd.ExecuteNonQueryAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateButton", ex);
                 return false;
             }
+            finally { Close(); }
         }
         /// <summary>
         /// Liest alle Buttons aus der Datenbank, wenn diese in KnowingButtons vorhanden sind.
         /// </summary>
         /// <returns></returns>
-        public static async Task<Boolean> ReadButtons()
+        public async Task<bool> ReadButtons()
         {
             try
             {
@@ -110,8 +123,8 @@ namespace SmartHome.Classes
                     if (b != null)
                     {
                         b.Batterie = battery;
-                        if(DateTime.TryParse(date, out DateTime dtout))
-                        b.LastClick = dtout;
+                        if (DateTime.TryParse(date, out DateTime dtout))
+                            b.LastClick = dtout;
                         if (Enum.TryParse(last, out ButtonAction action))
                         {
                             b.LastAction = action;
@@ -125,6 +138,10 @@ namespace SmartHome.Classes
             {
                 SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadButtons", ex);
                 return false;
+            }
+            finally
+            {
+                Close();
             }
         }
 

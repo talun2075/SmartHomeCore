@@ -3,7 +3,10 @@ using InnerCore.Api.DeConz.Models.Lights;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
+using SmartHome.Classes.Deconz;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Util;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,9 +16,13 @@ namespace SmartHome.Controllers
     [Route("/[controller]")]
     public class DeconzController : Controller
     {
-        public DeconzController(IWebHostEnvironment env)
+        private ISmartHomeHelper shp;
+        private IDeconzWrapper deconz;
+        public DeconzController(IWebHostEnvironment env, ISmartHomeHelper _shp, IDeconzWrapper _deconz )
         {
             SmartHomeConstants.Env = env;
+            shp = _shp;
+            deconz = _deconz;
         }
         public IActionResult Index()
         {
@@ -30,12 +37,12 @@ namespace SmartHome.Controllers
         [HttpGet("GetGroups")]
         public async Task<List<SmartHomeRoom>> GetGroups()
         {
-            return await DeconzWrapper.GetGroups();
+            return await deconz.GetGroups();
         }
         [HttpGet("GetLightsbyGroup/{id}")]
         public async Task<SmartHomeRoom> GetLightsbyGroup(int id)
         {
-            return await DeconzWrapper.GetGroup(id);
+            return await deconz.GetGroup(id);
         }
         /// <summary>
         /// Schaltet für eine Gruppe das Licht An/Aus
@@ -46,10 +53,10 @@ namespace SmartHome.Controllers
         [HttpGet("ToggleGroupPowerStateTo/{id}/{v}")]
         public async Task<DeConzResults> ToggleGroupPowerStateTo(int id, bool v)
         {
-            SmartHomeRoom g = await DeconzWrapper.GetGroup(id);
+            SmartHomeRoom g = await deconz.GetGroup(id);
             if (g == null) return null;
-            var comm = v ? DeconzWrapper.LightCommand.TurnOn() : DeconzWrapper.LightCommand.TurnOff();
-            return await DeconzWrapper.ChangeGroupState(comm, g);
+            var comm = v ? deconz.LightCommand.TurnOn() : deconz.LightCommand.TurnOff();
+            return await deconz.ChangeGroupState(comm, g);
         }
         /// <summary>
         /// Schaltet für eine Gruppe das Licht An/Aus
@@ -60,30 +67,30 @@ namespace SmartHome.Controllers
         [HttpGet("ToggleLightPowerStateTo/{id}/{v}")]
         public async Task<DeConzResults> ToggleLightPowerStateTo(int id, bool v)
         {
-            var comm = v ? DeconzWrapper.LightCommand.TurnOn() : DeconzWrapper.LightCommand.TurnOff();
-            return await DeconzWrapper.ChangeLightState(comm, new List<string> { id.ToString() });
+            var comm = v ? deconz.LightCommand.TurnOn() : deconz.LightCommand.TurnOff();
+            return await deconz.ChangeLightState(comm, new List<string> { id.ToString() });
         }
 
         [HttpGet("GetLights")]
         public async Task<IEnumerable<Light>> GetLights()
         {
-            return await DeconzWrapper.GetLights();
+            return await deconz.GetLights();
         }
         [HttpGet("GetLight/{id}")]
         public async Task<Light> GetLight(string id)
         {
-            return await DeconzWrapper.GetLightById(id);
+            return await deconz.GetLightById(id);
         }
         [HttpGet("GetLightPowerOn/{id}")]
         public async Task<bool> GetLightPowerOn(string id)
         {
-            return (await DeconzWrapper.GetLightById(id)).State.On;
+            return (await deconz.GetLightById(id)).State.On;
         }
         [HttpGet("GetRoomPowerOn/{name}")]
         public async Task<bool> GetRoomPowerOn(string name)
         {
             bool retval = false;
-            var room = await DeconzWrapper.GetGroup(name);
+            var room = await deconz.GetGroup(name);
             var lights =  await GetLights();
             foreach (var item in room.Room.Lights)
             {
@@ -97,10 +104,21 @@ namespace SmartHome.Controllers
             return true;
         }
 
+        [HttpGet("GardenOn")]
+        public async Task<DeConzResults> GardenOn()
+        {
+            return await shp.DeconzGardenOn();
+        }
+        [HttpGet("GardenOff")]
+        public async Task<DeConzResults> GardenOff()
+        {
+            return await shp.DeconzGardenOff();
+        }
+
         [HttpPost("SetColor/{id}")]
         public void SetColor(string id,[FromBody]string hexColor)
         {
-            DeconzWrapper.SetLightColor(id, hexColor);
+            deconz.SetLightColor(id, hexColor);
         }
     }
 }

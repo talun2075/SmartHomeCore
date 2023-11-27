@@ -4,27 +4,28 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Xml;
-using SmartHome.DataClasses;
+using SmartHome.Classes.Shelly.Data;
+using SmartHome.Classes.SmartHome.Util;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.Shelly
 {
-    public class ShellyWorker
+    public class ShellyWorker : IShellyWorker
     {
-        private static readonly JsonSerializerOptions _jsonSerializerOptions = new ()
-        { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IncludeFields= true};
-        private static readonly Dictionary<String, String> _listofShellyUrls = new ();
-        private static readonly List<Shelly1> _listOfShellys = new ();
-        public static async Task<List<Shelly1>> Read()
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new()
+        { PropertyNamingPolicy = JsonNamingPolicy.CamelCase, IncludeFields = true };
+        private readonly Dictionary<string, string> _listofShellyUrls = new();
+        private readonly List<Shelly1> _listOfShellys = new();
+        public async Task<List<Shelly1>> Read()
         {
             try
             {
                 if (!ReadShellyXML()) return _listOfShellys;
-                foreach (String item in _listofShellyUrls.Keys)
+                foreach (string item in _listofShellyUrls.Keys)
                 {
-                    String retv = String.Empty;
+                    string retv = string.Empty;
                     try
                     {
-                        retv = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET,"http://"+item+"/settings");
+                        retv = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, "http://" + item + "/settings");
                     }
                     catch (Exception ex)
                     {
@@ -37,10 +38,10 @@ namespace SmartHome.Classes
                         if (s != null)
                         {
                             s.Description = _listofShellyUrls[item];
-                            if(_listOfShellys.Count > 0)
+                            if (_listOfShellys.Count > 0)
                             {
                                 var shelly = _listOfShellys.FirstOrDefault(x => x.Name == s.Name);
-                                if(shelly == null)
+                                if (shelly == null)
                                 {
                                     _listOfShellys.Add(s);
                                 }
@@ -60,11 +61,11 @@ namespace SmartHome.Classes
                     {
                         SmartHomeConstants.log.ServerErrorsAdd("ShellyWorker:Read:Convert:", ex);
                     }
-                    
+
                 }
                 return _listOfShellys;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("ShellyWorker:Read:", ex);
             }
@@ -73,42 +74,42 @@ namespace SmartHome.Classes
         }
 
 
-        public static async Task<Boolean> Switch()
+        public async Task<bool> Switch()
         {
             await Task.Delay(100);
             return true;
         }
-        public static async Task<Boolean> PowerGuestRoom(Boolean PowerOn = false)
+        public async Task<bool> PowerGuestRoom(bool PowerOn = false)
         {
-            List<String> shellys = new() { "gastrechts.shelly.tami", "gastlinks.shelly.tami" };
+            List<string> shellys = new() { "gastrechts.shelly.tami", "gastlinks.shelly.tami" };
             return await PowerRooms(shellys, PowerOn);
         }
-        public static async Task<Boolean> PowerGuestRoomRight(Boolean PowerOn = false)
+        public async Task<bool> PowerGuestRoomRight(bool PowerOn = false)
         {
-            List<String> shellys = new() { "gastrechts.shelly.tami" };
+            List<string> shellys = new() { "gastrechts.shelly.tami" };
             return await PowerRooms(shellys, PowerOn);
         }
-        public static async Task<Boolean> PowerGuestRoomLeft(Boolean PowerOn = false)
+        public async Task<bool> PowerGuestRoomLeft(bool PowerOn = false)
         {
-            List<String> shellys = new() { "gastlinks.shelly.tami" };
+            List<string> shellys = new() { "gastlinks.shelly.tami" };
             return await PowerRooms(shellys, PowerOn);
         }
-        public static async Task<Boolean> PowerRoom(string room, Boolean PowerOn = false)
+        public async Task<bool> PowerRoom(string room, bool PowerOn = false)
         {
-            List<String> shellys = new()
+            List<string> shellys = new()
             {
                 room
             };
             return await PowerRooms(shellys, PowerOn);
         }
-        public static async Task<Boolean> PowerRooms(List<String> shellys, Boolean PowerOn = false)
+        public async Task<bool> PowerRooms(List<string> shellys, bool PowerOn = false)
         {
             try
             {
                 if (!SmartHomeConstants.Shelly1.Any())
-                      await Read();
-                
-                foreach (String item in shellys)
+                    await Read();
+
+                foreach (string item in shellys)
                 {
                     Shelly1 shelly = SmartHomeConstants.Shelly1.FirstOrDefault(x => x.Name.ToLower() == item.ToLower());
                     if (shelly == null) return false;
@@ -136,13 +137,13 @@ namespace SmartHome.Classes
             }
         }
 
-         private static Boolean ReadShellyXML()
+        private bool ReadShellyXML()
         {
             try
             {
                 //SmartHomeConstants.log.TraceLog("ReadButtonXML", "Start");
                 string path = SmartHomeConstants.Env.ContentRootPath + "\\Configuration\\Shellys.xml";
-                XmlDocument myXmlDocument = new ();
+                XmlDocument myXmlDocument = new();
                 myXmlDocument.Load(path);
                 //myXmlDocument.Load(mUrl + mXMLPath); //Load NOT LoadXml
                 XmlNodeList buttonsconfig = myXmlDocument.SelectNodes("/Shellys/Shelly");
@@ -153,7 +154,7 @@ namespace SmartHome.Classes
                     var des = item.Attributes["Description"].Value;
                     if (!string.IsNullOrEmpty(url.ToString()) && !_listofShellyUrls.ContainsKey(url))
                     {
-                        _listofShellyUrls.Add(url,des);
+                        _listofShellyUrls.Add(url, des);
                     }
                 }
                 return true;

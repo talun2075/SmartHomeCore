@@ -5,39 +5,50 @@ using System.Threading.Tasks;
 using System.Xml;
 using HomeLogging;
 using InnerCore.Api.DeConz.Models;
-using SmartHome.DataClasses;
+using SmartHome.Classes.Database;
+using SmartHome.Classes.Deconz;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Util;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.SmartHome
 {
-    public class SmartHomeWrapper
+    public class SmartHomeWrapper : ISmartHomeWrapper
     {
+        IDatabaseWrapper db;
+        ISmartHomeHelper helper;
+        public SmartHomeWrapper(IDatabaseWrapper _db, ISmartHomeHelper _helper)
+        {
+            db = _db;
+            helper = _helper;
+        }
         #region ClassVariables
         #endregion ClassVariables
         #region ClickEvents
-        public async static Task<Boolean> Touch(string mac, ButtonRequest br = null)
+        public async Task<bool> Touch(string mac, ButtonRequest br = null)
         {
             if (!await CheckButton(mac))
             {
-                SmartHomeConstants.log.ServerErrorsAdd("Touch", new Exception("Unbekannte MAC:" + mac+" IP:"+br.IP), "SmartHomeWrapper");
-                throw SmartHomeHelper.ReturnWebError("Unbekannte MAC:" + mac);
+                SmartHomeConstants.log.ServerErrorsAdd("Touch", new Exception("Unbekannte MAC:" + mac + " IP:" + br.IP), "SmartHomeWrapper");
+                throw helper.ReturnWebError("Unbekannte MAC:" + mac);
             }
             switch (mac)
             {
                 case "5CCF7FF0D13F":
-                        return await GuestRoom("zzz Regen Neu");
+                    return await GuestRoom("zzz Regen Neu");
                 case "2C3AE801C092":
                     return await GroundFloorOn();
                 case "5CCF7FF0D1CA":
-                    DeConzResults retv = await SmartHomeHelper.DeconzEating(DeconzSwitch.On);
+                    DeConzResults retv = await helper.DeconzEating(DeconzSwitch.On);
                     if (retv[0].Error == null) return true;
-                    throw SmartHomeHelper.ReturnWebError("Fehler aufgetreten beim Licht einschalten");
+                    throw helper.ReturnWebError("Fehler aufgetreten beim Licht einschalten");
                 case "2C3AE8018316":
                     try
                     {
                         await GroundFloorOff();
-                        await SmartHomeHelper.DeconzGroundFloorOff();
-                        await SmartHomeHelper.PowerOffAurora("Wohnzimmer");
-                        await SmartHomeHelper.PowerOffAurora("Esszimmer");
+                        await helper.DeconzGroundFloorOff();
+                        await helper.PowerOffAurora("Wohnzimmer");
+                        await helper.PowerOffAurora("Esszimmer");
                         return true;
                     }
                     catch
@@ -46,16 +57,16 @@ namespace SmartHome.Classes
                     }
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Touch:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
-                    throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
+                    throw helper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
 
             }
         }
-        public async static Task<Boolean> Single(string mac)
+        public async Task<bool> Single(string mac)
         {
             if (!await CheckButton(mac))
             {
                 SmartHomeConstants.log.ServerErrorsAdd("Single", new Exception("Unbekannte MAC:" + mac), "SmartHomeWrapper");
-                throw SmartHomeHelper.ReturnWebError("Unbekannte MAC:" + mac);
+                throw helper.ReturnWebError("Unbekannte MAC:" + mac);
             }
             switch (mac)
             {
@@ -64,9 +75,9 @@ namespace SmartHome.Classes
                 case "2C3AE8018316":
                     return await FirstOff();
                 case "BCFF4D4B1034":
-                    return await SmartHomeHelper.SonosIanRoomRandom2();
+                    return await helper.SonosIanRoomRandom2();
                 case "68C63AD16455":
-                    return await SmartHomeHelper.SonosIanRoomRandom3();
+                    return await helper.SonosIanRoomRandom3();
                 case "60019427DE18":
                     return await PowerShellysGuestRoom(true);
                 case "2C3AE801C092":
@@ -78,7 +89,7 @@ namespace SmartHome.Classes
                 case "5CCF7FF0D1CA":
                     return await AllOff();
                 case "68C63AD1624E":
-                    var result = await SmartHomeHelper.DeconzLightsPower("28");
+                    var result = await helper.DeconzLightsPower("28");
                     if (!result.HasErrors())
                     {
                         return true;
@@ -86,15 +97,15 @@ namespace SmartHome.Classes
                     return false;
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Single:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
-                    throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
+                    throw helper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
             }
         }
-        public async static Task<Boolean> Double(string mac)
+        public async Task<bool> Double(string mac)
         {
             if (!await CheckButton(mac))
             {
                 SmartHomeConstants.log.ServerErrorsAdd("Double", new Exception("Unbekannte MAC:" + mac), "SmartHomeWrapper");
-                throw SmartHomeHelper.ReturnWebError("Unbekannte MAC:" + mac);
+                throw helper.ReturnWebError("Unbekannte MAC:" + mac);
             }
             switch (mac)
             {
@@ -106,11 +117,11 @@ namespace SmartHome.Classes
                 case "483FDA6EBD7D":
                     return await GroundFloorOn("Gelegenheit Party");
                 case "5CCF7F0CC51A":
-                    return await SmartHomeHelper.SonosIanRoomOff();
+                    return await helper.SonosIanRoomOff();
                 case "60019427EFA7":
-                    return await GuestRoomOff() && await SmartHomeHelper.PowerShellysGuestRoomRight(false);
+                    return await GuestRoomOff() && await helper.PowerShellysGuestRoomRight(false);
                 case "68C63AD1624E":
-                    var result = await SmartHomeHelper.DeconzLightsPower(new List<string>() { "8", "28" });
+                    var result = await helper.DeconzLightsPower(new List<string>() { "8", "28" });
                     if (!result.HasErrors())
                     {
                         return true;
@@ -118,21 +129,21 @@ namespace SmartHome.Classes
                     return false;
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Double:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
-                    throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
+                    throw helper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
 
             }
         }
-        public async static Task<Boolean> Long(string mac)
+        public async Task<bool> Long(string mac)
         {
             if (!await CheckButton(mac))
             {
                 SmartHomeConstants.log.ServerErrorsAdd("Long", new Exception("Unbekannte MAC:" + mac), "SmartHomeWrapper");
-                throw SmartHomeHelper.ReturnWebError("Unbekannte MAC:" + mac);
+                throw helper.ReturnWebError("Unbekannte MAC:" + mac);
             }
             switch (mac)
             {
                 case "5CCF7F0CC51A":
-                    return await SmartHomeHelper.SonosIanRoomOff();
+                    return await helper.SonosIanRoomOff();
                 case "60019427DE18":
                     return await PowerShellysGuestRoom(false);
                 case "2C3AE801C092":
@@ -140,7 +151,7 @@ namespace SmartHome.Classes
                 case "5CCF7FF0D13F":
                     return await GuestRoomOff();
                 case "68C63AD16455":
-                    return await SmartHomeHelper.SonosIanRoomRandom3();
+                    return await helper.SonosIanRoomRandom3();
                 case "483FDA6EBD7D":
                     return await GroundFloorOn("Harte Gruppen Genre");
                 case "5CCF7FF0D1CA":
@@ -150,7 +161,7 @@ namespace SmartHome.Classes
                 case "60019427EFA7":
                     return await GuestRoom("zzz tempsleep", 6);
                 case "68C63AD1624E":
-                    var result = await SmartHomeHelper.DeconzLightsPower(new List<string>(){"8","28" },false);
+                    var result = await helper.DeconzLightsPower(new List<string>() { "8", "28" }, false);
                     if (!result.HasErrors())
                     {
                         return true;
@@ -158,17 +169,17 @@ namespace SmartHome.Classes
                     return false;
                 default:
                     SmartHomeConstants.log.TraceLog("SmartHomeWrapper:Long:Default", "Für diesen Case ist nichts definiert. MAC:" + mac);
-                    throw SmartHomeHelper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
+                    throw helper.ReturnWebError("Für diesen Case ist nichts definiert. MAC:" + mac);
             }
         }
 
-        public async static Task<Boolean> CupeLiving (int id)
+        public async Task<bool> CupeLiving(int id)
         {
-            return await SmartHomeHelper.CupeLiving(id);
+            return await helper.CupeLiving(id);
         }
 
-        public static Logging generic_log = new (new LoggerWrapperConfig() { ConfigName = "GenericLog", InfoFileName = "battery.txt" });
-        public static async Task<Boolean> Generic(ButtonRequest br)
+        public Logging generic_log = new(new LoggerWrapperConfig() { ConfigName = "GenericLog", InfoFileName = "battery.txt" });
+        public async Task<bool> Generic(ButtonRequest br)
         {
             //var mac = HttpContext.Current.Request["mac"];
             //var battery = HttpContext.Current.Request["battery"];
@@ -196,8 +207,9 @@ namespace SmartHome.Classes
                 if (!SmartHomeConstants.KnowingButtons.Any()) await ReadButtonXML();
                 Button b = SmartHomeConstants.KnowingButtons.FirstOrDefault(x => x.Mac == br.Mac);
                 if (b == null) return false;
-                
-                if(Int32.TryParse(br.Battery, out int brbattery)){
+
+                if (int.TryParse(br.Battery, out int brbattery))
+                {
                     b.Batterie = brbattery;
                 }
                 if (Enum.TryParse(br.Action, out ButtonAction ba))
@@ -208,16 +220,12 @@ namespace SmartHome.Classes
                 b.LastClick = DateTime.Now;
                 try
                 {
-                   await DatabaseWrapper.UpdateButton(b);
+                    await db.UpdateButton(b);
                 }
                 catch (Exception ex)
                 {
                     SmartHomeConstants.log.ServerErrorsAdd("SmartHomeWrapper:Generic:SQLitecall", ex, br.Mac);
-                    throw SmartHomeHelper.ReturnWebError("SmartHomeWrapper:Generic:SQLitecall:" + ex.Message);
-                }
-                finally
-                {
-                    DatabaseWrapper.Close();
+                    throw helper.ReturnWebError("SmartHomeWrapper:Generic:SQLitecall:" + ex.Message);
                 }
                 //if (b.Batterie < 25 && b.Aktiv == true)
                 //    generic_log.InfoLog(b.Name + " (" + b.Mac + ") ", battery);
@@ -226,16 +234,12 @@ namespace SmartHome.Classes
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeWrapper:Generic", ex, br.Mac);
-                throw SmartHomeHelper.ReturnWebError("SmartHomeWrapper:Generic:SQLitecall:" + ex.Message);
+                throw helper.ReturnWebError("SmartHomeWrapper:Generic:SQLitecall:" + ex.Message);
             }
-        }
-        public static String Test()
-        {
-            return SmartHomeHelper.Test();
         }
         #endregion ClickEvents
         #region private Methoden
-        private static async Task<Boolean> CheckButton(string tocheck)
+        private async Task<bool> CheckButton(string tocheck)
         {
             if (!SmartHomeConstants.KnowingButtons.Any())
             {
@@ -245,19 +249,19 @@ namespace SmartHome.Classes
             if (b != null && b.Aktiv) return true;
             return false;
         }
-        public static async Task<Boolean> ReadButtonXML()
+        public async Task<bool> ReadButtonXML()
         {
             try
             {
                 //SmartHomeConstants.log.TraceLog("ReadButtonXML", "Start");
                 string path = SmartHomeConstants.Env.ContentRootPath + "\\Configuration\\Buttons.xml";
-                XmlDocument myXmlDocument = new ();
+                XmlDocument myXmlDocument = new();
                 myXmlDocument.Load(path);
                 //myXmlDocument.Load(mUrl + mXMLPath); //Load NOT LoadXml
                 XmlNodeList buttonsconfig = myXmlDocument.SelectNodes("/Buttons/Button");
                 foreach (XmlNode item in buttonsconfig)
                 {
-                    Button st = new ()
+                    Button st = new()
                     {
                         Name = item.Attributes["Name"].Value,
                         Mac = item.Attributes["Mac"].Value,
@@ -288,55 +292,55 @@ namespace SmartHome.Classes
                         }
                     }
                 }
-                await DatabaseWrapper.ReadButtons();
+                await db.ReadButtons();
                 //SmartHomeConstants.log.TraceLog("ReadButtonXML", "Ende");
                 return true;
             }
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeWrapper:ReadButtonXML:", ex);
-                throw SmartHomeHelper.ReturnWebError("SmartHomeWrapper:ReadButtonXML:" + ex.Message);
+                throw helper.ReturnWebError("SmartHomeWrapper:ReadButtonXML:" + ex.Message);
             }
         }
-        
-        public static async Task<Boolean> PowerShellysGuestRoom(Boolean powerOn = false)
+
+        public async Task<bool> PowerShellysGuestRoom(bool powerOn = false)
         {
-            return await SmartHomeHelper.PowerShellysGuestRoom(powerOn);
+            return await helper.PowerShellysGuestRoom(powerOn);
         }
-        
+
         /// <summary>
         /// Schaltet alles aus im Haus aus.
         /// </summary>
         /// <returns></returns>
-        private static async Task<Boolean> FirstOff()
+        private async Task<bool> FirstOff()
         {
             try
             {
-                await SmartHomeHelper.DeconzFirstFloorOff();
+                await helper.DeconzFirstFloorOff();
                 return true;
             }
             catch (Exception ex)
             {
-                throw SmartHomeHelper.ReturnWebError("FirstOff" + ex.Message);
+                throw helper.ReturnWebError("FirstOff" + ex.Message);
             }
         }
         /// <summary>
         /// Schaltet Ergeschosse und erster Stock aus im Haus aus.
         /// </summary>
         /// <returns></returns>
-        private static async Task<Boolean> AllOff()
+        private async Task<bool> AllOff()
         {
             try
             {
-                await SmartHomeHelper.SonosStoppAllPlayer();
-                _ = SmartHomeHelper.PowerOffAuroras();
-                _ = SmartHomeHelper.PowerOffDenon(true);
-                await SmartHomeHelper.DeconzAllLightsOff();
+                await helper.SonosStoppAllPlayer();
+                _ = helper.PowerOffAuroras();
+                _ = helper.PowerOffDenon(true);
+                await helper.DeconzAllLightsOff();
                 return true;
             }
             catch (Exception ex)
             {
-                throw SmartHomeHelper.ReturnWebError("AllOff" + ex.Message);
+                throw helper.ReturnWebError("AllOff" + ex.Message);
             }
         }
         /// <summary>
@@ -344,16 +348,16 @@ namespace SmartHome.Classes
         /// Auf Sonos schalten und alle Lampen ausschalten. 
         /// </summary>
         /// <returns></returns>
-        private static async Task<Boolean> WohnzimmerSpezial()
+        private async Task<bool> WohnzimmerSpezial()
         {
-            Boolean retval = true;
+            bool retval = true;
             var showedex = new Exception();
             try
             {
-                await SmartHomeHelper.DeconzGroundFloorOff();
-                await SmartHomeHelper.PowerOffAurora("Esszimmer");
-                await SmartHomeHelper.PowerOnAuroras("Wohnzimmer");
-                await SmartHomeHelper.PowerOnDenon();
+                await helper.DeconzGroundFloorOff();
+                await helper.PowerOffAurora("Esszimmer");
+                await helper.PowerOnAuroras("Wohnzimmer");
+                await helper.PowerOnDenon();
             }
             catch (Exception ex)
             {
@@ -364,7 +368,7 @@ namespace SmartHome.Classes
 
             try
             {
-                await SmartHomeHelper.SonosLivingRoomSpezial();
+                await helper.SonosLivingRoomSpezial();
 
             }
             catch (Exception ex)
@@ -375,7 +379,7 @@ namespace SmartHome.Classes
             }
             if (!retval)
             {
-                throw SmartHomeHelper.ReturnWebError("AllOff" + showedex.Message);
+                throw helper.ReturnWebError("AllOff" + showedex.Message);
             }
             return retval;
         }
@@ -384,23 +388,23 @@ namespace SmartHome.Classes
         /// Erdgeschoss ausschalten
         /// </summary>
         /// <returns></returns>
-        private static async Task<Boolean> GroundFloorOff()
+        private async Task<bool> GroundFloorOff()
         {
             try
             {
-                await SmartHomeHelper.SonosGroundFloorOff();
+                await helper.SonosGroundFloorOff();
             }
             catch (Exception ex)
             {
-                throw SmartHomeHelper.ReturnWebError("GroundFloorOff" + ex.Message);
+                throw helper.ReturnWebError("GroundFloorOff" + ex.Message);
             }
             try
             {
-                await SmartHomeHelper.PowerOffDenon();
+                await helper.PowerOffDenon();
             }
             catch (Exception ex)
             {
-                throw SmartHomeHelper.ReturnWebError("GroundFloorOff:Part2" + ex.Message);
+                throw helper.ReturnWebError("GroundFloorOff:Part2" + ex.Message);
             }
             return true;
         }
@@ -409,13 +413,13 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="playlistToPlay">Playlist die abgespielt werden soll</param>
         /// <returns></returns>
-        private static async Task<Boolean> GroundFloorOn(string playlistToPlay = "3 Sterne Beide")
+        private async Task<bool> GroundFloorOn(string playlistToPlay = "3 Sterne Beide")
         {
             try
             {
                 try
                 {
-                    _ = SmartHomeHelper.PowerOnDenon();
+                    _ = helper.PowerOnDenon();
                 }
                 catch (Exception ex)
                 {
@@ -423,7 +427,7 @@ namespace SmartHome.Classes
                 }
                 try
                 {
-                    await SmartHomeHelper.SonosGroundFloorOn(playlistToPlay);
+                    await helper.SonosGroundFloorOn(playlistToPlay);
                 }
                 catch (Exception ex)
                 {
@@ -434,16 +438,16 @@ namespace SmartHome.Classes
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("GroundFloorOn:global", ex, "SmartHomeWrapper");
-                throw SmartHomeHelper.ReturnWebError("GroundFloorOn" + ex.Message);
+                throw helper.ReturnWebError("GroundFloorOn" + ex.Message);
             }
         }
-        private static async Task<Boolean> GuestRoom(string playlistToPlay, int volume = 0)
+        private async Task<bool> GuestRoom(string playlistToPlay, int volume = 0)
         {
-            return await SmartHomeHelper.SonosGuestRoom(playlistToPlay, volume);
+            return await helper.SonosGuestRoom(playlistToPlay, volume);
         }
-        private static async Task<Boolean> GuestRoomOff()
+        private async Task<bool> GuestRoomOff()
         {
-            return await SmartHomeHelper.SonosGuestRoomOff();
+            return await helper.SonosGuestRoomOff();
         }
 
         #endregion private Methoden

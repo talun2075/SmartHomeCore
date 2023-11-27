@@ -1,15 +1,15 @@
 ﻿using System.Xml;
 using System;
 using System.Collections.Generic;
-using SmartHome.DataClasses;
 using System.Linq;
+using SmartHome.Classes.SmartHome.Util;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.Old
 {
     public static class OverViewWorker
     {
 
-        public static Boolean ReadOverViewConfig()
+        public static bool ReadOverViewConfig()
         {
             try
             {
@@ -30,12 +30,11 @@ namespace SmartHome.Classes
                         OverView ov = new();
                         ov.Name = roomChild.Attributes["Name"].Value;
                         ov.GetCurrentValue = roomChild.Attributes["GetCurrentValue"].Value.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList();
-                        
-                        //todo: kontrolle ob das auch funktioniert, wenn kein semi dran hängt
+
                         ov.Off = roomChild.Attributes["Off"].Value.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList();
                         ov.On = roomChild.Attributes["On"].Value.Split(";", StringSplitOptions.RemoveEmptyEntries).ToList();
 
-                        if (ov.IsNotEmpty) 
+                        if (ov.IsNotEmpty)
                             overviewRoom.Controllers.Add(ov);
                     }
                     OverViews.Add(overviewRoom);

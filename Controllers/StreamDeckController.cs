@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
-using SmartHome.DataClasses;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,11 @@ namespace SmartHome.Controllers
     [ApiController]
     public class StreamDeckController : ControllerBase
     {
-        public StreamDeckController(IWebHostEnvironment env)
+        ISmartHomeWrapper shw;
+        public StreamDeckController(IWebHostEnvironment env, ISmartHomeWrapper _shw)
         {
             SmartHomeConstants.Env = env;
+            shw = _shw;
         }
         [HttpGet("Date")]
         public string Date()
@@ -173,7 +176,7 @@ namespace SmartHome.Controllers
         [HttpGet("GetButtonsAsync")]
         public async Task<List<Button>> GetButtonsAsync()
         {
-            if (!SmartHomeConstants.KnowingButtons.Any()) await SmartHomeWrapper.ReadButtonXML();
+            if (!SmartHomeConstants.KnowingButtons.Any()) await shw.ReadButtonXML();
             var returnlist = SmartHomeConstants.KnowingButtons;
             returnlist.RemoveAll(x => x.Visible == false || x.Aktiv == false);
             return returnlist;

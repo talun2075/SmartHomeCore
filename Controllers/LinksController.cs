@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using SmartHome.Classes;
+using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +14,7 @@ namespace SmartHome.Controllers
     {
         private static string envpath;
         private static List<Link> linklist = new();
+
         public LinksController(IWebHostEnvironment env)
         {
             envpath = env.ContentRootPath;
@@ -32,7 +35,7 @@ namespace SmartHome.Controllers
 
 
 
-        private static bool Read()
+        private bool Read()
         {
             string path = envpath + "\\Configuration\\Links.xml";
             XmlDocument myXmlDocument = new();
@@ -67,6 +70,7 @@ namespace SmartHome.Controllers
                             }
                             catch (Exception ex)
                             {
+                                SmartHomeConstants.log.ServerErrorsAdd("Links", ex, "Read->Child");
                                 continue;
                             }
 
@@ -76,6 +80,7 @@ namespace SmartHome.Controllers
                 }
                 catch (Exception ex)
                 {
+                    SmartHomeConstants.log.ServerErrorsAdd("Links", ex, "Read");
                     continue;
                 }
             }

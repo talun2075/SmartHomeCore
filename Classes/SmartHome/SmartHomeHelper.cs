@@ -10,18 +10,30 @@ using InnerCore.Api.DeConz.Models.Lights;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
 using InnerCore.Api.DeConz.ColorConverters;
 using SmartHome.Classes.Aurora.Core;
-using System.Xml.Linq;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Util;
+using SmartHome.Classes.Shelly;
+using SmartHome.Classes.Deconz;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.SmartHome
 {
 
-    public static class SmartHomeHelper
+    public class SmartHomeHelper : ISmartHomeHelper
     {
+        IShellyWorker shellyworker;
+        IDeconzWrapper deconz;
+        public SmartHomeHelper(IShellyWorker _sw, IDeconzWrapper _deconz)
+        {
+            shellyworker = _sw;
+            deconz = _deconz;
+        }
+
         #region Auroras
         /// <summary>
         /// Auroras einschalten
         /// </summary>
-        public static async Task<bool> PowerOnAuroras(string room)
+        public async Task<bool> PowerOnAuroras(string room)
         {
             try
             {
@@ -36,7 +48,7 @@ namespace SmartHome.Classes
         /// <summary>
         /// Auroras ausschalten
         /// </summary>
-        public static async Task<Boolean> PowerOffAuroras()
+        public async Task<bool> PowerOffAuroras()
         {
             try
             {
@@ -51,15 +63,15 @@ namespace SmartHome.Classes
         /// <summary>
         /// Dedizierte Aurora ausschalten
         /// </summary>
-        public static async Task<Boolean> PowerOffAurora(String selectedaurora)
+        public async Task<bool> PowerOffAurora(string selectedaurora)
         {
             try
             {
-               
+
                 if (string.IsNullOrEmpty(selectedaurora)) return false;
-                    AuroraLigth a = await AuroraWrapper.GetAurorabyName(selectedaurora);
-                    if (a == null) return false;
-                    await a.SetPowerOn(false);
+                AuroraLigth a = await AuroraWrapper.GetAurorabyName(selectedaurora);
+                if (a == null) return false;
+                await a.SetPowerOn(false);
                 return true;
             }
             catch (Exception ex)
@@ -73,7 +85,7 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="selectedaurora"></param>
         /// <returns></returns>
-        public static async Task<Boolean> PowerOnAurora(String selectedaurora)
+        public async Task<bool> PowerOnAurora(string selectedaurora)
         {
             try
             {
@@ -92,7 +104,7 @@ namespace SmartHome.Classes
         }
         #endregion Auroras
         #region Denon
-        public static async Task<Boolean> PowerOffDenon(bool ignoreinput = false)
+        public async Task<bool> PowerOffDenon(bool ignoreinput = false)
         {
             try
             {
@@ -114,12 +126,12 @@ namespace SmartHome.Classes
         /// <summary>
         /// Schaltet den Denon ein und setzt ihn auf Sonos falls nicht schon eingestellt.
         /// </summary>
-        public static async Task<Boolean> PowerOnDenon()
+        public async Task<bool> PowerOnDenon()
         {
             try
             {
                 //Denon Verarbeiten.
-                await Denon.Initialisieren(SmartHomeConstants.Denon.BaseURL); 
+                await Denon.Initialisieren(SmartHomeConstants.Denon.BaseURL);
                 if (Denon.SelectedInput != DenonInputs.Sonos)
                 {
                     Denon.SelectedInput = DenonInputs.Sonos;
@@ -144,7 +156,7 @@ namespace SmartHome.Classes
         /// <summary>
         /// Schaltet den Marantz aus, wenn auf Sonos geschaltet
         /// </summary>
-        //public static async Task<Boolean> PowerOffMarantz(bool ignoreinput = false)
+        //public async Task<Boolean> PowerOffMarantz(bool ignoreinput = false)
         //{
         //    try
         //    {
@@ -166,7 +178,7 @@ namespace SmartHome.Classes
         /// <summary>
         /// Schaltet den Marantz ein und setzt ihn auf Sonos falls nicht schon eingestellt.
         /// </summary>
-        //public static async Task<Boolean> PowerOnMarantz()
+        //public async Task<Boolean> PowerOnMarantz()
         //{
         //    try
         //    {
@@ -197,27 +209,28 @@ namespace SmartHome.Classes
         /// Schaltet alle Lampen im Erdgeschoss an.
         /// </summary>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzGroundFloorOn()
+        public async Task<DeConzResults> DeconzGroundFloorOn()
         {
             try
             {
-                return await ChangeGroupState(DeconzWrapper.LightCommand.TurnOn(), await DeconzWrapper.GetGroup("Wohnzimmer"));
+                return await ChangeGroupState(deconz.LightCommand.TurnOn(), await deconz.GetGroup("Wohnzimmer"));
             }
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "DeconzGroundFloorOn");
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzGroundFloorOn");
+                return deconz.GenerateExceptionMessage(ex, "DeconzGroundFloorOn");
             }
         }
 
-        public static async Task<DeConzResults> DeconzLightsPower(string id, Boolean PowerOn = true)
+        public async Task<DeConzResults> DeconzLightsPower(string id, bool PowerOn = true)
         {
             return await DeconzLightsPower(new List<string> { id }, PowerOn);
         }
-        public static async Task<DeConzResults> DeconzLightsPower(List<string> ids, Boolean PowerOn = true)
+        public async Task<DeConzResults> DeconzLightsPower(List<string> ids, bool PowerOn = true)
         {
             LightCommand lw = new();
-            if (PowerOn) {
+            if (PowerOn)
+            {
                 lw.TurnOn();
             }
             else
@@ -226,7 +239,7 @@ namespace SmartHome.Classes
             }
             return await ChangeGroupState(lw, ids);
         }
-        internal async static Task<Boolean> CupeLiving(int id)
+        public async Task<bool> CupeLiving(int id)
         {
             /*
              * Licht 31 = Lowboard nur an/aus
@@ -238,11 +251,11 @@ namespace SmartHome.Classes
                 case 3:
                     //90°
                     Random ran = new();
-                    SmartHomeRoom wz = await DeconzWrapper.GetGroup("Wohnzimmer");
-                    await ChangeGroupState(DeconzWrapper.LightCommand.TurnOn(), wz);
+                    SmartHomeRoom wz = await deconz.GetGroup("Wohnzimmer");
+                    await ChangeGroupState(deconz.LightCommand.TurnOn(), wz);
                     foreach (string item in wz.Room.Lights)
                     {
-                        if(item == "30")
+                        if (item == "30")
                         {
                             LightCommand l = new();
                             l.SetColor(RGBColor.Random());
@@ -251,7 +264,7 @@ namespace SmartHome.Classes
                         }
                         else
                         {
-                            
+
                             LightCommand l = new();
                             l.SetColor(ran.NextDouble(), ran.NextDouble());
                             await ChangeGroupState(l, item);
@@ -267,7 +280,7 @@ namespace SmartHome.Classes
                     break;
                 case 4:
                     //180°
-                    await ChangeGroupState(DeconzWrapper.LightCommand.TurnOff(), await DeconzWrapper.GetGroup("Wohnzimmer"));
+                    await ChangeGroupState(deconz.LightCommand.TurnOff(), await deconz.GetGroup("Wohnzimmer"));
                     break;
             }
 
@@ -278,12 +291,12 @@ namespace SmartHome.Classes
         /// Schaltet den Garten an
         /// </summary>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzGardenOn()
+        public async Task<DeConzResults> DeconzGardenOn()
         {
             try
             {
                 //id 9 & 22
-                _ = await ChangeGroupState(DeconzWrapper.LightCommand.TurnOn().SetColor(SmartHomeConstants.Deconz.RandomRGBColor), "9");
+                _ = await ChangeGroupState(deconz.LightCommand.TurnOn().SetColor(SmartHomeConstants.Deconz.RandomRGBColor), "9");
                 LightCommand lw = new();
                 lw.TurnOn();
                 Random rand = new();
@@ -295,38 +308,38 @@ namespace SmartHome.Classes
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "DeconzGardenon");
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzGardenOn");
+                return deconz.GenerateExceptionMessage(ex, "DeconzGardenOn");
             }
         }
         /// <summary>
         /// Schaltet den Garten aus
         /// </summary>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzGardenOff()
+        public async Task<DeConzResults> DeconzGardenOff()
         {
             try
             {
-                var retval = await ChangeGroupState(DeconzWrapper.LightCommand.TurnOff(), await DeconzWrapper.GetGroup("Garten"));
+                var retval = await ChangeGroupState(deconz.LightCommand.TurnOff(), await deconz.GetGroup("Garten"));
                 return retval;
             }
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "DeconzGardenOff");
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzGardenOff");
+                return deconz.GenerateExceptionMessage(ex, "DeconzGardenOff");
             }
         }
         /// <summary>
         /// Schaltet, wenn eingeschaltet das Erdgeschoss aus.
         /// </summary>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzGroundFloorOff()
+        public async Task<DeConzResults> DeconzGroundFloorOff()
         {
             try
             {
-                List<SmartHomeRoom> listofgroups = await DeconzWrapper.GetGroups();
+                List<SmartHomeRoom> listofgroups = await deconz.GetGroups();
                 //List<Group> lofg = listofgroups.ToList();
                 var usethisgroups = listofgroups.Where(x => x.Room.Name.StartsWith("Wohnzimmer") || x.Room.Name.StartsWith("Essz") || x.Room.Name.StartsWith("Küche"));
-                List<string> allIds = new ();
+                List<string> allIds = new();
                 foreach (SmartHomeRoom g in usethisgroups)
                 {
                     allIds.AddRange(g.Room.Lights);
@@ -340,7 +353,7 @@ namespace SmartHome.Classes
                     }
                 }
                 if (allIds.Any())
-                    return await ChangeGroupState(DeconzWrapper.LightCommand.TurnOff(), allIds);
+                    return await ChangeGroupState(deconz.LightCommand.TurnOff(), allIds);
 
                 DefaultDeConzResult d = new()
                 {
@@ -355,20 +368,20 @@ namespace SmartHome.Classes
             }
             catch (Exception ex)
             {
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzGroundFloorOff");
+                return deconz.GenerateExceptionMessage(ex, "DeconzGroundFloorOff");
             }
         }
         /// <summary>
         /// Schaltet alle Lampen im ersten Stock aus (Nicht Schlafzimmer)
         /// </summary>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzFirstFloorOff()
+        public async Task<DeConzResults> DeconzFirstFloorOff()
         {
             try
             {
                 //Ian, Finn ermitteln
-                SmartHomeRoom ian = await DeconzWrapper.GetGroup("Ian");
-                SmartHomeRoom finn = await DeconzWrapper.GetGroup("Finn");
+                SmartHomeRoom ian = await deconz.GetGroup("Ian");
+                SmartHomeRoom finn = await deconz.GetGroup("Finn");
                 List<string> allIds = ian.Room.Lights.Union(finn.Room.Lights).ToList();
                 List<string> offstate = await DeconzCheckOnState(allIds);
                 if (offstate.Any())
@@ -379,7 +392,7 @@ namespace SmartHome.Classes
                     }
                 }
                 if (allIds.Any())
-                    return await ChangeGroupState(DeconzWrapper.LightCommand.TurnOff(), allIds);
+                    return await ChangeGroupState(deconz.LightCommand.TurnOff(), allIds);
                 DefaultDeConzResult d = new()
                 {
                     Success = new SuccessResult()
@@ -393,18 +406,18 @@ namespace SmartHome.Classes
             }
             catch (Exception ex)
             {
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzFirstFloorOff");
+                return deconz.GenerateExceptionMessage(ex, "DeconzFirstFloorOff");
             }
         }
         /// <summary>
         /// Schaltet alle Lampen im Haus aus. 
         /// </summary>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzAllLightsOff()
+        public async Task<DeConzResults> DeconzAllLightsOff()
         {
             try
             {
-                List<SmartHomeRoom> listofgroups = await DeconzWrapper.GetGroups();
+                List<SmartHomeRoom> listofgroups = await deconz.GetGroups();
                 var usethisgroups = listofgroups.Where(x => !x.Room.Name.StartsWith("Fritz") && !x.Room.Name.StartsWith("Garten") && !x.Room.Name.StartsWith("TaLun"));
                 List<string> allIds = new();
                 foreach (SmartHomeRoom g in usethisgroups)
@@ -420,7 +433,7 @@ namespace SmartHome.Classes
                     }
                 }
                 if (allIds.Any())
-                    return await ChangeGroupState(DeconzWrapper.LightCommand.TurnOff(), allIds);
+                    return await ChangeGroupState(deconz.LightCommand.TurnOff(), allIds);
 
                 DefaultDeConzResult d = new()
                 {
@@ -435,7 +448,7 @@ namespace SmartHome.Classes
             }
             catch (Exception ex)
             {
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzAllLightsOff");
+                return deconz.GenerateExceptionMessage(ex, "DeconzAllLightsOff");
             }
         }
         /// <summary>
@@ -443,33 +456,33 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="hs"></param>
         /// <returns></returns>
-        public static async Task<DeConzResults> DeconzEating(DeconzSwitch hs)
+        public async Task<DeConzResults> DeconzEating(DeconzSwitch hs)
         {
             try
             {
                 if (hs == DeconzSwitch.On)
                 {
-                    var eating = await DeconzWrapper.GetGroup("Esszimmer");
+                    var eating = await deconz.GetGroup("Esszimmer");
                     var scene = eating.Room.Scenes.FirstOrDefault(x => x.Name == "Essen");
-                    await DeconzWrapper.UseClient.RecallSceneAsync(scene.Id, eating.Room.Id);
-                    var kitchen = await DeconzWrapper.GetGroup("Küche");
+                    await deconz.UseClient.RecallSceneAsync(scene.Id, eating.Room.Id);
+                    var kitchen = await deconz.GetGroup("Küche");
                     Random rdn = new();
-                    return await ChangeGroupState(DeconzWrapper.LightCommand.TurnOn().SetColor(rdn.NextDouble(), rdn.NextDouble()), kitchen.Room.Lights);
-                    
+                    return await ChangeGroupState(deconz.LightCommand.TurnOn().SetColor(rdn.NextDouble(), rdn.NextDouble()), kitchen.Room.Lights);
+
                     //var maxscene = kitchen.Room.Scenes.Count > 0 ? kitchen.Room.Scenes.Count - 1 : 0;
                     //var selectedscene = rdn.Next(0, maxscene);
-                    //return await DeconzWrapper.UseClient.RecallSceneAsync(selectedscene.ToString(), kitchen.Room.Id);
+                    //return await deconz.UseClient.RecallSceneAsync(selectedscene.ToString(), kitchen.Room.Id);
                 }
                 else
                 {
-                    var e = await DeconzWrapper.GetGroup("Essz");
-                    var k = await DeconzWrapper.GetGroup("Küche");
-                    return await ChangeGroupState(DeconzWrapper.LightCommand.TurnOff(), e.Room.Lights.Union(k.Room.Lights).ToList());
+                    var e = await deconz.GetGroup("Essz");
+                    var k = await deconz.GetGroup("Küche");
+                    return await ChangeGroupState(deconz.LightCommand.TurnOff(), e.Room.Lights.Union(k.Room.Lights).ToList());
                 }
             }
             catch (Exception ex)
             {
-                return DeconzWrapper.GenerateExceptionMessage(ex, "DeconzEating");
+                return deconz.GenerateExceptionMessage(ex, "DeconzEating");
             }
         }
         /// <summary>
@@ -478,7 +491,7 @@ namespace SmartHome.Classes
         /// <param name="group"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        private static async Task<DeConzResults> ChangeGroupState(LightCommand command, SmartHomeRoom group)
+        private async Task<DeConzResults> ChangeGroupState(LightCommand command, SmartHomeRoom group)
         {
             return await ChangeGroupState(command, group.Room.Lights);
         }
@@ -488,9 +501,9 @@ namespace SmartHome.Classes
         /// <param name="group"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        private static async Task<DeConzResults> ChangeGroupState(LightCommand command, string id)
+        private async Task<DeConzResults> ChangeGroupState(LightCommand command, string id)
         {
-            return await ChangeGroupState(command, new List<string>() {id });
+            return await ChangeGroupState(command, new List<string>() { id });
         }
         /// <summary>
         /// Sendet für die Übergebenen IDs das Command
@@ -498,21 +511,21 @@ namespace SmartHome.Classes
         /// <param name="ListOfLightIds"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        private static async Task<DeConzResults> ChangeGroupState(LightCommand command, List<string> ListOfLightIds)
+        private async Task<DeConzResults> ChangeGroupState(LightCommand command, List<string> ListOfLightIds)
         {
-            return await DeconzWrapper.UseClient.SendCommandAsync(command, ListOfLightIds);
+            return await deconz.UseClient.SendCommandAsync(command, ListOfLightIds);
         }
         /// <summary>
         /// Prüft für die Übergebenen Lampen, ob eine eingeschaltet ist und gibt bei der ersten gefundenen ein true zurück.
         /// </summary>
         /// <param name="ListOfLightIds"></param>
         /// <returns>A List with all Lights IDs that are OFF</returns>
-        private static async Task<List<string>> DeconzCheckOnState(List<string> ListOfLightIds)
+        private async Task<List<string>> DeconzCheckOnState(List<string> ListOfLightIds)
         {
             List<string> removefromlist = new();
             foreach (var item in ListOfLightIds)
             {
-                var light = await DeconzWrapper.UseClient.GetLightAsync(item);
+                var light = await deconz.UseClient.GetLightAsync(item);
                 if (light.State.On == true)
                 {
                     continue;
@@ -527,12 +540,12 @@ namespace SmartHome.Classes
         }
         #endregion Deconz
         #region Sonos
-        public static async Task<bool> SonosGuestRoomOff()
+        public async Task<bool> SonosGuestRoomOff()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomOff);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomOff);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -548,12 +561,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosIanRoomOff()
+        public async Task<bool> SonosIanRoomOff()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.IanRoomOff);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.IanRoomOff);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -569,14 +582,14 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosLivingRoomVolume(Boolean vol)
+        public async Task<bool> SonosLivingRoomVolume(bool vol)
         {
             try
             {
-                String retval;
-                    retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.LivingRoomVolume + vol);
-                SmartHomeConstants.log.InfoLog("WheelTest", "Vol:" + vol+ " Result:"+retval+" ConnString:"+ SmartHomeConstants.Sonos.LivingRoomVolume + vol);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval;
+                retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.LivingRoomVolume + vol);
+                SmartHomeConstants.log.InfoLog("WheelTest", "Vol:" + vol + " Result:" + retval + " ConnString:" + SmartHomeConstants.Sonos.LivingRoomVolume + vol);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -592,13 +605,13 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosGuestRoomVolume(Boolean vol)
+        public async Task<bool> SonosGuestRoomVolume(bool vol)
         {
             try
             {
-                String retval;
+                string retval;
                 retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomVolume + vol);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -614,21 +627,21 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosGuestRoom(string playlist, int volume = 0)
+        public async Task<bool> SonosGuestRoom(string playlist, int volume = 0)
         {
             try
             {
-                String retval;
+                string retval;
                 if (volume > 0)
                 {
-                    retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoom + "/" + playlist+"/"+volume);
+                    retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoom + "/" + playlist + "/" + volume);
                 }
                 else
                 {
                     retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoom + "/" + playlist);
                 }
 
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -644,12 +657,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosIanRoomRandom3()
+        public async Task<bool> SonosIanRoomRandom3()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.IanRoomRandom3);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.IanRoomRandom3);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -665,12 +678,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosIanRoomRandom2()
+        public async Task<bool> SonosIanRoomRandom2()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.IanRoomRandom2);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.IanRoomRandom2);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -686,12 +699,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosGuestRoomAudioInOn()
+        public async Task<bool> SonosGuestRoomAudioInOn()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomAudioInOn);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomAudioInOn);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -707,12 +720,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosGuestRoomAudioInOff()
+        public async Task<bool> SonosGuestRoomAudioInOff()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomAudioInOff);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GuestRoomAudioInOff);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -728,12 +741,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosGroundFloorOn(string playlist)
+        public async Task<bool> SonosGroundFloorOn(string playlist)
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GroundFloorOn + "/" + playlist);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GroundFloorOn + "/" + playlist);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -749,12 +762,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosLivingRoomSpezial()
+        public async Task<bool> SonosLivingRoomSpezial()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.LivingRoomSpezial);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.LivingRoomSpezial);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -770,12 +783,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosStoppAllPlayer()
+        public async Task<bool> SonosStoppAllPlayer()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.StoppAllPlayers);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.StoppAllPlayers);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -791,12 +804,12 @@ namespace SmartHome.Classes
                 return false;
             }
         }
-        public static async Task<bool> SonosGroundFloorOff()
+        public async Task<bool> SonosGroundFloorOff()
         {
             try
             {
-                String retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GroundFloorOff);
-                if (Boolean.TryParse(retval, out Boolean retvalchecked))
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GroundFloorOff);
+                if (bool.TryParse(retval, out bool retvalchecked))
                 {
                     return retvalchecked;
                 }
@@ -817,17 +830,17 @@ namespace SmartHome.Classes
         /// <summary>
         /// Shellys Gästezimmer schalten
         /// </summary>
-        public static async Task<bool> PowerShellysGuestRoom(Boolean powerOn)
+        public async Task<bool> PowerShellysGuestRoom(bool powerOn)
         {
-            return await ShellyWorker.PowerGuestRoom(powerOn);
+            return await shellyworker.PowerGuestRoom(powerOn);
         }
-        public static async Task<bool> PowerShellysGuestRoomRight(Boolean powerOn)
+        public async Task<bool> PowerShellysGuestRoomRight(bool powerOn)
         {
-            return await ShellyWorker.PowerGuestRoomRight(powerOn);
+            return await shellyworker.PowerGuestRoomRight(powerOn);
         }
         #endregion Shellys
         #region ErrorHandling
-        public static Exception ReturnWebError(string message, HttpStatusCode hsc = HttpStatusCode.BadRequest)
+        public Exception ReturnWebError(string message, HttpStatusCode hsc = HttpStatusCode.BadRequest)
         {
             var response = new HttpResponseMessage(hsc)
             {
@@ -836,7 +849,7 @@ namespace SmartHome.Classes
             return new Exception(message);//todo: Exception Handling korrigieren.
         }
         #endregion ErrorHandling
-        public static  String Test()
+        public string Test()
         {
             try
             {

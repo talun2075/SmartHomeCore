@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
-using SmartHome.DataClasses;
+using SmartHome.Classes.Shelly;
+using SmartHome.Classes.Shelly.Data;
+using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +15,11 @@ namespace SmartHome.Controllers
     public class ShellyController : Controller
     {
         private static readonly Dictionary<string, DateTime> ignoreOnTogglePower = new();
-        public ShellyController(IWebHostEnvironment env)
+        IShellyWorker shellyWorker;
+        public ShellyController(IWebHostEnvironment env, IShellyWorker _shellyWorker)
         {
             SmartHomeConstants.Env = env;
+            shellyWorker = _shellyWorker;
         }
         public async Task<ActionResult> Index()
         {
@@ -36,7 +39,7 @@ namespace SmartHome.Controllers
            if(SmartHomeConstants.Shelly1.Any()) 
             { return SmartHomeConstants.Shelly1; }
             
-            return await ShellyWorker.Read();
+            return await shellyWorker.Read();
         }
         
         [HttpGet("TogglePower/{sheyllmac}/{power}/{ignoreListActive=false}")]
@@ -119,7 +122,7 @@ namespace SmartHome.Controllers
             return retval;
 
         }
-        private static void UpdateIgnoreList()
+        private void UpdateIgnoreList()
         {
             List<string> toremove = new();
             foreach (var item in ignoreOnTogglePower)
@@ -138,13 +141,13 @@ namespace SmartHome.Controllers
             }
 
         }
-        private static async Task<Boolean> UpdateShellys()
+        private async Task<Boolean> UpdateShellys()
         {
             try
             {
                 if (!SmartHomeConstants.Shelly1.Any() || (DateTime.Now - SmartHomeConstants.ShellyLastChange).Minutes > 5)
                 {
-                    SmartHomeConstants.Shelly1 = await ShellyWorker.Read();
+                    SmartHomeConstants.Shelly1 = await shellyWorker.Read();
                     SmartHomeConstants.ShellyLastChange = DateTime.Now;
                 }
                 return true;

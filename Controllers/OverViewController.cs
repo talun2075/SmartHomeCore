@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
+using SmartHome.Classes.Old;
 
 namespace SmartHome.Controllers
 {

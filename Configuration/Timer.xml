@@ -12,8 +12,8 @@
   Arguments: as String array, ||| as separator
   Logging Boolean for logg a trace, default false
   -->
-	<Time Name="GardenON" Class="SmartHome.Classes.SmartHomeHelper" Method ="DeconzGardenOn" Repeat="false" When="16:30:00" Type="INTERNAL" Logging="false" Active="true"/>
-	<Time Name="GardenOff" Class="SmartHome.Classes.SmartHomeHelper" Method ="DeconzGardenOff" Repeat="false" When="22:00:00" Type="INTERNAL" Logging="false" Active="true"/>
+	<Time Name="GardenON" Class="http://sh.tami/deconz/gardenon" Method ="DeconzGardenOn" Repeat="false" When="16:30:00" Type="URL" Logging="false" Active="true"/>
+	<Time Name="GardenOff" Class="http://sh.tami/deconz/gardenoff" Method ="DeconzGardenOff" Repeat="false" When="22:00:00" Type="URL" Logging="false" Active="true"/>
 	<Time Name="SonosTimeStuff" Uri="http://sonos.tami/settings/FillSonosTimeSettingStuff" Repeat="true" When="12:00:00" Type="URL" Active="true"/>
 	<Time Name="SetPlaylists" Uri="http://sonos.tami/zone/SetPlaylists" Repeat="true" When="00:30:00" Type="URL" Active="true"/>
 	<Time Name="CheckDevicesToPlayer" Uri="http://sonos.tami/zone/CheckDevicesToPlayer" Repeat="true" When="01:00:00" Type="URL" Active="true"/>

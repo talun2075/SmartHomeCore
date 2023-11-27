@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
-using SmartHome.DataClasses;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,46 +15,50 @@ namespace SmartHome.Controllers
     [ApiController]
     public class SmartHomeController : ControllerBase
     {
-        public SmartHomeController(IWebHostEnvironment env)
+        ISmartHomeWrapper shw;
+        ISmartHomeTimerWorker shtw;
+        public SmartHomeController(IWebHostEnvironment env, ISmartHomeWrapper _shw, ISmartHomeTimerWorker _shtw)
         {
             SmartHomeConstants.Env = env;
+            shw = _shw;
+            shtw = _shtw;
         }
 
         [HttpGet("Touch/{id}")]
         public async Task<Boolean> Touch(string id)
         {
-            return await SmartHomeWrapper.Touch(id, GetContext());
+            return await shw.Touch(id, GetContext());
         }
         [HttpGet("Single/{id}")]
         public async Task<Boolean> Single(string id)
         {
-            return await SmartHomeWrapper.Single(id);
+            return await shw.Single(id);
         }
         [HttpGet("Double/{id}")]
         public async Task<Boolean> Double(string id)
         {
-            return await SmartHomeWrapper.Double(id);
+            return await shw.Double(id);
         }
         [HttpGet("Long/{id}")]
         public async Task<Boolean> Long(string id)
         {
-            return await SmartHomeWrapper.Long(id);
+            return await shw.Long(id);
         }
         [HttpGet("Generic/{id}")]
         public async Task<Boolean> Generic(string id)
         {
-            return await SmartHomeWrapper.Generic(GetContext());
+            return await shw.Generic(GetContext());
         }
         [HttpGet("CheckTimer")]
         public async Task<Boolean> CheckTimer()
         {
-            return await SmartHomeTimerWorker.CheckTimer();
+            return await shtw.CheckTimer();
         }
         [HttpGet("AllButtons")]
         public async Task<List<Button>> AllButtons()
         {
             if (!SmartHomeConstants.KnowingButtons.Any())
-                await SmartHomeWrapper.ReadButtonXML();
+                await shw.ReadButtonXML();
             return SmartHomeConstants.KnowingButtons;
         }
         [HttpGet("Test")]
@@ -64,7 +69,7 @@ namespace SmartHome.Controllers
         [HttpGet("CupeLiving/{id}")]
         public async Task<Boolean> CupeLiving(int id)
         {
-            return await SmartHomeWrapper.CupeLiving(id);
+            return await shw.CupeLiving(id);
         }
         private ButtonRequest GetContext()
         {

@@ -1,14 +1,15 @@
 ﻿using HomeLogging;
 using InnerCore.Api.DeConz.ColorConverters;
 using Microsoft.AspNetCore.Hosting;
-using SmartHome.DataClasses;
+using SmartHome.Classes.Shelly.Data;
+using SmartHome.Classes.SmartHome.Data;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.SmartHome.Util
 {
     /// <summary>
     /// Constanten für das SmartHome
@@ -72,7 +73,7 @@ namespace SmartHome.Classes
         /// <param name="call"></param>
         /// <param name="value"></param>
         /// <returns></returns>
-        public static async Task<String> ConnectToWeb(SmartHomeConstants.RequestEnums nr, string call, string value = "")
+        public static async Task<string> ConnectToWeb(RequestEnums nr, string call, string value = "")
         {
             try
             {
@@ -82,7 +83,7 @@ namespace SmartHome.Classes
                 Uri urlstate = new(call);
                 HttpResponseMessage result;
                 string returnValue;
-                if (nr == SmartHomeConstants.RequestEnums.GET)
+                if (nr == RequestEnums.GET)
                 {
 
                     result = await _httpClient.GetAsync(urlstate);
@@ -91,11 +92,11 @@ namespace SmartHome.Classes
                 else
                 {
                     using var content = new StringContent(value, System.Text.Encoding.UTF8, "application/json");
-                    if (nr == SmartHomeConstants.RequestEnums.POST)
+                    if (nr == RequestEnums.POST)
                     {
                         result = await _httpClient.PostAsync(urlstate, content);
                     }
-                    else if (nr == SmartHomeConstants.RequestEnums.PUT)
+                    else if (nr == RequestEnums.PUT)
                     {
                         result = await _httpClient.PutAsync(urlstate, content);
                     }
@@ -105,7 +106,7 @@ namespace SmartHome.Classes
                     }
                     if (result.StatusCode == System.Net.HttpStatusCode.NoContent)
                     {
-                        returnValue = SmartHomeConstants.ConnectToWebRetval.ok.ToString();
+                        returnValue = ConnectToWebRetval.ok.ToString();
                     }
                     else
                     {
@@ -123,13 +124,13 @@ namespace SmartHome.Classes
             catch (TaskCanceledException ex)
             {
                 // Its a some other issue
-                SmartHomeConstants.log.ServerErrorsAdd("ConnectToWeb:TaskCanceledException:Url:" + call, ex);
-                return String.Empty;
+                log.ServerErrorsAdd("ConnectToWeb:TaskCanceledException:Url:" + call, ex);
+                return string.Empty;
             }
             catch (Exception ex)
             {
-                SmartHomeConstants.log.ServerErrorsAdd("ConnectToWeb:Url:" + call, ex);
-                return String.Empty;
+                log.ServerErrorsAdd("ConnectToWeb:Url:" + call, ex);
+                return string.Empty;
             }
         }
         #endregion WebServerCalls
@@ -141,7 +142,7 @@ namespace SmartHome.Classes
             get
             {
                 Random random = new();
-                var color = String.Format("#{0:X6}", random.Next(0x1000000)); // = "#A197B9"
+                var color = string.Format("#{0:X6}", random.Next(0x1000000)); // = "#A197B9"
                 return new RGBColor(color);
                 //Random rnd = new Random();
                 //return new RGBColor(rnd.Next(0, 255), rnd.Next(0, 255), rnd.Next(0, 255));
@@ -172,7 +173,7 @@ namespace SmartHome.Classes
                 return rnd.Next(2000, 6500);
             }
         }
-        public String BaseUrl
+        public string BaseUrl
         {
             get
             {
@@ -193,7 +194,7 @@ namespace SmartHome.Classes
                 return 999;
             }
         }
-        public String ApiKey
+        public string ApiKey
         {
             get
             {
@@ -203,11 +204,11 @@ namespace SmartHome.Classes
     }
     public class DenonConstants
     {
-        public String BaseURL { get; private set; } = "http://denon.tami";
+        public string BaseURL { get; private set; } = "http://denon.tami";
     }
     public class MarantzConstants
     {
-        public String BaseURL { get; private set; } = "http://marantz.tami";
+        public string BaseURL { get; private set; } = "http://marantz.tami";
     }
 
     ///// <summary>
@@ -251,42 +252,42 @@ namespace SmartHome.Classes
         /// <summary>
         /// Base Pfad, IP, da DNS nicht geht.
         /// </summary>
-        public static String BaseURL { get; private set; } = "http://sonos.tami/SmartHome";
+        public static string BaseURL { get; private set; } = "http://sonos.tami/SmartHome";
         /// <summary>
         /// Alle Player aus
         /// </summary>
-        public String StoppAllPlayers { get; private set; } = BaseURL + "/StoppAllPlayers";
+        public string StoppAllPlayers { get; private set; } = BaseURL + "/StoppAllPlayers";
         /// <summary>
         /// Ergeschoss an
         /// </summary>
-        public String GroundFloorOn { get; private set; } = BaseURL + "/GroundFloorOn";
-        public String GroundFloorOff { get; private set; } = BaseURL + "/GroundFloorOff";
+        public string GroundFloorOn { get; private set; } = BaseURL + "/GroundFloorOn";
+        public string GroundFloorOff { get; private set; } = BaseURL + "/GroundFloorOff";
         /// <summary>
         /// Wohnzimmer Spezial
         /// </summary>
-        public String LivingRoomSpezial { get; private set; } = BaseURL + "/LivingRoomSpezial";
+        public string LivingRoomSpezial { get; private set; } = BaseURL + "/LivingRoomSpezial";
         /// <summary>
         /// Gästezimmer mit übergebener Playlist starten
         /// </summary>
-        public String GuestRoom { get; private set; } = BaseURL + "/GuestRoom";
+        public string GuestRoom { get; private set; } = BaseURL + "/GuestRoom";
         /// <summary>
         /// Gästezimmer Lautstärke nach oben oder unten korrigieren.
         /// </summary>
-        public String GuestRoomVolume { get; private set; } = BaseURL + "/RoomVolumeRelativ/RINCON_000E5850B61601400/";
-        public String LivingRoomVolume { get; private set; } = BaseURL + "/RoomVolumeRelativ/RINCON_000E5823E01C01400/";
+        public string GuestRoomVolume { get; private set; } = BaseURL + "/RoomVolumeRelativ/RINCON_000E5850B61601400/";
+        public string LivingRoomVolume { get; private set; } = BaseURL + "/RoomVolumeRelativ/RINCON_000E5823E01C01400/";
         /// <summary>
         /// Gästezimmer aus.
         /// </summary>
-        public String GuestRoomOff { get; private set; } = BaseURL + "/GuestRoomOff";
-        public String IanRoomRandom3 { get; private set; } = "http://sonos.tami/Ian/PlayRandom/zzzIanButton3";
-        public String IanRoomRandom2 { get; private set; } = "http://sonos.tami/Ian/PlayRandom/zzzIanButton2";
+        public string GuestRoomOff { get; private set; } = BaseURL + "/GuestRoomOff";
+        public string IanRoomRandom3 { get; private set; } = "http://sonos.tami/Ian/PlayRandom/zzzIanButton3";
+        public string IanRoomRandom2 { get; private set; } = "http://sonos.tami/Ian/PlayRandom/zzzIanButton2";
         /// <summary>
         /// Gästezimmer aus.
         /// </summary>
-        public String IanRoomOff { get; private set; } = BaseURL + "/IanRoomOff";
-        public String GuestRoomAudioInOn { get; private set; } = BaseURL + "/GuestRoomAudioInOn";
+        public string IanRoomOff { get; private set; } = BaseURL + "/IanRoomOff";
+        public string GuestRoomAudioInOn { get; private set; } = BaseURL + "/GuestRoomAudioInOn";
 
-        public String GuestRoomAudioInOff { get; private set; } = BaseURL + "/GuestRoomAudioInOff";
+        public string GuestRoomAudioInOff { get; private set; } = BaseURL + "/GuestRoomAudioInOff";
         //SonosGuestRoomAudioInOn
     }
 }

@@ -6,7 +6,7 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Threading.Tasks;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.Old
 {
     public class ColoClient
     {
@@ -57,20 +57,20 @@ namespace SmartHome.Classes
         }
         #endregion Ctor
         #region Public Methods
-        public async Task<Boolean> TurnOn()
+        public async Task<bool> TurnOn()
         {
             string command = string.Format("{0}{1}{2}", COMMAND_PREFIX, COMMAND_CONFIG, "f35");
 
             return await SendMessage(command);
         }
 
-        public async Task<Boolean> TurnOff()
+        public async Task<bool> TurnOff()
         {
             string command = string.Format("{0}{1}{2}", COMMAND_PREFIX, COMMAND_CONFIG, "e1e");
 
             return await SendMessage(command);
         }
-        public async Task<Boolean> SetEffect(Effects effect)
+        public async Task<bool> SetEffect(Effects effect)
         {
             string effectValue = EffectsLookup.Get(Enum.GetName(typeof(Effects), effect));
 
@@ -79,7 +79,7 @@ namespace SmartHome.Classes
             return await SendMessage(command);
         }
 
-        public async Task<Boolean> SetBrightness(int brightness)
+        public async Task<bool> SetBrightness(int brightness)
         {
             if (brightness < 0)
                 brightness = 0;
@@ -92,14 +92,14 @@ namespace SmartHome.Classes
             return await SendMessage(command);
         }
 
-        public async Task<Boolean> SetColour(System.Drawing.Color colour)
+        public async Task<bool> SetColour(System.Drawing.Color colour)
         {
             string hexColour = colour.R.ToString("X2") + colour.G.ToString("X2") + colour.B.ToString("X2");
 
             return await SetColour(hexColour);
         }
 
-        public async Task<Boolean> SetColour(string colour)
+        public async Task<bool> SetColour(string colour)
         {
             string prefix = "00";
             string command = string.Format("{0}{1}{2}{3}", COMMAND_PREFIX, COMMAND_EFFECT, prefix, colour);
@@ -108,12 +108,12 @@ namespace SmartHome.Classes
         }
         #endregion Public Methods
         #region Private Methods
-        private async Task<Boolean> SendMessage(string message)
+        private async Task<bool> SendMessage(string message)
         {
-            if (PingHost(this.Host.ToString()))
+            if (PingHost(Host.ToString()))
             {
                 UdpClient udpClient = new();
-                IPEndPoint ipEndPoint = new(this.Host, port);
+                IPEndPoint ipEndPoint = new(Host, port);
 
                 try
                 {
@@ -162,7 +162,7 @@ namespace SmartHome.Classes
 
             return pingable;
         }
-        private static byte[] StringToByteArray(String hex)
+        private static byte[] StringToByteArray(string hex)
         {
             int NumberChars = hex.Length;
 

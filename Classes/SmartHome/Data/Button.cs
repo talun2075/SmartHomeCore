@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SmartHome.DataClasses
+namespace SmartHome.Classes.SmartHome.Data
 {
     public class Button
     {

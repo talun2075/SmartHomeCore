@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace SmartHome.DataClasses
+namespace SmartHome.Classes.Shelly.Data
 {
     public class Shelly1
     {
@@ -79,7 +79,7 @@ namespace SmartHome.DataClasses
         public bool Discoverable { get; set; }
 
         //Own
-        public string Description {  get; set; }
+        public string Description { get; set; }
 
     }
     #region Shelly Data Classes

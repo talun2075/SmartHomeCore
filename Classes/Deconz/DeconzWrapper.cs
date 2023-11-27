@@ -12,23 +12,25 @@ using InnerCore.Api.DeConz.Models.Lights;
 using InnerCore.Api.DeConz.Models.Sensors;
 using InnerCore.Api.DeConz.ColorConverters;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
+using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.SmartHome.Util;
 
-namespace SmartHome.Classes
+namespace SmartHome.Classes.Deconz
 {
     /// <summary>
     /// Wrapper für die Deconz Lib
     /// </summary>
-    public static class DeconzWrapper
+    public class DeconzWrapper : IDeconzWrapper
     {
-        private static DeConzClient _client;
-        private static BridgeConfig _bridgeConfig;
-        private static readonly List<DeconzDataConfig> DeconzDataConfigList = new();
+        private DeConzClient _client;
+        private BridgeConfig _bridgeConfig;
+        private readonly List<DeconzDataConfig> DeconzDataConfigList = new();
 
         #region Properties
         /// <summary>
         /// Der Primäre DeconzBridgeClient, wird für sämtliche Kommunikation genutzt.
         /// </summary>
-        public static DeConzClient UseClient
+        public DeConzClient UseClient
         {
             get
             {
@@ -38,7 +40,7 @@ namespace SmartHome.Classes
                     {
                         _client = new DeConzClient(SmartHomeConstants.Deconz.BaseUrl, SmartHomeConstants.Deconz.HttpPort, SmartHomeConstants.Deconz.ApiKey);
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
                         SmartHomeConstants.log.ServerErrorsAdd("Property:UseClient", e, "DeconzWrapper");
                     }
@@ -48,8 +50,8 @@ namespace SmartHome.Classes
             }
         }
 
-        public  static IEnumerable<Sensor> Sensors { get; set; }
- #endregion Properties
+        public IEnumerable<Sensor> Sensors { get; set; }
+        #endregion Properties
         #region public Methods
         /// <summary>
         /// Sendet für die Übergebene Gruppe die das command ab.
@@ -57,7 +59,7 @@ namespace SmartHome.Classes
         /// <param name="group"></param>
         /// <param name="command"></param>
         /// <returns></returns>
-        public static async Task<DeConzResults> ChangeGroupState(LightCommand command, SmartHomeRoom room)
+        public async Task<DeConzResults> ChangeGroupState(LightCommand command, SmartHomeRoom room)
         {
             return await ChangeLightState(command, room.Room.Lights);
         }
@@ -65,7 +67,7 @@ namespace SmartHome.Classes
         /// Läd alle Gruppen aus der Bridge
         /// </summary>
         /// <returns></returns>
-        public static async Task<List<SmartHomeRoom>> GetGroups()
+        public async Task<List<SmartHomeRoom>> GetGroups()
         {
             var g = await UseClient.GetGroupsAsync();
             if (DeconzDataConfigList.Count == 0)
@@ -87,8 +89,8 @@ namespace SmartHome.Classes
                     if (hdc.OverWriteName && !string.IsNullOrEmpty(hdc.OverWrittenName))
                         shr.Room.Name = hdc.OverWrittenName;
                 }
-                if(!shr.Hide)
-                shrList.Add(shr);
+                if (!shr.Hide)
+                    shrList.Add(shr);
             }
             return shrList.OrderBy(x => x.SortOrder).ToList();
         }
@@ -96,7 +98,7 @@ namespace SmartHome.Classes
         /// Läd alle Lichter aus der Bridge
         /// </summary>
         /// <returns></returns>
-        public static async Task<IEnumerable<Light>> GetLights()
+        public async Task<IEnumerable<Light>> GetLights()
         {
             return await UseClient.GetLightsAsync();
         }
@@ -104,7 +106,7 @@ namespace SmartHome.Classes
         /// Läd definierte Lampe
         /// </summary>
         /// <returns></returns>
-        public static async Task<Light> GetLightById(string id)
+        public async Task<Light> GetLightById(string id)
         {
             var _lights = await GetLights();
             return _lights.FirstOrDefault(x => x.Id == id);
@@ -113,7 +115,7 @@ namespace SmartHome.Classes
         /// Läd definierte Lampe
         /// </summary>
         /// <returns></returns>
-        public static async Task<Light> GetLightByName(string name)
+        public async Task<Light> GetLightByName(string name)
         {
             var _lights = await GetLights();
             return _lights.FirstOrDefault(x => x.Name.StartsWith(name));
@@ -123,7 +125,7 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public static async Task<SmartHomeRoom> GetGroup(string name)
+        public async Task<SmartHomeRoom> GetGroup(string name)
         {
             var g = await GetGroups();
             return g.FirstOrDefault(x => x.Room.Name.StartsWith(name, StringComparison.CurrentCultureIgnoreCase));
@@ -133,7 +135,7 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        public static async Task<SmartHomeRoom> GetGroup(int id)
+        public async Task<SmartHomeRoom> GetGroup(int id)
         {
             var g = await GetGroups();
             return g.FirstOrDefault(x => x.Room.Id == id.ToString());
@@ -142,7 +144,7 @@ namespace SmartHome.Classes
         /// Ermittelt die Konfiguration der Bridge
         /// </summary>
         /// <returns></returns>
-        public static async Task<BridgeConfig> GetConfig()
+        public async Task<BridgeConfig> GetConfig()
         {
             _bridgeConfig ??= await UseClient.GetConfigAsync();
             return _bridgeConfig;
@@ -152,7 +154,7 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="groupid">ID des Raumes</param>
         /// <returns></returns>
-        public static async Task<IReadOnlyCollection<Scene>> GetScenesbyGroup(string groupid)
+        public async Task<IReadOnlyCollection<Scene>> GetScenesbyGroup(string groupid)
         {
             var s = await GetGroup(groupid);
             return s.Room.Scenes;
@@ -162,14 +164,14 @@ namespace SmartHome.Classes
         /// </summary>
         /// <param name="groupid">ID des Raumes</param>
         /// <returns></returns>
-        public static async Task<IReadOnlyCollection<Scene>> GetScenesbyGroup(Group _group)
+        public async Task<IReadOnlyCollection<Scene>> GetScenesbyGroup(Group _group)
         {
             return await GetScenesbyGroup(_group.Id);
         }
         /// <summary>
         /// Gibt immer ein neues Kommando um eine oder mehrere Lampen zu steuern
         /// </summary>
-        public static LightCommand LightCommand
+        public LightCommand LightCommand
         {
             get
             {
@@ -179,7 +181,7 @@ namespace SmartHome.Classes
         /// <summary>
         /// Gibt immer ein neues Kommando um eine Scene zu steuern.
         /// </summary>
-        public static SceneCommand SceneCommand
+        public SceneCommand SceneCommand
         {
             get
             {
@@ -192,7 +194,7 @@ namespace SmartHome.Classes
         /// <param name="ex"></param>
         /// <param name="calledMethod"></param>
         /// <returns></returns>
-        public static DeConzResults GenerateExceptionMessage(Exception ex, string calledMethod)
+        public DeConzResults GenerateExceptionMessage(Exception ex, string calledMethod)
         {
             SmartHomeConstants.log.ServerErrorsAdd(calledMethod, ex, "DeconzWrapper");
             return new DeConzResults {
@@ -216,7 +218,7 @@ namespace SmartHome.Classes
         /// <param name="ListOfLightIds">Liste von zu schaltenden Lampe(n)</param>
         /// <param name="command">Light Command für Power ON/Off etc.</param>
         /// <returns></returns>
-        public static async Task<DeConzResults> ChangeLightState(LightCommand command, List<string> ListOfLightIds)
+        public async Task<DeConzResults> ChangeLightState(LightCommand command, List<string> ListOfLightIds)
         {
             return await UseClient.SendCommandAsync(command, ListOfLightIds);
         }
@@ -226,25 +228,25 @@ namespace SmartHome.Classes
         /// <param name="command"></param>
         /// <param name="LightId"></param>
         /// <returns></returns>
-        public static async Task<DeConzResults> ChangeLightState(LightCommand command, string LightId)
+        public async Task<DeConzResults> ChangeLightState(LightCommand command, string LightId)
         {
             return await ChangeLightState(command, new List<string>() { LightId });
         }
-        
-        public static async void SetLightColor(string id, string color)
+
+        public async void SetLightColor(string id, string color)
         {
             var light = await GetLightById(id);
-            RGBColor rGBColor = new (color);
-            await ChangeLightState(DeconzWrapper.LightCommand.TurnOn().SetColor(rGBColor,(light.State.Hue == null && light.State.Saturation == null)), id);
+            RGBColor rGBColor = new(color);
+            await ChangeLightState(LightCommand.TurnOn().SetColor(rGBColor, light.State.Hue == null && light.State.Saturation == null), id);
         }
         #endregion public Methods
         #region private Methoden
-        private static void ReadDeconzDataConfig()
+        private void ReadDeconzDataConfig()
         {
             try
             {
                 string path = SmartHomeConstants.Env.ContentRootPath + "\\Configuration\\DeconzConfiguration.xml";
-               // string path = HttpRuntime.AppDomainAppPath + "Configuration\\DeconzConfiguration.xml";
+                // string path = HttpRuntime.AppDomainAppPath + "Configuration\\DeconzConfiguration.xml";
                 XmlDocument myXmlDocument = new();
                 myXmlDocument.Load(path);
                 XmlNodeList Deconzconfig = myXmlDocument.SelectNodes("/Deconz/RoomSortOrder");
@@ -254,7 +256,7 @@ namespace SmartHome.Classes
                     {
                         Hide = (item.Attributes["Hide"]?.Value) != null && (item.Attributes["Hide"]?.Value) != "false",
                         OverWriteName = (item.Attributes["OverWriteName"]?.Value) != null && (item.Attributes["OverWriteName"]?.Value) != "false",
-                        OverWrittenName = item.Attributes["OverWrittenName"]?.Value ?? String.Empty,
+                        OverWrittenName = item.Attributes["OverWrittenName"]?.Value ?? string.Empty,
                         RoomID = Convert.ToInt32(item.Attributes["RoomID"].Value),
                         SortOrder = item.Attributes["SortOrder"]?.Value == null ? 100 : Convert.ToInt32(item.Attributes["SortOrder"].Value)
                     };

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
+using SmartHome.Classes.Old;
+using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Net;
 using System.Threading.Tasks;

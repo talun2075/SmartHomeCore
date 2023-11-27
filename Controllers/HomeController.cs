@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
+using SmartHome.Classes.SmartHome.Util;
 
 namespace SmartHome.Controllers
 {

@@ -1,7 +1,7 @@
 ﻿using System;
-using SmartHome.Classes;
+using SmartHome.Classes.SmartHome.Util;
 
-namespace SmartHome.DataClasses
+namespace SmartHome.Classes.SmartHome.Data
 {
     /// <summary>
     /// Interne Timer Klasse

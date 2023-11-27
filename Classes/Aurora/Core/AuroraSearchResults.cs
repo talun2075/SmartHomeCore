@@ -8,9 +8,9 @@ namespace SmartHome.Classes.Aurora.Core
     /// </summary>
     public class AuroraSearchResults
     {
-        public AuroraSearchResults(string ip, string MacAdress, int port)
+        public AuroraSearchResults(string ip, string _MacAdress, int port)
         {
-            if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(MacAdress)) throw new ArgumentNullException(nameof(ip), "ip or MACAdress is Empty");
+            if (string.IsNullOrEmpty(ip) || string.IsNullOrEmpty(_MacAdress)) throw new ArgumentNullException(nameof(ip), "ip or MACAdress is Empty");
             if (ip.StartsWith("http://"))
                 ip = ip.Replace("http://", "");
             if (!Regex.IsMatch(ip, @"^[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}$")) throw new ArgumentOutOfRangeException(nameof(ip), ip, "This is not a IP");
@@ -18,7 +18,7 @@ namespace SmartHome.Classes.Aurora.Core
 
             IP = ip;
             Port = port;
-            MACAdress = MacAdress;
+            MacAdress = _MacAdress;
         }
         /// <summary>
         /// Port Default is 16021
@@ -31,7 +31,7 @@ namespace SmartHome.Classes.Aurora.Core
         /// <summary>
         /// Mac Adress of the Aurora
         /// </summary>
-        public string MACAdress { get; set; }
+        public string MacAdress { get; set; }
     }
 
 }

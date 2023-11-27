@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
-using SmartHome.Classes;
+using SmartHome.Classes.SmartHome.Interfaces;
+using SmartHome.Classes.SmartHome.Util;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -8,13 +9,15 @@ namespace SmartHome.Controllers
 {
     public class ButtonsController : Controller
     {
-        public ButtonsController(IWebHostEnvironment env)
+        ISmartHomeWrapper shw;
+        public ButtonsController(IWebHostEnvironment env, ISmartHomeWrapper _shw)
         {
             SmartHomeConstants.Env = env;
+            shw = _shw;
         }
         public async Task<ActionResult> Index()
         {
-            if (!SmartHomeConstants.KnowingButtons.Any()) await SmartHomeWrapper.ReadButtonXML();
+            if (!SmartHomeConstants.KnowingButtons.Any()) await shw.ReadButtonXML();
             ViewBag.Buttons = SmartHomeConstants.KnowingButtons;
             ViewBag.Title = "MyStrom Buttons";
             ViewBag.png = "buttons.png";

@@ -144,15 +144,6 @@ namespace SmartHome.Classes.Aurora.Core
         {
             if (_knowingAuroras.Any()) return _knowingAuroras;
             _knowingAuroras = ReadAuroraKnowingDevicesXml();
-            if (_knowingAuroras.Any()) return _knowingAuroras;
-
-
-            _knowingAuroras = new List<AuroraKnowingDevices>()
-            {
-                new AuroraKnowingDevices("C8:EF:29:5C:91:24", "p7rY1vD2YxRQLkLZ8SxhYtVsIhCTMsp3", "Wohnzimmer","192.168.0.110","S16432A0525"),
-                new AuroraKnowingDevices("94:9F:5B:E9:5F:A8", "vD2YxRQLkLZ8SxhYtVsIhCTMsp3ws5A4", "Esszimmer","192.168.0.112","S17122A4899")
-
-            };
             return _knowingAuroras;
 
         }
@@ -206,7 +197,7 @@ namespace SmartHome.Classes.Aurora.Core
 
                     foreach (AuroraSearchResults asrResults in lasr)
                     {
-                        AuroraKnowingDevices akd = _knowingAuroras.FirstOrDefault(x => x.MacAdress == asrResults.MACAdress);
+                        AuroraKnowingDevices akd = _knowingAuroras.FirstOrDefault(x => x.MacAdress.ToLower() == asrResults.MacAdress.ToLower());
                         if (akd != null)
                         {
 
@@ -244,7 +235,7 @@ namespace SmartHome.Classes.Aurora.Core
                     {
                         if (!string.IsNullOrEmpty(auroraKnowingDevice.KnowingIP))
                         {
-                            var t = AurorasList.FirstOrDefault(x => x.Ip == auroraKnowingDevice.KnowingIP);
+                            var t = AurorasList.FirstOrDefault(x => x.SerialNo.ToLower() == auroraKnowingDevice.Serial.ToLower());
                             if (t == null)
                             {
                                 //FindAurora havent Found this Aurora so add this to list
