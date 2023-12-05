@@ -106,9 +106,9 @@ namespace SmartHome.Classes.SmartHome
             {
                 if (st.Logging)
                     SmartHomeConstants.log.TraceLog("ReflectionCall", "Start:" + st.Name);
-                if (string.IsNullOrEmpty(st.Class) || string.IsNullOrEmpty(st.Method)) return false;
+                if (string.IsNullOrEmpty(st.Path) || string.IsNullOrEmpty(st.Method)) return false;
                 //change
-                var myclass = Type.GetType(st.Class);
+                var myclass = Type.GetType(st.Path);
                 MethodInfo method = myclass.GetMethod(st.Method);
                 if (st.Async)
                 {
@@ -124,7 +124,7 @@ namespace SmartHome.Classes.SmartHome
             }
             catch (Exception ex)
             {
-                SmartHomeConstants.log.ServerErrorsAdd("SonosTimerWorker:ReflectionCall:" + st.Class + ":" + st.Method, ex);
+                SmartHomeConstants.log.ServerErrorsAdd("SonosTimerWorker:ReflectionCall:" + st.Path + ":" + st.Method, ex);
                 return false;
             }
         }
@@ -168,9 +168,8 @@ namespace SmartHome.Classes.SmartHome
                         Name = item.Attributes["Name"].Value,
                         Time = TimeSpan.Parse(item.Attributes["When"].Value),
                         Repeat = item.Attributes["Repeat"]?.Value == "true",
-                        Class = item.Attributes["Class"]?.Value ?? string.Empty,
                         Method = item.Attributes["Method"]?.Value ?? string.Empty,
-                        URI = item.Attributes["Uri"]?.Value ?? string.Empty,
+                        Path = item.Attributes["Path"]?.Value ?? string.Empty,
                         Async = item.Attributes["Async"]?.Value == null || item.Attributes["Async"]?.Value == "true",
                         Logging = item.Attributes["Logging"]?.Value == "true",
                         Active = item.Attributes["Active"]?.Value == "true",
@@ -201,14 +200,13 @@ namespace SmartHome.Classes.SmartHome
                         else
                         {
                             curtimer.Method = st.Method;
-                            curtimer.Class = st.Class;
                             curtimer.Arguments = st.Arguments;
                             curtimer.Repeat = st.Repeat;
                             curtimer.Time = st.Time;
                             curtimer.Async = st.Async;
                             curtimer.RequestTypeUrlCalls = st.RequestTypeUrlCalls;
                             curtimer.TimerType = st.TimerType;
-                            curtimer.URI = st.URI;
+                            curtimer.Path = st.Path;
                             // SmartHomeConstants.log.TraceLog("ReadTimerXml", "Timer Update:" + st.Name);
                         }
                     }
@@ -230,7 +228,7 @@ namespace SmartHome.Classes.SmartHome
             if (st.Logging)
                 SmartHomeConstants.log.TraceLog("WebCall", "Start:" + st.Name);
             string value = "";
-            if (string.IsNullOrEmpty(st.URI)) return false;
+            if (string.IsNullOrEmpty(st.Path)) return false;
             if (st.Arguments.Length > 0)
             {
                 value = st.Arguments[0];
@@ -240,11 +238,11 @@ namespace SmartHome.Classes.SmartHome
                 string retval = "ok";
                 if (st.Async)
                 {
-                    retval = await SmartHomeConstants.ConnectToWeb(st.RequestTypeUrlCalls, st.URI, value);
+                    retval = await SmartHomeConstants.ConnectToWeb(st.RequestTypeUrlCalls, st.Path, value);
                 }
                 else
                 {
-                    _ = SmartHomeConstants.ConnectToWeb(st.RequestTypeUrlCalls, st.URI, value);
+                    _ = SmartHomeConstants.ConnectToWeb(st.RequestTypeUrlCalls, st.Path, value);
                 }
                 if (retval.Contains("ok") || retval.ToLower() == "true")
                 {
@@ -256,7 +254,7 @@ namespace SmartHome.Classes.SmartHome
                 {
                     if (st.Logging)
                         SmartHomeConstants.log.TraceLog("WebCall", "Ende mit Fehlern:" + st.Name + " Retval:" + retval);
-                    SmartHomeConstants.log.ServerErrorsAdd("TimerWorker", new Exception("Timer:" + st.Name + " URL:" + st.URI + " Wert:" + retval), "WebCall");
+                    SmartHomeConstants.log.ServerErrorsAdd("TimerWorker", new Exception("Timer:" + st.Name + " Path:" + st.Path + " Wert:" + retval), "WebCall");
                 }
             }
             catch (Exception ex)

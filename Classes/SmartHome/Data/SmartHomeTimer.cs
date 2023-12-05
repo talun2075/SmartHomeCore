@@ -22,11 +22,6 @@ namespace SmartHome.Classes.SmartHome.Data
         /// </summary>
         public TimeSpan Time { get; set; }
         /// <summary>
-        /// The Class where the Method is stored
-        /// With complete Namespace
-        /// </summary>
-        public string Class { get; set; }
-        /// <summary>
         /// The Method to call
         /// </summary>
         public string Method { get; set; }
@@ -43,9 +38,9 @@ namespace SmartHome.Classes.SmartHome.Data
         /// </summary>
         public SmartHomeConstants.TimerType TimerType { get; set; } = SmartHomeConstants.TimerType.URL;
         /// <summary>
-        /// The URI if Timertype is URL
+        /// The URI if Timertype is URL / Class of Method to call if Type INTERNAL
         /// </summary>
-        public string URI { get; set; }
+        public string Path { get; set; }
         /// <summary>
         /// Only for ReflectionCall important. All other will Be Async
         /// </summary>
