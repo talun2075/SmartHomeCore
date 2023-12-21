@@ -105,12 +105,12 @@ namespace SmartHome.Controllers
         }
 
         [HttpGet("GardenOn")]
-        public async Task<DeConzResults> GardenOn()
+        public async Task<string> GardenOn()
         {
             return await shp.DeconzGardenOn();
         }
         [HttpGet("GardenOff")]
-        public async Task<DeConzResults> GardenOff()
+        public async Task<string> GardenOff()
         {
             return await shp.DeconzGardenOff();
         }

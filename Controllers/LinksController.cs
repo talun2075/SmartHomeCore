@@ -25,10 +25,10 @@ namespace SmartHome.Controllers
             ViewBag.Links = linklist;
             ViewBag.Columns = linklist.Last().Column;
             ViewBag.Title = "Link Übersicht";
-            ViewBag.png = "bat.png";
-            ViewBag.svg = "safari-pinned-tab.svg";
-            ViewBag.png16 = "favicon-16x16.png";
-            ViewBag.png32 = "favicon-32x32.png";
+            ViewBag.png = "favicon.png";
+            ViewBag.svg = "home.svg";
+            ViewBag.png16 = "favicon.png";
+            ViewBag.png32 = "favicon.png";
             ViewBag.NavClass = "navSixt";
             return View();
         }

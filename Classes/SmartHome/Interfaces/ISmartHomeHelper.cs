@@ -12,8 +12,8 @@ namespace SmartHome.Classes.SmartHome.Interfaces
         Task<DeConzResults> DeconzAllLightsOff();
         Task<DeConzResults> DeconzEating(DeconzSwitch hs);
         Task<DeConzResults> DeconzFirstFloorOff();
-        Task<DeConzResults> DeconzGardenOff();
-        Task<DeConzResults> DeconzGardenOn();
+        Task<string> DeconzGardenOff();
+        Task<string> DeconzGardenOn();
         Task<DeConzResults> DeconzGroundFloorOff();
         Task<DeConzResults> DeconzGroundFloorOn();
         Task<DeConzResults> DeconzLightsPower(List<string> ids, bool PowerOn = true);

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
+using Microsoft.Extensions.DependencyInjection;
 using SmartHome.Classes.SmartHome.Data;
 using SmartHome.Classes.SmartHome.Interfaces;
 using SmartHome.Classes.SmartHome.Util;
@@ -14,6 +15,11 @@ namespace SmartHome.Classes.SmartHome
     {
         #region Klassenvariablen
         private static List<SmartHomeTimer> timers = new();
+        private ISmartHomeHelper shm;
+        public SmartHomeTimerWorker(ISmartHomeHelper _shm)
+        {
+            shm = _shm;
+        }
         #endregion Klassenvariablen
         public async Task<bool> CheckTimer()
         {
@@ -88,45 +94,8 @@ namespace SmartHome.Classes.SmartHome
         {
 
             st.LastRuntime = DateTime.Now;
-            return st.TimerType switch
-            {
-                SmartHomeConstants.TimerType.INTERNAL => await ReflectionCall(st),//SmartHomeConstants.log.TraceLog("CallTimer", "Internal");
-                SmartHomeConstants.TimerType.URL => await WebCall(st),//SmartHomeConstants.log.TraceLog("CallTimer", "Web");
-                _ => false,
-            };
-        }
-        /// <summary>
-        /// Der eigentliche Reflection Aufruf.
-        /// </summary>
-        /// <param name="st"></param>
-        /// <returns></returns>
-        private async Task<bool> ReflectionCall(SmartHomeTimer st)
-        {
-            try
-            {
-                if (st.Logging)
-                    SmartHomeConstants.log.TraceLog("ReflectionCall", "Start:" + st.Name);
-                if (string.IsNullOrEmpty(st.Path) || string.IsNullOrEmpty(st.Method)) return false;
-                //change
-                var myclass = Type.GetType(st.Path);
-                MethodInfo method = myclass.GetMethod(st.Method);
-                if (st.Async)
-                {
-                    await (dynamic)method.Invoke(myclass, st.Arguments);
-                }
-                else
-                {
-                    method.Invoke(myclass, st.Arguments);
-                }
-                if (st.Logging)
-                    SmartHomeConstants.log.TraceLog("ReflectionCall", "Ende:" + st.Name);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                SmartHomeConstants.log.ServerErrorsAdd("SonosTimerWorker:ReflectionCall:" + st.Path + ":" + st.Method, ex);
-                return false;
-            }
+            return await WebCall(st);
+
         }
         /// <summary>
         /// Einlesen der Timer XML. Vorhandene Einträge werden nicht überschrieben sondern aktualisiert.
@@ -175,15 +144,8 @@ namespace SmartHome.Classes.SmartHome
                         Active = item.Attributes["Active"]?.Value == "true",
                         Arguments = argsu,
                         RequestTypeUrlCalls = rtuc
-
                     };
-                    if (!string.IsNullOrEmpty(item.Attributes["Type"]?.Value))
-                    {
-                        if (Enum.TryParse(item.Attributes["Type"].Value, out SmartHomeConstants.TimerType stp))
-                        {
-                            st.TimerType = stp;
-                        }
-                    }
+                    
                     if (!timers.Any())
                     {
                         // SmartHomeConstants.log.TraceLog("ReadTimerXml", "Timer add:"+st.Name);
@@ -205,7 +167,6 @@ namespace SmartHome.Classes.SmartHome
                             curtimer.Time = st.Time;
                             curtimer.Async = st.Async;
                             curtimer.RequestTypeUrlCalls = st.RequestTypeUrlCalls;
-                            curtimer.TimerType = st.TimerType;
                             curtimer.Path = st.Path;
                             // SmartHomeConstants.log.TraceLog("ReadTimerXml", "Timer Update:" + st.Name);
                         }

@@ -1,6 +1,7 @@
 ﻿using HomeLogging;
 using SmartHome.Classes.Aurora.Core.DataClasses;
 using SmartHome.Classes.Aurora.Core.Enums;
+using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +15,7 @@ namespace SmartHome.Classes.Aurora.Core
     {
         #region ClassVariables
         public static event EventHandler<AuroraLigth> Auroras_Changed = delegate { };
-        private static readonly Logging log = new(new LoggerWrapperConfig { ErrorFileName = "AuroraErrors.txt", TraceFileName = "AuroraTrace.txt", InfoFileName = "AuroraInfo.txt", ConfigName = "Aurora", AddDateTimeToFilesNames = true });
+        private static readonly Logging log = SmartHomeConstants.log;
         private static List<AuroraKnowingDevices> _knowingAuroras = new();
         private static List<string> _groupScenarios;
         private static readonly Dictionary<string, List<string>> _groupScenariosperRoom = new();

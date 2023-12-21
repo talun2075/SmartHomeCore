@@ -34,8 +34,9 @@ namespace SmartHome.Controllers
         {
             ViewBag.Title = "Aurora";
             ViewBag.png = "nanoleaflogo.png";
-            ViewBag.png16 = "nanoleaflogo.png";
-            ViewBag.png32 = "nanoleaflogo.png";
+            ViewBag.png16 = "favicon-16x16.png";
+            ViewBag.png32 = "favicon-32x32.png";
+            ViewBag.svg = "nanoleaf.svg";
             ViewBag.NavClass = "navFourth";
             return View();
         }

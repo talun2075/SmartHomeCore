@@ -291,7 +291,7 @@ namespace SmartHome.Classes.SmartHome
         /// Schaltet den Garten an
         /// </summary>
         /// <returns></returns>
-        public async Task<DeConzResults> DeconzGardenOn()
+        public async Task<string> DeconzGardenOn()
         {
             try
             {
@@ -302,30 +302,32 @@ namespace SmartHome.Classes.SmartHome
                 Random rand = new();
                 lw.SetColor(SmartHomeConstants.Deconz.RandomRGBColor);
                 lw.Brightness = (byte)rand.Next(31, 150);
-                var retval = await ChangeGroupState(lw, "22");
-                return retval;
+                _ = await ChangeGroupState(lw, "22");
+                return "ok";
             }
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "DeconzGardenon");
-                return deconz.GenerateExceptionMessage(ex, "DeconzGardenOn");
+                return "error";
+                //return deconz.GenerateExceptionMessage(ex, "DeconzGardenOn");
             }
         }
         /// <summary>
         /// Schaltet den Garten aus
         /// </summary>
         /// <returns></returns>
-        public async Task<DeConzResults> DeconzGardenOff()
+        public async Task<string> DeconzGardenOff()
         {
             try
             {
-                var retval = await ChangeGroupState(deconz.LightCommand.TurnOff(), await deconz.GetGroup("Garten"));
-                return retval;
+                _ = await ChangeGroupState(deconz.LightCommand.TurnOff(), await deconz.GetGroup("Garten"));
+                return "ok";
             }
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "DeconzGardenOff");
-                return deconz.GenerateExceptionMessage(ex, "DeconzGardenOff");
+                //return deconz.GenerateExceptionMessage(ex, "DeconzGardenOff");
+                return "error";
             }
         }
         /// <summary>

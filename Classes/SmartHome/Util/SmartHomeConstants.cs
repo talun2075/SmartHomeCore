@@ -48,22 +48,6 @@ namespace SmartHome.Classes.SmartHome.Util
         {
             ok
         }
-        /// <summary>
-        /// TimerTypen
-        /// </summary>
-        public enum TimerType
-        {
-            /// <summary>
-            /// Use the Class/Methods for internal calling
-            /// This is the Default;
-            /// </summary>
-            INTERNAL,
-            /// <summary>
-            /// Try to call a Web URI
-            /// </summary>
-            URL
-        }
-
         #region WebServerCalls
         private static readonly HttpClient _httpClient = new() { Timeout = TimeSpan.FromMinutes(5) };
         /// <summary>

@@ -34,10 +34,6 @@ namespace SmartHome.Classes.SmartHome.Data
         /// </summary>
         public DateTime LastRuntime { get; set; }
         /// <summary>
-        /// The Type of Timer
-        /// </summary>
-        public SmartHomeConstants.TimerType TimerType { get; set; } = SmartHomeConstants.TimerType.URL;
-        /// <summary>
         /// The URI if Timertype is URL / Class of Method to call if Type INTERNAL
         /// </summary>
         public string Path { get; set; }

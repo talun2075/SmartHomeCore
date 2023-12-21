@@ -13,7 +13,6 @@ namespace Bootstrapper
 {
     public static class Bootstrapper
     {
-        //todo: fehlende Systeme zufügen. 
         public static IServiceCollection AddConfig(this IServiceCollection services, IConfiguration config)
 
         {
@@ -29,6 +28,7 @@ namespace Bootstrapper
 #pragma warning restore IDE0060 // Nicht verwendete Parameter entfernen
 
         {
+            //todo: add aurora
             services.AddSingleton<IDatabaseWrapper, DatabaseWrapper>();
             services.AddSingleton<IDeyeModbus, DeyeModbus>();
             services.AddSingleton<ISmartHomeWrapper, SmartHomeWrapper>();
