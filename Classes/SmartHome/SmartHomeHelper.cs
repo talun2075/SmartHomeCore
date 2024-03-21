@@ -48,6 +48,21 @@ namespace SmartHome.Classes.SmartHome
         /// <summary>
         /// Auroras ausschalten
         /// </summary>
+        public async Task<bool> PowerOffAuroras(string room)
+        {
+            try
+            {
+                return await AuroraWrapper.GroupPowerOn(room, false);
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "PowerOffAuroras:Block2");
+                return false;
+            }
+        }
+        /// <summary>
+        /// Auroras ausschalten
+        /// </summary>
         public async Task<bool> PowerOffAuroras()
         {
             try
@@ -656,6 +671,59 @@ namespace SmartHome.Classes.SmartHome
             catch (Exception ex)
             {
                 SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "SonosGuestRoom:Block2");
+                return false;
+            }
+        }
+        public async Task<bool> SonosWorkRoom(string playlist, int volume = 0)
+        {
+            try
+            {
+                string retval;
+                if (volume > 0)
+                {
+                    retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GenericRoomOn + "/" + playlist + "/Arbeit/" + volume);
+                }
+                else
+                {
+                    return false;
+                }
+
+                if (bool.TryParse(retval, out bool retvalchecked))
+                {
+                    return retvalchecked;
+                }
+                else
+                {
+                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "SonosWorkRoom");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "SonosWorkRoom:Block2");
+                return false;
+            }
+        }
+        public async Task<bool> SonosWorkRoomOff()
+        {
+            try
+            {
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GenericRoomOff + "/Arbeit");
+                
+
+                if (bool.TryParse(retval, out bool retvalchecked))
+                {
+                    return retvalchecked;
+                }
+                else
+                {
+                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "SonosWorkRoom");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "SonosWorkRoom:Block2");
                 return false;
             }
         }

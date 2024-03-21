@@ -255,6 +255,11 @@ namespace SmartHome.Classes.SmartHome.Util
         /// </summary>
         public string GuestRoom { get; private set; } = BaseURL + "/GuestRoom";
         /// <summary>
+        /// Generic Room, wird über den Namen als Parameter gesteuert.
+        /// </summary>
+        public string GenericRoomOn { get; private set; } = BaseURL + "/GenericRoomOn";
+        public string GenericRoomOff { get; private set; } = BaseURL + "/GenericRoomOff";
+        /// <summary>
         /// Gästezimmer Lautstärke nach oben oder unten korrigieren.
         /// </summary>
         public string GuestRoomVolume { get; private set; } = BaseURL + "/RoomVolumeRelativ/RINCON_000E5850B61601400/";

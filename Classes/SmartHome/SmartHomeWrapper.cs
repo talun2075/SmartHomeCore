@@ -34,7 +34,7 @@ namespace SmartHome.Classes.SmartHome
             }
             switch (mac)
             {
-                case "5CCF7FF0D13F":
+                case "60019427DE18":
                     return await GuestRoom("zzz Regen Neu");
                 case "2C3AE801C092":
                     return await GroundFloorOn();
@@ -47,7 +47,7 @@ namespace SmartHome.Classes.SmartHome
                     {
                         await GroundFloorOff();
                         await helper.DeconzGroundFloorOff();
-                        await helper.PowerOffAurora("Wohnzimmer");
+                        await helper.PowerOffAuroras("Wohnzimmer");
                         await helper.PowerOffAurora("Esszimmer");
                         return true;
                     }
@@ -70,21 +70,17 @@ namespace SmartHome.Classes.SmartHome
             }
             switch (mac)
             {
-                case "5CCF7FF0D13F":
-                    return await GuestRoom("zzz tempsleep", 6);
                 case "2C3AE8018316":
                     return await FirstOff();
                 case "BCFF4D4B1034":
                     return await helper.SonosIanRoomRandom2();
                 case "68C63AD16455":
                     return await helper.SonosIanRoomRandom3();
-                case "60019427DE18":
-                    return await PowerShellysGuestRoom(true);
                 case "2C3AE801C092":
                     return await GroundFloorOff();
                 case "483FDA6EBD7D":
                     return await GroundFloorOn("Foo Fighters");
-                case "60019427EFA7":
+                case "60019427DE18":
                     return await GuestRoom("zzz Regen Neu");
                 case "5CCF7FF0D1CA":
                     return await AllOff();
@@ -109,8 +105,6 @@ namespace SmartHome.Classes.SmartHome
             }
             switch (mac)
             {
-                case "60019427DE18":
-                    return await WohnzimmerSpezial();
                 case "2C3AE801C092":
                 case "5CCF7FF0D1CA":
                     return await GroundFloorOff();
@@ -118,7 +112,7 @@ namespace SmartHome.Classes.SmartHome
                     return await GroundFloorOn("Gelegenheit Party");
                 case "5CCF7F0CC51A":
                     return await helper.SonosIanRoomOff();
-                case "60019427EFA7":
+                case "60019427DE18":
                     return await GuestRoomOff() && await helper.PowerShellysGuestRoomRight(false);
                 case "68C63AD1624E":
                     var result = await helper.DeconzLightsPower(new List<string>() { "8", "28" });
@@ -144,8 +138,6 @@ namespace SmartHome.Classes.SmartHome
             {
                 case "5CCF7F0CC51A":
                     return await helper.SonosIanRoomOff();
-                case "60019427DE18":
-                    return await PowerShellysGuestRoom(false);
                 case "2C3AE801C092":
                     return await GroundFloorOn("Harte Gruppen");
                 case "5CCF7FF0D13F":
@@ -158,7 +150,7 @@ namespace SmartHome.Classes.SmartHome
                     return await GroundFloorOn();
                 case "2C3AE8018316":
                     return await AllOff();
-                case "60019427EFA7":
+                case "60019427DE18":
                     return await GuestRoom("zzz tempsleep", 6);
                 case "68C63AD1624E":
                     var result = await helper.DeconzLightsPower(new List<string>() { "8", "28" }, false);

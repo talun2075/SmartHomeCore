@@ -23,6 +23,7 @@ namespace SmartHome.Classes.SmartHome.Interfaces
         Task<bool> PowerOffDenon(bool ignoreinput = false);
         Task<bool> PowerOnAurora(string selectedaurora);
         Task<bool> PowerOnAuroras(string room);
+        Task<bool> PowerOffAuroras(string room);
         Task<bool> PowerOnDenon();
         Task<bool> PowerShellysGuestRoom(bool powerOn);
         Task<bool> PowerShellysGuestRoomRight(bool powerOn);
@@ -30,6 +31,8 @@ namespace SmartHome.Classes.SmartHome.Interfaces
         Task<bool> SonosGroundFloorOff();
         Task<bool> SonosGroundFloorOn(string playlist);
         Task<bool> SonosGuestRoom(string playlist, int volume = 0);
+        Task<bool> SonosWorkRoom(string playlist, int volume = 0);
+        Task<bool> SonosWorkRoomOff();
         Task<bool> CupeLiving(int id);
         Task<bool> SonosGuestRoomAudioInOff();
         Task<bool> SonosGuestRoomAudioInOn();

@@ -214,6 +214,21 @@ namespace SmartHome.Controllers
             }
             return a.NLJ.State.Brightness.Value;
         }
+        /// <summary>
+        /// Brightness /Helligkeit
+        /// </summary>
+        /// <param name="id">Number between min and max</param>
+        /// <param name="v">Value of Brightness</param>
+        /// <returns>Brightness</returns>
+        [HttpGet("SetBrightnessRoom/{room}/{value}/{up}")]
+        public async Task<Boolean> SetBrightnessRoom(string room, string value,Boolean up = true)
+        {
+            if (string.IsNullOrEmpty(room) || string.IsNullOrEmpty(value)) return false;
+            if (!int.TryParse(value, out var b)) return false;
+
+            return await AuroraWrapper.SetBrightnessByRoom(room, b, up);
+            
+        }
         [HttpPost("SetHSVColor/{id}")]
         public async Task<int> SetHSVColor(string id, [FromBody] hsvColor hsvcolor)
         {

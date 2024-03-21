@@ -151,6 +151,7 @@ namespace SmartHome.Classes.Aurora.Core
                 }
                 if (string.IsNullOrEmpty(animName)) return "Error beim ermitteln des ZufallsEffects";
                 await SetSelectedScenario(animName);
+                await SetBrightness(25);
                 return NLJ.Effects.Selected;
             }
             catch (Exception ex)

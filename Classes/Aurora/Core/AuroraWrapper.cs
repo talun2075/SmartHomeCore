@@ -502,6 +502,37 @@ namespace SmartHome.Classes.Aurora.Core
                 return ex.Message;
             }
         }
+        public async static Task<Boolean> SetBrightnessByRoom(string room, int value, bool up)
+        {
+            if (!await CheckAuroraLiving()) return false;
+            try
+            {
+                foreach (AuroraLigth aurora in AurorasList)
+                {
+                    if (string.IsNullOrEmpty(aurora.Room) || aurora.Room.ToLower() != room.ToLower()) continue;
+                    int newval = aurora.NLJ.State.Brightness.Value;
+                    if (up)
+                    {
+                        newval += value;
+                    }
+                    else
+                    {
+                        newval -= value;
+                    }
+                    if (newval < aurora.NLJ.State.Brightness.Min)
+                        newval = aurora.NLJ.State.Brightness.Min;
+                    if (newval > aurora.NLJ.State.Brightness.Max)
+                        newval = aurora.NLJ.State.Brightness.Max;
+                    await aurora.SetBrightness(newval);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.ServerErrorsAdd("SetBrightnessByRoom Method: " + ex.Message, null);
+                return false;
+            }
+        }
         /// <summary>
         /// Set Group Scenarios
         /// </summary>

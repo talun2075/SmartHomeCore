@@ -52,7 +52,8 @@ namespace SmartHome.Controllers
         [HttpGet("CheckTimer")]
         public async Task<Boolean> CheckTimer()
         {
-            return await shtw.CheckTimer();
+            return false;
+            //return await shtw.CheckTimer();
         }
         [HttpGet("AllButtons")]
         public async Task<List<Button>> AllButtons()

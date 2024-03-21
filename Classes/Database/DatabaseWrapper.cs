@@ -14,7 +14,7 @@ namespace SmartHome.Classes.Database
         private SQLiteConnection conn;
         private SQLiteCommand cmd;
         private SQLiteCommand rcmd;
-        private readonly string cs = @"URI=file:E:\talun\buttonsbatteryLevel.db";//todo: move to configuration
+        private readonly string cs = @"URI=file:E:\talun\buttonsbatteryLevel.db";
         public DatabaseWrapper(IOptionsMonitor<DatabaseOptions> options)
         {
             if (!string.IsNullOrEmpty(options.CurrentValue.Path))
@@ -47,7 +47,7 @@ namespace SmartHome.Classes.Database
 
         public async void Close()
         {
-            if (conn != null || conn.State != System.Data.ConnectionState.Closed)
+            if (conn != null && conn.State != System.Data.ConnectionState.Closed)
                await conn.CloseAsync();
 
         }
