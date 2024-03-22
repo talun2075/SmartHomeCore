@@ -796,7 +796,7 @@ namespace SmartHome.Classes.SmartHome
         {
             try
             {
-                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.POST, SmartHomeConstants.Sonos.FinnRoomReplace,playlist);
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.FinnRoomReplace+"/"+playlist);
 
 
                 if (bool.TryParse(retval, out bool retvalchecked))

@@ -271,7 +271,7 @@ namespace SmartHome.Classes.SmartHome.Util
         public string IanRoomRandom3 { get; private set; } = "http://sonos.tami/Ian/PlayRandom/zzzIanButton3";
         public string IanRoomRandom2 { get; private set; } = "http://sonos.tami/Ian/PlayRandom/zzzIanButton2";
         public string FinnRoomRandom1 { get; private set; } = "http://sonos.tami/Finn/PlayRandom/zzzFinnButton1";
-        public string FinnRoomReplace { get; private set; } = "http://sonos.tami/Finn/ReplacePlaylist";
+        public string FinnRoomReplace { get; private set; } = "http://sonos.tami/Finn/ReplacePlaylistGet";
         /// <summary>
         /// Gästezimmer aus.
         /// </summary>
