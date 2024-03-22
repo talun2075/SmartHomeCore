@@ -6,31 +6,113 @@ using Microsoft.Extensions.Options;
 using Domain;
 using SmartHome.Classes.SmartHome.Util;
 using SmartHome.Classes.SmartHome.Data;
+using SmartHome.Classes.Receipt;
 
 namespace SmartHome.Classes.Database
 {
     public class DatabaseWrapper : IDatabaseWrapper
     {
-        private SQLiteConnection conn;
-        private SQLiteCommand cmd;
-        private SQLiteCommand rcmd;
-        private readonly string cs = @"URI=file:E:\talun\buttonsbatteryLevel.db";
+        private SQLiteConnection conbuttons;
+        private SQLiteConnection conReceipt;
+        private readonly string dbButtons = @"URI=file:E:\talun\buttonsbatteryLevel.db";
+        private readonly string dbReceipt = @"URI=file:E:\talun\receipts.db";
         public DatabaseWrapper(IOptionsMonitor<DatabaseOptions> options)
         {
-            if (!string.IsNullOrEmpty(options.CurrentValue.Path))
+            if (!string.IsNullOrEmpty(options.CurrentValue.PathBatttery))
             {
-                cs = options.CurrentValue.Path;
+                dbButtons = options.CurrentValue.PathBatttery;
             }
-            conn = new SQLiteConnection(cs);
+            conbuttons = new SQLiteConnection(dbButtons);
+            if (!string.IsNullOrEmpty(options.CurrentValue.PathReceipt))
+            {
+                dbReceipt = options.CurrentValue.PathReceipt;
+            }
+            conReceipt = new SQLiteConnection(dbReceipt);
         }
-
-        public async Task<bool> Open()
+        #region Receipt
+        private async Task<bool> OpenReceipt()
         {
             try
             {
-                if (conn.State == System.Data.ConnectionState.Open) return true;
-                    await conn.OpenAsync();
-                cmd = new SQLiteCommand(conn)
+                if(conReceipt == null)
+                {
+                    conReceipt = new SQLiteConnection(dbReceipt);
+                }
+                if (conReceipt.State == System.Data.ConnectionState.Open) return true;
+                await conReceipt.OpenAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.Open", ex);
+                return false;
+            }
+
+        }
+        private async void CloseReceipt()
+        {
+            if (conReceipt != null && conReceipt.State != System.Data.ConnectionState.Closed)
+                await conReceipt.CloseAsync();
+
+        }
+        public async Task<ReceiptDTO> ReadReceiptData(int receiptid)
+        {
+            ReceiptDTO ret = new ReceiptDTO();
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "select * from talun_rezepte where rezept_id ="+receiptid
+                };
+                var rdr = await rcmd.ExecuteReaderAsync();
+                
+                while (rdr.Read())
+                {
+                    var id = rdr.GetInt32(0);
+                    var title = rdr.GetString(1);
+                    var decription = rdr.GetString(2);
+                    var duration = rdr.GetString(4);
+                    var resttime = rdr.GetString(5);
+                    var resttimeunit = rdr.GetString(6);
+
+                    ret.ID = id; 
+                    ret.Title = title; 
+                    ret.Duration = duration;
+                    ret.Decription = decription;
+                    ret.RestTime.RestTime = string.IsNullOrEmpty(resttime)? 0 : Convert.ToInt32(resttime);
+                    ret.RestTime.Unit = string.IsNullOrEmpty(resttimeunit) ? 0 : Convert.ToInt32(resttimeunit);
+
+                }
+                //todo: fehlende Zutaten und kategorien zufügen.
+
+                return ret;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadButtons", ex);
+                return ret;
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+
+
+        }
+        #endregion Receipt
+        #region Buttons
+        private async Task<bool> OpenButton()
+        {
+            try
+            {
+                if(conbuttons == null)
+                {
+                    conbuttons = new SQLiteConnection(dbButtons);
+                }
+                if (conbuttons.State == System.Data.ConnectionState.Open) return true;
+                await conbuttons.OpenAsync();
+                var cmd = new SQLiteCommand(conbuttons)
                 {
                     CommandText = "CREATE TABLE IF NOT EXISTS buttons (id text PRIMARY KEY,name text NOT NULL,battery integer default 100, lastaction text, lastclick text, ip text);"
                 };
@@ -44,34 +126,13 @@ namespace SmartHome.Classes.Database
             }
 
         }
-
-        public async void Close()
+        private async void CloseButton()
         {
-            if (conn != null && conn.State != System.Data.ConnectionState.Closed)
-               await conn.CloseAsync();
+            if (conbuttons != null && conbuttons.State != System.Data.ConnectionState.Closed)
+                await conbuttons.CloseAsync();
 
         }
-        ///// <summary>
-        ///// Update Batterie Wert
-        ///// </summary>
-        ///// <param name="mac"></param>
-        ///// <param name="batteryvalue"></param>
-        ///// <returns></returns>
-        //public static async Task<Boolean> UpdateBattery(Button button)
-        //{
-        //    try
-        //    {
-        //        if (cmd == null || conn == null || conn.State != System.Data.ConnectionState.Open) await Open();
-        //        cmd.CommandText = "Update buttons set battery=" + button.Batterie + " where id ='" + button.Mac + "'";
-        //        await cmd.ExecuteNonQueryAsync();
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateButton", ex);
-        //        return false;
-        //    }
-        //}
+
         /// <summary>
         /// Aktualisiert ein Button in die DB
         /// </summary>
@@ -84,8 +145,12 @@ namespace SmartHome.Classes.Database
         {
             try
             {
-                if (cmd == null || conn == null || conn.State != System.Data.ConnectionState.Open) await Open();
-                cmd.CommandText = "REPLACE INTO buttons(id,name, battery,lastaction, lastclick,ip) VALUES('" + button.Mac + "','" + button.Name + "'," + button.Batterie + ",'" + button.LastAction + "','" + DateTime.Now.ToString() + "','" + button.IP + "')";
+                await OpenButton();
+                var cmd = new SQLiteCommand(conbuttons)
+                {
+                    CommandText = "REPLACE INTO buttons(id,name, battery,lastaction, lastclick,ip) VALUES('" + button.Mac + "','" + button.Name + "'," + button.Batterie + ",'" + button.LastAction + "','" + DateTime.Now.ToString() + "','" + button.IP + "')"
+                };
+
                 await cmd.ExecuteNonQueryAsync();
                 return true;
             }
@@ -94,7 +159,7 @@ namespace SmartHome.Classes.Database
                 SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateButton", ex);
                 return false;
             }
-            finally { Close(); }
+            finally { CloseButton(); }
         }
         /// <summary>
         /// Liest alle Buttons aus der Datenbank, wenn diese in KnowingButtons vorhanden sind.
@@ -104,8 +169,8 @@ namespace SmartHome.Classes.Database
         {
             try
             {
-                if (cmd == null) await Open();
-                rcmd = new SQLiteCommand(conn)
+                await OpenButton();
+                var rcmd = new SQLiteCommand(conbuttons)
                 {
                     CommandText = "Select * from buttons"
                 };
@@ -141,9 +206,9 @@ namespace SmartHome.Classes.Database
             }
             finally
             {
-                Close();
+                CloseButton();
             }
         }
-
+        #endregion Buttons
     }
 }

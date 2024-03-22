@@ -70,6 +70,8 @@ namespace SmartHome.Classes.SmartHome
             }
             switch (mac)
             {
+                case "60019427EFA7":
+                    return await helper.SonosFinnRoomRandom1();
                 case "2C3AE8018316":
                     return await FirstOff();
                 case "BCFF4D4B1034":
@@ -105,6 +107,8 @@ namespace SmartHome.Classes.SmartHome
             }
             switch (mac)
             {
+                case "60019427EFA7":
+                    return await helper.SonosFinnRoomOff();
                 case "2C3AE801C092":
                 case "5CCF7FF0D1CA":
                     return await GroundFloorOff();
@@ -136,6 +140,8 @@ namespace SmartHome.Classes.SmartHome
             }
             switch (mac)
             {
+                case "60019427EFA7":
+                    return await helper.SonosFinn("Santiano");
                 case "5CCF7F0CC51A":
                     return await helper.SonosIanRoomOff();
                 case "2C3AE801C092":

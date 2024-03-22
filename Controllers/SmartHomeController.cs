@@ -50,10 +50,9 @@ namespace SmartHome.Controllers
             return await shw.Generic(GetContext());
         }
         [HttpGet("CheckTimer")]
-        public async Task<Boolean> CheckTimer()
+        public Boolean CheckTimer()
         {
             return false;
-            //return await shtw.CheckTimer();
         }
         [HttpGet("AllButtons")]
         public async Task<List<Button>> AllButtons()

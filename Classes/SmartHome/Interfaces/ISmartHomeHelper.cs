@@ -41,6 +41,9 @@ namespace SmartHome.Classes.SmartHome.Interfaces
         Task<bool> SonosIanRoomOff();
         Task<bool> SonosIanRoomRandom2();
         Task<bool> SonosIanRoomRandom3();
+        Task<bool> SonosFinnRoomRandom1();
+        Task<bool> SonosFinnRoomOff();
+        Task<bool> SonosFinn(string playlist);
         Task<bool> SonosLivingRoomSpezial();
         Task<bool> SonosLivingRoomVolume(bool vol);
         Task<bool> SonosStoppAllPlayer();

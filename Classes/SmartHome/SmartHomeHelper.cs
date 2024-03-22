@@ -769,6 +769,73 @@ namespace SmartHome.Classes.SmartHome
                 return false;
             }
         }
+        public async Task<bool> SonosFinnRoomOff()
+        {
+            try
+            {
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.GenericRoomOff + "/Finn");
+
+
+                if (bool.TryParse(retval, out bool retvalchecked))
+                {
+                    return retvalchecked;
+                }
+                else
+                {
+                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "SonosWorkRoom");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "SonosWorkRoom:Block2");
+                return false;
+            }
+        }
+        public async Task<bool> SonosFinn(string playlist)
+        {
+            try
+            {
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.POST, SmartHomeConstants.Sonos.FinnRoomReplace,playlist);
+
+
+                if (bool.TryParse(retval, out bool retvalchecked))
+                {
+                    return retvalchecked;
+                }
+                else
+                {
+                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "SonosWorkRoom");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "SonosWorkRoom:Block2");
+                return false;
+            }
+        }
+        public async Task<bool> SonosFinnRoomRandom1()
+        {
+            try
+            {
+                string retval = await SmartHomeConstants.ConnectToWeb(SmartHomeConstants.RequestEnums.GET, SmartHomeConstants.Sonos.FinnRoomRandom1);
+                if (bool.TryParse(retval, out bool retvalchecked))
+                {
+                    return retvalchecked;
+                }
+                else
+                {
+                    SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", new Exception(retval), "SonosFinnRoomRandom1");
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("SmartHomeHelper", ex, "SonosFinnRoomRandom1:Block2");
+                return false;
+            }
+        }
         public async Task<bool> SonosGuestRoomAudioInOn()
         {
             try
