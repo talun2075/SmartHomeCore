@@ -1,0 +1,281 @@
+body {
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#000)) fixed;
+    font-size: x-large;
+}
+/*Navigations Men�*/
+.NavigationMenu {
+    display: none;
+    cursor: pointer;
+}
+
+.bar1, .bar2, .bar3 {
+    width: 35px;
+    height: 5px;
+    background-color: #333;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
+.changeShowNav .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-9px, 6px);
+    transform: rotate(-45deg) translate(-9px, 6px);
+}
+
+.changeShowNav .bar2 {
+    opacity: 0;
+}
+
+.changeShowNav .bar3 {
+    -webkit-transform: rotate(45deg) translate(-8px, -8px);
+    transform: rotate(45deg) translate(-8px, -8px);
+}
+
+.navigationseintrag {
+    height: 5em;
+    width: 5em;
+    background-color: white;
+    background-size: 90% 90%;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+    .navigationseintrag:nth-child(2) {
+        border-bottom: 1px solid grey;
+        border-top: 1px solid grey;
+    }
+
+    .navigationseintrag:nth-child(4) {
+        border-bottom: 1px solid grey;
+        border-top: 1px solid grey;
+    }
+#Navigation {
+    position: fixed;
+    z-index: 500;
+}
+#Suche {
+    display: none;
+    text-align: left;
+    border-radius: 25px 25px 25px 25px;
+    margin-left: 6em;
+    overflow: hidden;
+    border: 1px solid gray;
+    background-color: white;
+    margin-bottom: 0.5em;
+}
+#SucheInput {
+
+    width: calc(100% - 3em);
+    height: 2em;
+    background-color: white;
+    border: none;
+    padding-left: 2.5em;
+    background-image: URL('/images/rnavigation/rezeptsuche.svg');
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    font-size: 2em;
+    background-position: left;
+    margin-left: 0.5em;
+
+}
+#SucheEintragKeineErgebnisse {
+    text-align: center;
+    padding-top: 1em;
+    display: none;
+    border-radius: 25px;
+    background-color: white;
+    margin-left: 6em;
+    padding-bottom: 1em;
+    margin-top: 0.5em;
+    margin-bottom: 0.5em;
+}
+#RezeptListeButton {
+    background-image: url("/images/rnavigation/list.svg");
+    border-radius: 25px 25px 0 0;
+}
+
+#ZutatenListeButton {
+    background-image: url("/images/rnavigation/carrot.svg");
+}
+#SucheButton {
+    background-image: url("/images/rnavigation/rezeptsuche.svg");
+    border-radius: 0 0 25px 25px;
+}
+#KategorieListeButton {
+    background-image: url("/images/rnavigation/category.svg");
+}
+#EinheitenListeButton {
+    background-image: url("/images/rnavigation/cu.svg");
+    border-radius: 0 0 25px 25px;
+}
+
+.ueberschrift {
+    text-align: center;
+    font-style: oblique;
+    font-weight: bold;
+}
+
+.listen {
+    display: none;
+    margin-left: 6em;
+    background-color: white;
+    border: 1px solid grey;
+    border-radius: 25px 25px 25px 25px;
+    min-height: 100px;
+}
+
+.listenEintrag {
+    padding-left: 1em;
+    border-bottom: 1px dotted grey;
+}
+    .listenEintrag:last-child {
+        border-bottom: 0;
+    }
+#RezeptDauerWrapper,#RezeptRuheZeitWrapper,#ZeitenWrapper {
+    display: flex;
+    width: calc(100% - 4em);
+}
+#RezeptZutaten > DIV {
+    margin-top: 0.5em;
+}
+.rezeptElement {
+    padding: 2em;
+    border-top: 1px dotted grey;
+}
+#Rezept > .rezeptElement:first-child {
+    border-top: 0;
+}
+#RezeptOptionInformation {
+    background: linear-gradient(0deg, rgba(255,255,255,1) 0%, rgba(255,255,255,0.4317927854735645) 56%, rgba(0,0,0,1) 100%);
+    border-radius: 25px 25px 0 0;
+    display:none;
+}
+.zeiger {
+    cursor: pointer;
+    font-style: italic;
+}
+/*Bilder*/
+/* Slideshow container */
+.slideshow-container {
+  max-width: 1000px;
+  position: relative;
+  margin: auto;
+}
+
+/* Hide the images by default */
+.mySlides {
+    display: none;
+}
+.mySlides > IMG,.singlePicture {
+    max-height: 25em;
+    width: 100%;
+    border-radius: 20px 20px 20px 20px;
+    height: auto;
+    object-fit: contain;
+}
+/* Next & previous buttons */
+.prev, .next {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  width: auto;
+  margin-top: -22px;
+  padding: 16px;
+  color: white;
+  font-weight: bold;
+  font-size: 18px;
+  transition: 0.6s ease;
+  border-radius: 0 3px 3px 0;
+  z-index: 300;
+    background-color: grey;
+}
+
+/* Position the "next button" to the right */
+.next {
+  right: 2.6em;
+  border-radius: 3px 0 0 3px;
+}
+
+/* On hover, add a black background color with a little bit see-through */
+.prev:hover, .next:hover {
+    background-color: #000000;
+    background-color: rgba(0,0,0,0.8);
+}
+
+/* Number text (1/3 etc) */
+.numbertext {
+  color: #f2f2f2;
+  padding: 2.5em 1em;
+  position: absolute;
+  top: 0;
+}
+.numbertextformat {
+    background-color: grey;
+    border-radius: 2em;
+    padding: 0.5em;
+}
+.active {
+  background-color: #717171;
+}
+#RezeptPermaLinkA {
+    cursor: pointer;
+    text-decoration: none;
+    color: black;
+    font-style: italic;
+    font-weight: bold;
+}
+/* Fading animation */
+.fade {
+  -webkit-animation-name: fade;
+  -webkit-animation-duration: 1.5s;
+  animation-name: fade;
+  animation-duration: 1.5s;
+}
+
+@-webkit-keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+@keyframes fade {
+  from {opacity: .4}
+  to {opacity: 1}
+}
+
+
+/*MediaQueries*/
+@media screen and (orientation: portrait) {
+    .NavigationMenu {
+        display: inline-block;
+    }
+    #Navigation {
+        box-shadow: 3px 3px 3px 3px;
+        border-radius: 25px;
+        top: 2em;
+        left: 2em;
+    }
+    .listen, #Suche {
+        width: calc(100% - 1em);
+        margin: 2em 0.5em 2em 0.5em;
+    }
+
+    .noDisplaySmart {
+        display: none;
+    }
+    #RezeptTitelDIV > LABEL{
+        display: flex;
+    }
+    #RezeptTitelIN {
+        max-width: calc(100% - 1.5em);
+    }
+}
+@media screen and (max-width: 560px) {
+    #ZeitenWrapper,#ZeitenWrapper > DIV {
+        display: block;
+    }
+	.navigationseintrag {
+    height: 4em;
+    width: 4em;
+    
+}
+
+}

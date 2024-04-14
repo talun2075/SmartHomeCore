@@ -39,6 +39,10 @@ namespace SmartHome.Controllers
                 case "links.tami":
                 case "link.tami":
                     return RedirectToAction("Index", "Links");
+                case "r.tami":
+                case "rezept.tami":
+                case "rezepte.tami":
+                    return RedirectToAction("Index", "receipt");
             }
             return RedirectToAction("Index", "Deconz"); ;
         }

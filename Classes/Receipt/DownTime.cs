@@ -2,7 +2,7 @@
 {
     public class DownTime
     {
-        public int RestTime { get; set; }
+        public string RestTime { get; set; }
         public int Unit { get; set; }
     }
 }

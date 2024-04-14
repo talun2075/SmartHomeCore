@@ -1,0 +1,52 @@
+﻿<link rel="stylesheet" href="/css/rezepte.css" media="all" />
+<script src="/js/rezept.js" type="text/javascript"></script>
+<script src="/js/qrcode.js" type="text/javascript"></script>
+<script src="/js/send.js" type="text/javascript"></script>
+<meta charset="UTF-8" />
+<div class="InsideWrapper">
+    <div class="NavigationMenu" onclick="ChangeNavigationMenu(this)">
+        <div class="bar1"></div>
+        <div class="bar2"></div>
+        <div class="bar3"></div>
+    </div>
+    <div id="Navigation" class="noDisplaySmart">
+        <div id="RezeptListeButton" class="navigationseintrag" onclick="Rezept.GetRezeptListe()"></div>
+        <div id="ZutatenListeButton" class="navigationseintrag" onclick="Rezept.RenderZutatenListe()"></div>
+        <div id="KategorieListeButton" class="navigationseintrag" onclick="Rezept.RenderKategorieListe()"></div>
+        <div id="SucheButton" class="navigationseintrag" onclick="Rezept.Suche('button')"></div>
+
+    </div>
+    <div id="Suche"><div id="SucheWrapper"><input placeholder="Suche.." maxlength="20" type="text" id=SucheInput></div></div>
+    <div id="SucheEintragKeineErgebnisse">Keine Suchergebnisse</div>
+    <div id="OptionsListe" class="listen"></div>
+    <div id="RezeptListe" class="listen"></div>
+    <div id="ZutatenListe" class="listen"></div>
+    <div id="KategorieListe" class="listen"></div>
+    <div id="DruckListe" class="listen"></div>
+    <div id="Rezept" class="listen">
+        <div id="RezeptOptionInformation" class="rezeptElement ueberschrift" onclick="Rezept.OptionListShow()"></div>
+        <div id="RezeptTitel" class="rezeptElement ueberschrift"></div>
+
+        <div id="RezeptBilder" class="rezeptElement slideshow-container"></div>
+        <div id="RezeptBeschreibung" class="rezeptElement"></div>
+        <div id="ZeitenWrapper" class="rezeptElement">
+            <div id="RezeptDauerWrapper">
+                <div>Dauer:&nbsp;&nbsp; </div>
+                <div id="RezeptDauer"></div>
+
+            </div>
+            <div id="RezeptRuheZeitWrapper">
+                <div>Ruhezeit:&nbsp;&nbsp;</div>
+                <div id="RezeptRuheZeit"></div>
+            </div>
+        </div>
+        <div id="RezeptZutaten" class="rezeptElement"></div>
+        <div id="RezeptKategorien" class="rezeptElement"></div>
+        <div id="RezeptPermaLinkDIV" class="rezeptElement"><a href="" id="RezeptPermaLinkA">Link zum Rezept<br><canvas id="Qrperma" /></a></div>
+    </div>
+</div>
+<script>
+    window.Rezept = new RezeptObject();
+    Rezept.Init();
+    setTimeout("LoadParamRezept()", 1000);
+</script>

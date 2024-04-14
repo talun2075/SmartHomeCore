@@ -1,6 +1,7 @@
 ﻿body {
     font-size: 1.5em;
     background-color: #aeaeb0;
+    /*/todo: warum wird die navigation mal sticky mal nicht*/
 }
 .topNavigation {
     height: auto;
@@ -8,8 +9,14 @@
     display: inline-flex;
     margin-bottom: 30px;
     margin-top: 10px;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: wrap;
+    position: sticky;
+    top: 20px;
+    background-color: white;
+    padding-bottom: 10px;
+    border-radius: 25px 25px 25px 25px;
+    box-shadow: black 15px 10px 30px;
+    z-index: 5;
 }
 .topNavigation a {
         color: black;
@@ -44,4 +51,14 @@ a{
 }
 .navSixt > DIV:nth-child(6) {
     font-weight: bold;
+}
+.navSeven > DIV:nth-child(7) {
+    font-weight: bold;
+}
+
+@media screen and (max-width: 560px) {
+    .topNavigation {
+        position: initial;
+    }
+
 }

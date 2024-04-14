@@ -7,6 +7,7 @@ using Domain;
 using SmartHome.Classes.SmartHome.Util;
 using SmartHome.Classes.SmartHome.Data;
 using SmartHome.Classes.Receipt;
+using System.Collections.Generic;
 
 namespace SmartHome.Classes.Database
 {
@@ -34,7 +35,7 @@ namespace SmartHome.Classes.Database
         {
             try
             {
-                if(conReceipt == null)
+                if (conReceipt == null)
                 {
                     conReceipt = new SQLiteConnection(dbReceipt);
                 }
@@ -55,42 +56,162 @@ namespace SmartHome.Classes.Database
                 await conReceipt.CloseAsync();
 
         }
-        public async Task<ReceiptDTO> ReadReceiptData(int receiptid)
+
+        public async Task<List<IngredientDTOBase>> ReadIngrediensData()
         {
-            ReceiptDTO ret = new ReceiptDTO();
+            List<IngredientDTOBase> ret = new();
             try
             {
                 await OpenReceipt();
                 var rcmd = new SQLiteCommand(conReceipt)
                 {
-                    CommandText = "select * from talun_rezepte where rezept_id ="+receiptid
+                    CommandText = "select * from talun_rezepte_zutaten order by zutat"
                 };
                 var rdr = await rcmd.ExecuteReaderAsync();
-                
+
                 while (rdr.Read())
                 {
-                    var id = rdr.GetInt32(0);
-                    var title = rdr.GetString(1);
-                    var decription = rdr.GetString(2);
-                    var duration = rdr.GetString(4);
-                    var resttime = rdr.GetString(5);
-                    var resttimeunit = rdr.GetString(6);
-
-                    ret.ID = id; 
-                    ret.Title = title; 
-                    ret.Duration = duration;
-                    ret.Decription = decription;
-                    ret.RestTime.RestTime = string.IsNullOrEmpty(resttime)? 0 : Convert.ToInt32(resttime);
-                    ret.RestTime.Unit = string.IsNullOrEmpty(resttimeunit) ? 0 : Convert.ToInt32(resttimeunit);
-
+                    IngredientDTOBase ing = new();
+                    ing.ID = rdr.GetInt32(0);
+                    ing.Ingredient = rdr.GetString(1);
+                    ret.Add(ing);
                 }
-                //todo: fehlende Zutaten und kategorien zufügen.
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadIngrediensData",ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
+        public async Task<List<CategoryDTO>> ReadCategoriesData()
+        {
+            List<CategoryDTO> ret = new();
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "select * from talun_rezepte_kategorie order by kategorie"
+                };
+                var rdr = await rcmd.ExecuteReaderAsync();
+
+                while (rdr.Read())
+                {
+                    CategoryDTO ing = new();
+                    ing.ID = rdr.GetInt32(0);
+                    ing.Category = rdr.GetString(1);
+                    ret.Add(ing);
+                }
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadCategoriessData", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
+        public async Task<List<ReceiptDTO>> ReadReceiptList()
+        {
+            List<ReceiptDTO> ret = new();
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "select * from talun_rezepte order by rezept_titel"
+                };
+                var rdr = await rcmd.ExecuteReaderAsync();
+
+                while (rdr.Read())
+                {
+                    ReceiptDTO receipt = new ReceiptDTO();
+                    try
+                    {
+                        var resttimeunit = rdr.GetString(6);
+                        receipt.ID = rdr.GetInt32(0);
+                        receipt.Title = rdr.GetString(1);
+                        receipt.Duration = rdr.GetString(4);
+                        receipt.Decription = rdr.GetString(2);
+                        receipt.RestTime.RestTime = rdr.GetString(5);
+                        receipt.RestTime.Unit = string.IsNullOrEmpty(resttimeunit) ? 0 : Convert.ToInt32(resttimeunit);
+
+                        var rkcmd = new SQLiteCommand(conReceipt)
+                        {
+                            CommandText = "SELECT zuei.menge,zu.zutat_id, zu.zutat, e.einheit,zuei.zuei_id FROM talun_rezepte_zuei as zuei left join talun_rezepte_zutaten as zu on zuei.zutat_id=zu.zutat_id LEFT JOIN talun_rezepte_einheit AS e ON zuei.einheit_id=e.einheit_id WHERE zuei.rezept_id=" + receipt.ID
+                        };
+                        var rkdr = await rkcmd.ExecuteReaderAsync();
+                        List<IngredientPerReceipt> ingredients = new List<IngredientPerReceipt>();
+                        while (rkdr.Read())
+                        {
+                            IngredientPerReceipt ing = new();
+                            ing.Amount = rkdr.GetString(0);
+                            ing.ID = rkdr.GetInt32(1);
+                            ing.Ingredient = rkdr.GetString(2);
+                            ing.Unit = rkdr.GetString(3);
+                            ing.IngredientUnitID = rkdr.GetInt32(4);
+                            ingredients.Add(ing);
+                        }
+                        receipt.Ingredients = ingredients;
+                        var rkatcmd = new SQLiteCommand(conReceipt)
+                        {
+                            CommandText = "SELECT kr.kategorie_id, ka.kategorie FROM talun_rezepte_kare AS kr LEFT JOIN talun_rezepte_kategorie AS ka ON kr.kategorie_id=ka.kategorie_id WHERE kr.rezept_id=" + receipt.ID
+                        };
+                        var rkatdr = await rkatcmd.ExecuteReaderAsync();
+                        List<CategoryDTO> categories = new();
+                        while (rkatdr.Read())
+                        {
+                            CategoryDTO cat = new();
+                            cat.ID = rkatdr.GetInt32(0);
+                            if (cat.ID > 0)
+                                cat.Category = rkatdr.GetString(1);
+
+                            categories.Add(cat);
+                        }
+                        receipt.Categories = categories;
+
+                        var rbatcmd = new SQLiteCommand(conReceipt)
+                        {
+                            CommandText = "SELECT * FROM talun_rezepte_bilder WHERE rezept_id='" + receipt.ID + "' order by bild_ordnen"
+                        };
+                        var rbatdr = await rbatcmd.ExecuteReaderAsync();
+                        List<Picture> pictures = new();
+                        while (rbatdr.Read())
+                        {
+                            try
+                            {
+                                Picture pic = new();
+                                pic.ID = rbatdr.GetInt32(0);
+                                pic.Image = rbatdr.GetString(2);
+                                pic.SortOrder = rbatdr.GetString(3);
+                                pictures.Add(pic);
+                            }
+                            catch (Exception ex)
+                            {
+                                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadReceiptList:Pictures:RezeptID:" + receipt.ID, ex);
+                            }
+                        }
+                        receipt.Pictures = pictures;
+
+                        ret.Add(receipt);
+                    }
+                    catch (Exception ex)
+                    {
+                        SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadReceiptList:RezeptID:" + receipt.ID, ex);
+                    }
+                }//While Ende
 
                 return ret;
             }
             catch (Exception ex)
             {
-                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadButtons", ex);
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadReceiptList", ex);
                 return ret;
             }
             finally
@@ -100,13 +221,14 @@ namespace SmartHome.Classes.Database
 
 
         }
+
         #endregion Receipt
         #region Buttons
         private async Task<bool> OpenButton()
         {
             try
             {
-                if(conbuttons == null)
+                if (conbuttons == null)
                 {
                     conbuttons = new SQLiteConnection(dbButtons);
                 }

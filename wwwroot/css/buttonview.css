@@ -1,4 +1,7 @@
-﻿.button_ring {
+﻿#BodyDIV {
+    display: flow-root;
+}
+.button_ring {
     background-color: chartreuse;
     border-radius: 50%;
     width: 350px;

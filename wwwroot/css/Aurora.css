@@ -1,6 +1,7 @@
 ﻿#AuroraWrapper {
     margin: 0 auto;
     width: fit-content;
+    display: flow-root;
 }
 .auroraName {
     margin-bottom: 10px;
