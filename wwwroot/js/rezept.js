@@ -6,6 +6,8 @@ var OptionListSource = "";
 var RezeptListe = [];
 var ZutatenListe = [];
 var KategorieListe = [];
+var EinheitenListe = [];
+var adminmodus = false;
 //Dom Elements
 var DOMRezeptliste;
 var DOMRezept;
@@ -25,6 +27,8 @@ var DOMSucheInput;
 var DOMSucheKeineErgebnisse;
 var DOMOptionsListe;
 var DOMRezeptOptionInformation;
+var DOMEinheitenListe;
+var DOMEinheitenListeButton;
 function RezeptObject(adminstyle) {
     var t = this;
     this.adminStyle = (typeof adminstyle === "undefined") ? false : adminstyle;
@@ -47,6 +51,8 @@ function RezeptObject(adminstyle) {
         DOMSucheKeineErgebnisse = document.getElementById("SucheEintragKeineErgebnisse");
         DOMOptionsListe = document.getElementById("OptionsListe");
         DOMRezeptOptionInformation = document.getElementById("RezeptOptionInformation");
+        DOMEinheitenListe = document.getElementById("EinheitenListe");
+        DOMEinheitenListeButton = document.getElementById("EinheitenListeButton");
         this.GetRezeptListe();
         DOMSucheInput.addEventListener('input', function (evt) {
             Rezept.Suche("change")
@@ -70,14 +76,31 @@ function RezeptObject(adminstyle) {
         if (DOMRezeptliste.hasChildNodes()) {
             DOMRezeptliste.replaceChildren();
         }
-        RezeptListe.forEach(re => {
+        if (adminmodus === true) {
             var divEntry = document.createElement("DIV");
             divEntry.classList.add("listenEintrag")
-            divEntry.textContent = re.title;
-            divEntry.setAttribute("onclick", "Rezept.GetRezept(" + re.id + ")");
-            divEntry.dataset.name = re.title.toLowerCase();
+            divEntry.textContent = "Neu";
+            divEntry.setAttribute("onclick", "Rezept.EditRezept('neu')");
+            divEntry.dataset.name = "neu";
             DOMRezeptliste.appendChild(divEntry);
-        });
+            RezeptListe.forEach(re => {
+                var divEntry = document.createElement("DIV");
+                divEntry.classList.add("listenEintrag")
+                divEntry.textContent = re.title;
+                divEntry.setAttribute("onclick", "Rezept.EditRezept(" + re.id + ")");
+                divEntry.dataset.name = re.title.toLowerCase();
+                DOMRezeptliste.appendChild(divEntry);
+            });
+        } else {
+            RezeptListe.forEach(re => {
+                var divEntry = document.createElement("DIV");
+                divEntry.classList.add("listenEintrag")
+                divEntry.textContent = re.title;
+                divEntry.setAttribute("onclick", "Rezept.GetRezept(" + re.id + ")");
+                divEntry.dataset.name = re.title.toLowerCase();
+                DOMRezeptliste.appendChild(divEntry);
+            });
+        }
         DOMRezeptliste.style.display = "block";
     }
     this.HideLists = function () {
@@ -221,17 +244,34 @@ function RezeptObject(adminstyle) {
         if (DOMZutatenListe.hasChildNodes()) {
             DOMZutatenListe.replaceChildren();
         }
-        ZutatenListe.forEach(ing => {
+        if (adminmodus === true) {
             let ingDom = document.createElement("DIV");
             ingDom.classList.add("listenEintrag");
-            ingDom.textContent = ing.ingredient;
-            ingDom.dataset.name = ing.ingredient.toLowerCase();
-            ingDom.setAttribute("OnClick", "Rezept.GetZutatenPerID(" + ing.id + ",'" + ing.ingredient +"')");
+            ingDom.textContent = "Neu";
+            ingDom.dataset.name = "neu";
+            ingDom.setAttribute("OnClick", "Rezept.AddType('Zutat')");
             DOMZutatenListe.appendChild(ingDom);
-        });
+            ZutatenListe.forEach(ing => {
+                let ingDom = document.createElement("DIV");
+                ingDom.classList.add("listenEintrag");
+                ingDom.textContent = ing.ingredient;
+                ingDom.dataset.name = ing.ingredient.toLowerCase();
+                ingDom.setAttribute("OnClick", "Rezept.EditType(" + ing.id + ",'Zutat')");
+                DOMZutatenListe.appendChild(ingDom);
+            });
+        } else {
+            ZutatenListe.forEach(ing => {
+                let ingDom = document.createElement("DIV");
+                ingDom.classList.add("listenEintrag");
+                ingDom.textContent = ing.ingredient;
+                ingDom.dataset.name = ing.ingredient.toLowerCase();
+                ingDom.setAttribute("OnClick", "Rezept.GetZutatenPerID(" + ing.id + ",'" + ing.ingredient + "')");
+                DOMZutatenListe.appendChild(ingDom);
+            });
+        }
         DOMZutatenListe.style.display = "block";
     }
-    this.GetZutatenPerID = function (id,text) {
+    this.GetZutatenPerID = function (id, text) {
         let foundedre = RezeptListe.filter(obj => { return obj.ingredients.find(y => y.id == id); });
         if (foundedre.length === 0) {
             return;
@@ -252,7 +292,6 @@ function RezeptObject(adminstyle) {
         });
         this.OptionListShow();
     }
-
     this.GetKategoriePerID = function (id, text) {
         let foundedre = RezeptListe.filter(obj => { return obj.categories.find(y => y.id == id); });
         if (foundedre.length === 0 || foundedre === undefined) {
@@ -307,14 +346,31 @@ function RezeptObject(adminstyle) {
         if (DOMKategorieListe.hasChildNodes()) {
             DOMKategorieListe.replaceChildren();
         }
-        KategorieListe.forEach(cat => {
+        if (adminmodus === true) {
             let catDom = document.createElement("DIV");
             catDom.classList.add("listenEintrag");
-            catDom.textContent = cat.category;
-            catDom.dataset.name = cat.category.toLowerCase();
-            catDom.setAttribute("OnClick", "Rezept.GetKategoriePerID(" + cat.id + ",'"+cat.category+"')");
+            catDom.textContent = "Neu";
+            catDom.dataset.name = "neu";
+            catDom.setAttribute("OnClick", "Rezept.AddType('Kategorie')");
             DOMKategorieListe.appendChild(catDom);
-        });
+            KategorieListe.forEach(cat => {
+                let catDom = document.createElement("DIV");
+                catDom.classList.add("listenEintrag");
+                catDom.textContent = cat.category;
+                catDom.dataset.name = cat.category.toLowerCase();
+                catDom.setAttribute("OnClick", "Rezept.EditType(" + cat.id + ",'Kategorie')");
+                DOMKategorieListe.appendChild(catDom);
+            });
+        } else {
+            KategorieListe.forEach(cat => {
+                let catDom = document.createElement("DIV");
+                catDom.classList.add("listenEintrag");
+                catDom.textContent = cat.category;
+                catDom.dataset.name = cat.category.toLowerCase();
+                catDom.setAttribute("OnClick", "Rezept.GetKategoriePerID(" + cat.id + ",'" + cat.category + "')");
+                DOMKategorieListe.appendChild(catDom);
+            });
+        }
         DOMKategorieListe.style.display = "block";
     }
     this.GetKategorieListe = function (withRender = false) {
@@ -378,87 +434,160 @@ function RezeptObject(adminstyle) {
         }
     }
 
+    this.RenderEinheitenListe = function () {
+        this.HideLists();
+        this.ResetSearch();
+        this.OptionListClear();
+        if (EinheitenListe.length === 0) {
+            this.GetEinheitenListe(true);
+            return;
+        }
+        if (DOMEinheitenListe.hasChildNodes()) {
+            DOMEinheitenListe.replaceChildren();
+        }
+        if (adminmodus === true) {
+            let catDom = document.createElement("DIV");
+            catDom.classList.add("listenEintrag");
+            catDom.textContent = "Neu";
+            catDom.dataset.name = "neu";
+            catDom.setAttribute("OnClick", "Rezept.AddType('Einheit')");
+            DOMEinheitenListe.appendChild(catDom);
+            EinheitenListe.forEach(cat => {
+                let catDom = document.createElement("DIV");
+                catDom.classList.add("listenEintrag");
+                catDom.textContent = cat.unit;
+                catDom.dataset.name = cat.unit.toLowerCase();
+                catDom.setAttribute("OnClick", "Rezept.EditType(" + cat.id + ",'Einheit')");
+                DOMEinheitenListe.appendChild(catDom);
+            });
+        } else {
+            
+        }
+        DOMEinheitenListe.style.display = "block";
+    }
+    this.GetEinheitenListe = function (withRender = false) {
+        if (EinheitenListe.length === 0) {
+            Send(sendroot + "GetUnits").then(function (data) {
+                EinheitenListe = data;
+                if (withRender === true) {
+                    t.RenderEinheitenListe();
+                }
+            });
+        }
+    }
+    this.ToggleAdminModus = function(){
+        adminmodus = !adminmodus;
+        if (adminmodus === true) {
+            DOMEinheitenListeButton.style.display = "block";
+        } else {
+            DOMEinheitenListeButton.style.display = "none";
+        }
+        this.HideLists();
+        this.RenderRezepListe();
+    }
+    this.AddType = function(typ) {
+        var value = prompt("Bitte den Wert f" + unescape("%FC") + "r die " + typ + " eingeben:");
+        if (value != null) {
+            switch (typ) {
+                case "Einheit":
+                    Send(sendroot + "AddUnit", value, "POST").then(function () {
+                        EinheitenListe = []
+                        t.RenderEinheitenListe();
+                    }).catch(function (jqXHR, textStatus) {
+                        alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                    });
+
+                    break;
+                case "Zutat":
+                    Send(sendroot + "AddIngredient", value, "POST").then(function () {
+                        ZutatenListe = []
+                        t.RenderZutatenListe();
+                    }).catch(function (jqXHR, textStatus) {
+                        alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                    });
+                    break;
+                case "Kategorie":
+                    Send(sendroot + "AddCategory", value, "POST").then(function () {
+                        KategorieListe = []
+                        t.RenderKategorieListe();
+                    }).catch(function (jqXHR, textStatus) {
+                        alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                    });
+                    break;
+                default:
+                    this.ErrorMessage("Unkowing AddType");
+                    return;
+                    break;
+
+            }
+        }
+    }
+    this.EditType = function(id, typ) {
+        if (isNaN(id)) {
+            alert("ID has wrong Syntax");
+            return;
+        };
+        let listentryt;
+        switch (typ) {
+            case "Einheit":
+                listentryt = EinheitenListe.find(x => x.id == id).unit;
+                if (typeof listentryt === "undefined") {
+                    alert("ID for Edit not Found");
+                    return;
+                }
+                break;
+            case "Zutat":
+                listentryt = ZutatenListe.find(x => x.id == id).ingredient;
+                if (typeof listentryt === "undefined") {
+                    alert("ID for Edit not Found");
+                    return;
+                }
+                break;
+            case "Kategorie":
+                listentryt = KategorieListe.find(x => x.id == id).category;
+                if (typeof listentryt === "undefined") {
+                    alert("ID for Edit not Found");
+                    return;
+                }
+                break;
+        }
+        listentryid = id;
+        //Prompt for new Value
+        var value = prompt("Bitte den neuen Wert f" + unescape("%FC") + "r " + listentryt + " eingeben", listentryt);
+        if (value != null) {
+                switch (typ) {
+                    case "Einheit":
+                        Send(sendroot + "UpdateUnit/" + id, value, "POST").then(function () {
+                            EinheitenListe = []
+                            t.RenderEinheitenListe();
+                        }).catch(function (jqXHR, textStatus) {
+                            alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                        });
+                        break;
+                    case "Zutat":
+                        Send(sendroot + "UpdateIngredient/" + id, value, "POST").then(function () {
+                            ZutatenListe = []
+                            t.RenderZutatenListe();
+                        }).catch(function (jqXHR, textStatus) {
+                            alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                        });
+                        break;
+                    case "Kategorie":
+                        Send(sendroot + "UpdateCategory/" + id, value, "POST").then(function () {
+                            KategorieListe = []
+                            t.RenderKategorieListe();
+                        }).catch(function (jqXHR, textStatus) {
+                            alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                        });
+                        break;
+                }
+            
+
+        }
+    }
 
 
 }//Ende Class
-
-/*
-
-this.EditRezept = function(id) {
-    if (id === "neu") {
-        AdminRezept.AddRezept();
-    } else {
-        AdminRezept.EditRezept(this.AjaxCall("r", id));
-    }
-}
-this.EditZutat = function (id) {
-    if (id ==="neu") {
-        AdminRezept.AddType("Zutat");
-    } else {
-        AdminRezept.EditType(id, "Zutat");
-    }
-}
-this.EditKategorie = function (id) {
-    if (id ==="neu") {
-        AdminRezept.AddType("Kategorie");
-    } else {
-        AdminRezept.EditType(id, "Kategorie");
-    }
-}
-this.EditEinheit = function(id) {
-    if (id ==="neu") {
-        AdminRezept.AddType("Einheit");
-    } else {
-        AdminRezept.EditType(id, "Einheit");
-    }
-}
-this.ReloadZutatenListe = function() {
-    ZutatenListeVar = [];
-    var el = document.getElementById("ZutatenListe");
-    while (el.firstChild) el.removeChild(el.firstChild);
-    this.GetZutatenListe();
-}
-this.ReloadKategorienListe = function () {
-    KategorienListeVar = [];
-    var el = document.getElementById("KategorieListe");
-    while (el.firstChild) el.removeChild(el.firstChild);
-    this.GetKategorienListe();
-}
-this.ReloadEinheitenListe = function () {
-    EinheitenListeVar = [];
-    var el = document.getElementById("EinheitenListe");
-    while (el.firstChild) el.removeChild(el.firstChild);
-    this.GetEinheitenListe();
-}
-this.LoadAllList = function() {
-    if (ZutatenListeVar.length === 0) {
-        this.AjaxCall("zl").done(function(data) {
-            for (var i = 0; i < data.length; i++) {
-                ZutatenListeVar[data[i].id] = data[i].titel;
-            }
-            ZutatenListeData = data;
-        });
-    }
-    if (KategorienListeVar.length === 0) {
-        this.AjaxCall("kl").done(function(data) {
-            for (var i = 0; i < data.length; i++) {
-                KategorienListeVar[data[i].id] = data[i].titel;
-            }
-            KategorienListeData = data;
-        });
-    }
-    if (EinheitenListeVar.length === 0) {
-        this.AjaxCall("el").done(function(data) {
-            for (var i = 0; i < data.length; i++) {
-                EinheitenListeVar[data[i].id] = data[i].titel;
-            }
-            EinheitenListeData = data;
-        });
-    }
-}
-*/
-//}
-
 
 
 function ChangeNavigationMenu(t) {

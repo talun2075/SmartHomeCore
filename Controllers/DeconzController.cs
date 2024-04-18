@@ -23,6 +23,7 @@ namespace SmartHome.Controllers
             SmartHomeConstants.Env = env;
             shp = _shp;
             deconz = _deconz;
+            //todo: Jquery aus oberfläche entfernen
         }
         public IActionResult Index()
         {

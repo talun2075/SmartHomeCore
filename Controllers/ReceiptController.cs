@@ -33,6 +33,11 @@ namespace SmartHome.Controllers
         {
             return await db.ReadCategoriesData();
         }
+        [HttpGet("GetUnits")]
+        public async Task<List<UnitDTO>> GetUnits()
+        {
+            return await db.ReadUnitsData();
+        }
         [HttpGet("GetIngrediens")]
         public async Task<List<IngredientDTOBase>> GetIngrediens()
         {
@@ -43,7 +48,35 @@ namespace SmartHome.Controllers
         {
             return await db.ReadReceiptList();
         }
-
-
+        [HttpPost("AddCategory")]
+        public async Task<Boolean> AddCategory([FromBody] string v)
+        {
+            return await db.AddCategory(v);
+        }
+        [HttpPost("AddUnit")]
+        public async Task<Boolean> AddUnit([FromBody] string v)
+        {
+            return await db.AddUnit(v);
+        }
+        [HttpPost("AddIngredient")]
+        public async Task<Boolean> AddIngredient([FromBody] string v)
+        {
+            return await db.AddIngredient(v);
+        }
+        [HttpPost("UpdateCategory/{id}")]
+        public async Task<Boolean> UpdateCategory(int id, [FromBody] string v)
+        {
+            return await db.UpdateCategory(new CategoryDTO { Category=v,ID = id});
+        }
+        [HttpPost("UpdateUnit/{id}")]
+        public async Task<Boolean> UpdateUnit(int id, [FromBody] string v)
+        {
+            return await db.UpdateUnit(id,v);
+        }
+        [HttpPost("UpdateIngredient/{id}")]
+        public async Task<Boolean> UpdateIngredient(int id, [FromBody] string v)
+        {
+            return await db.UpdateIngredient(new IngredientDTOBase { ID=id, Ingredient = v});
+        }
     }
 }

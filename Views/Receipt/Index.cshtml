@@ -13,8 +13,8 @@
         <div id="RezeptListeButton" class="navigationseintrag" onclick="Rezept.GetRezeptListe()"></div>
         <div id="ZutatenListeButton" class="navigationseintrag" onclick="Rezept.RenderZutatenListe()"></div>
         <div id="KategorieListeButton" class="navigationseintrag" onclick="Rezept.RenderKategorieListe()"></div>
+        <div id="EinheitenListeButton" class="adminnavigationseintrag" onclick="Rezept.RenderEinheitenListe()"></div>
         <div id="SucheButton" class="navigationseintrag" onclick="Rezept.Suche('button')"></div>
-
     </div>
     <div id="Suche"><div id="SucheWrapper"><input placeholder="Suche.." maxlength="20" type="text" id=SucheInput></div></div>
     <div id="SucheEintragKeineErgebnisse">Keine Suchergebnisse</div>
@@ -22,7 +22,7 @@
     <div id="RezeptListe" class="listen"></div>
     <div id="ZutatenListe" class="listen"></div>
     <div id="KategorieListe" class="listen"></div>
-    <div id="DruckListe" class="listen"></div>
+    <div id="EinheitenListe" class="listen"></div>
     <div id="Rezept" class="listen">
         <div id="RezeptOptionInformation" class="rezeptElement ueberschrift" onclick="Rezept.OptionListShow()"></div>
         <div id="RezeptTitel" class="rezeptElement ueberschrift"></div>
@@ -44,6 +44,28 @@
         <div id="RezeptKategorien" class="rezeptElement"></div>
         <div id="RezeptPermaLinkDIV" class="rezeptElement"><a href="" id="RezeptPermaLinkA">Link zum Rezept<br><canvas id="Qrperma" /></a></div>
     </div>
+    <div id="AdminRezept" class="listen">
+        <div id="RezeptTitelDIV">
+            <label for="RezeptTitelIN">Titel:</label><input id="RezeptTitelIN" type="text" />
+        </div>
+        <div id="RezeptBeschreibungDIVLabel">Beschreibung:</div>
+        <div id="RezeptBeschreibungDIV">
+            <textarea id="RezeptBeschreibungIN"></textarea>
+        </div>
+        <div id="RezeptDauerDIV">
+            <label for="RezeptDauerIN">Dauer:</label><input id="RezeptDauerIN" type="number" /> Minuten
+        </div>
+        <div id="RezeptRuheZeitDIV">
+            <label for="RezeptRuheZeitIN">Ruhezeit:</label><input id="RezeptRuheZeitIN" type="number" /><select id="RezeptRuheDauerSelection"><option value="" selected="selected"></option><option value="1">Minuten</option><option value="0">Stunden</option></select>
+        </div>
+        <div id="RezeptZutatenDIV"></div>
+        <div id="RezeptKategorienDIV"></div>
+        <div id="RezeptBildDIV">
+            <label for="RezeptBildIN">Bilder:</label><input id="RezeptBildIN" type="file" multiple="multiple" />
+        </div>
+        <div class="paddingbuttom">&nbsp;</div>
+    </div>
+    <div id="AdminButton" class="adminToggle" onclick="Rezept.ToggleAdminModus()"><img src="~/images/administration.png" /></div>
 </div>
 <script>
     window.Rezept = new RezeptObject();

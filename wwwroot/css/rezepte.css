@@ -15,7 +15,15 @@ body {
     margin: 6px 0;
     transition: 0.4s;
 }
-
+#AdminButton > IMG {
+    width: 2em;
+    height: 2em;
+}
+#AdminButton {
+    position: fixed;
+    left: 0;
+    bottom: 5px;
+}
 .changeShowNav .bar1 {
     -webkit-transform: rotate(-45deg) translate(-9px, 6px);
     transform: rotate(-45deg) translate(-9px, 6px);
@@ -30,7 +38,7 @@ body {
     transform: rotate(45deg) translate(-8px, -8px);
 }
 
-.navigationseintrag {
+.adminnavigationseintrag,.navigationseintrag {
     height: 5em;
     width: 5em;
     background-color: white;
@@ -38,11 +46,13 @@ body {
     background-repeat: no-repeat;
     background-position: center;
 }
-
-    .navigationseintrag:nth-child(2) {
-        border-bottom: 1px solid grey;
-        border-top: 1px solid grey;
-    }
+.adminnavigationseintrag{
+    display:none;
+}
+.navigationseintrag:nth-child(2) {
+    border-bottom: 1px solid grey;
+    border-top: 1px solid grey;
+}
 
     .navigationseintrag:nth-child(4) {
         border-bottom: 1px solid grey;
@@ -105,7 +115,6 @@ body {
 }
 #EinheitenListeButton {
     background-image: url("/images/rnavigation/cu.svg");
-    border-radius: 0 0 25px 25px;
 }
 
 .ueberschrift {
@@ -266,6 +275,9 @@ body {
     }
     #RezeptTitelIN {
         max-width: calc(100% - 1.5em);
+    }
+    #AdminButton {
+        display: none;
     }
 }
 @media screen and (max-width: 560px) {
