@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using System;
 using SmartHome.Classes.Receipt;
 using System.Collections.Generic;
+using System.IO;
+
 
 namespace SmartHome.Controllers
 {
@@ -53,6 +55,11 @@ namespace SmartHome.Controllers
         {
             return await db.AddCategory(v);
         }
+        [HttpPost("AddReceipt")]
+        public async Task<long> AddReceipt([FromBody] string v)
+        {
+            return await db.AddReceipt(v);
+        }
         [HttpPost("AddUnit")]
         public async Task<Boolean> AddUnit([FromBody] string v)
         {
@@ -66,17 +73,69 @@ namespace SmartHome.Controllers
         [HttpPost("UpdateCategory/{id}")]
         public async Task<Boolean> UpdateCategory(int id, [FromBody] string v)
         {
-            return await db.UpdateCategory(new CategoryDTO { Category=v,ID = id});
+            return await db.UpdateCategory(new CategoryDTO { Category = v, ID = id });
         }
         [HttpPost("UpdateUnit/{id}")]
         public async Task<Boolean> UpdateUnit(int id, [FromBody] string v)
         {
-            return await db.UpdateUnit(id,v);
+            return await db.UpdateUnit(id, v);
         }
         [HttpPost("UpdateIngredient/{id}")]
         public async Task<Boolean> UpdateIngredient(int id, [FromBody] string v)
         {
-            return await db.UpdateIngredient(new IngredientDTOBase { ID=id, Ingredient = v});
+            return await db.UpdateIngredient(new IngredientDTOBase { ID = id, Ingredient = v });
         }
+        [HttpPost("UpdateReceipt/{id}")]
+        public async Task<long> UpdateReceipt(int id, [FromBody] ReceiptUpdateDTO v)
+        {
+            switch (v.Type)
+            {
+                case ReceiptUpdateType.Duration:
+                case ReceiptUpdateType.Description:
+                case ReceiptUpdateType.RestTime:
+                case ReceiptUpdateType.ResTimeUnit:
+                case ReceiptUpdateType.Title:
+                    return await db.UpdateReceipt(id,v) == true ? 1 : 0;
+                case ReceiptUpdateType.ImageSortOrder:
+                    return await db.UpdateReceiptImageSortOrder(v) == true ? 1 : 0;
+                case ReceiptUpdateType.ImageDelete:
+                    if(await db.UpdateReceiptImageDelete(v))
+                    {
+                        //todo: delete image from path. v.value
+                    }
+                    break;
+                case ReceiptUpdateType.IngridientUnitDelete:
+                    return await db.UpdateReceiptIngridientUnitDelete(v) == true ? 1 : 0;
+                case ReceiptUpdateType.IngridientUnitUpdate:
+                    return await db.UpdateReceiptIngridientUnitUpdate(v) == true ? 1 : 0;
+                case ReceiptUpdateType.IngridientUnitADD:
+                    return await db.UpdateReceiptIngridientUnitAdd(id,v);
+                case ReceiptUpdateType.CategoryDelete:
+                    return await db.UpdateReceiptCategoryDelete(id, v) == true ? 1 : 0;
+                case ReceiptUpdateType.CategoryAdd:
+                    return await db.UpdateReceiptCategoryAdd(id,v)==true ? 1 : 0;
+            }
+            throw new NotImplementedException("Wrong ReceiptUpdateDTO Type send");
+        }
+        [HttpPost("UploadImage/{id}")]
+        public async Task<long> UploadImage(int id, [FromForm] IFormFile imfile)
+        {
+
+            //foreach (var formFile in files)
+            //{
+            //    if (formFile.Length > 0)
+            //    {
+            //        var filePath = Path.GetTempFileName();
+
+            //        using (var stream = System.IO.File.Create(filePath))
+            //        {
+            //            await formFile.CopyToAsync(stream);
+            //        }
+            //    }
+            //}
+
+            return 0;
+        }
+
     }
 }

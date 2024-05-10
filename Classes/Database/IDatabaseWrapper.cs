@@ -20,5 +20,14 @@ namespace SmartHome.Classes.Database
         Task<Boolean> UpdateCategory(CategoryDTO category);
         Task<Boolean> UpdateIngredient(IngredientDTOBase ingredient);
         Task<Boolean> UpdateUnit(int id, string unit);
+        Task<long> AddReceipt(string receiptName);
+        Task<Boolean> UpdateReceipt(long receiptId, ReceiptUpdateDTO ru);
+        Task<Boolean> UpdateReceiptCategoryAdd(long receiptId, ReceiptUpdateDTO ru);
+        Task<Boolean> UpdateReceiptCategoryDelete(long receiptId, ReceiptUpdateDTO ru);
+        Task<long> UpdateReceiptIngridientUnitAdd(long receiptId, ReceiptUpdateDTO ru);
+        Task<Boolean> UpdateReceiptIngridientUnitDelete(ReceiptUpdateDTO ru);
+        Task<Boolean> UpdateReceiptIngridientUnitUpdate(ReceiptUpdateDTO ru);
+        Task<Boolean> UpdateReceiptImageSortOrder(ReceiptUpdateDTO ru);
+        Task<Boolean> UpdateReceiptImageDelete(ReceiptUpdateDTO ru);
     }
 }

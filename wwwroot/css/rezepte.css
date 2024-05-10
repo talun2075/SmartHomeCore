@@ -21,7 +21,7 @@ body {
 }
 #AdminButton {
     position: fixed;
-    left: 0;
+    right: 0;
     bottom: 5px;
 }
 .changeShowNav .bar1 {
@@ -291,3 +291,164 @@ body {
 }
 
 }
+
+/*ADMIN PART*/
+label {
+    min-width: 6em;
+    margin-right: 1em;
+    display: inline-block;
+}
+
+input[type="text"], input[type="number"] {
+    border: 1px solid grey;
+    border-radius: 25px;
+    line-height: 1.5em;
+    padding-left: 1em;
+    font-size: x-large;
+    margin-top: 0.3em;
+    width: 3em;
+}
+
+#RezeptBeschreibungIN {
+    width: 100%;
+    height: 25em;
+    max-width: 90em;
+}
+
+#RezeptTitelIN {
+    width: 100%;
+    max-width: calc(100% - 10em);
+}
+
+#RezeptBeschreibungDIV {
+    padding: 1em;
+}
+
+SELECT {
+    border-radius: 5px;
+    border: 1px solid grey;
+    box-shadow: 2px 0 2px 0;
+    background-color: #d9dce0;
+    padding: 0.5em;
+    margin-left: 1em;
+    vertical-align: middle;
+}
+
+#RezeptRuheDauerSelection {
+    margin-left: 0.5em;
+    height: 2.5em;
+    padding-top: 0.5em;
+}
+
+#RezeptDauerDIV, #RezeptZutatenDIV, #RezeptKategorienDIV, #RezeptTitelDIV, #RezeptBeschreibungDIVLabel, #RezeptBildDIV {
+    margin-top: 1em;
+    border-top: 1px dotted grey;
+    padding-top: 0.5em;
+}
+
+.kategorieWrapper {
+    margin-bottom: 1em;
+}
+
+#BilderWrapperHideShowClick {
+    font-style: italic;
+    cursor: pointer;
+    border: 1px solid grey;
+    max-width: 14em;
+    text-align: center;
+    border-radius: 12px;
+    background-color: #d9dce0;
+    box-shadow: 3px 1px 3px 0;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.rezeptBilderListe > IMG {
+    max-width: 25em;
+}
+
+.rezeptBilderListe {
+    padding-bottom: 1em;
+}
+
+#RezeptBildDIV {
+    padding: 1em;
+}
+
+#BilderWrapperHideShow {
+    margin-top: 1em;
+}
+
+.hideChild > DIV {
+    display: none;
+}
+
+.error {
+    -webkit-animation-name: error;
+    -webkit-animation-duration: 1s;
+    animation-name: error;
+    animation-duration: 1s;
+    background-color: red;
+}
+
+.changedDone {
+    -webkit-animation-name: changedDone;
+    -webkit-animation-duration: 1s;
+    animation-name: changedDone;
+    animation-duration: 1s;
+}
+
+@-webkit-keyframes changedDone {
+    0% {
+        background-color: white;
+    }
+
+    50% {
+        background-color: green;
+    }
+
+    100% {
+        background-color: white;
+    }
+}
+
+@keyframes changedDone {
+    0% {
+        background-color: white;
+    }
+
+    50% {
+        background-color: green;
+    }
+
+    100% {
+        background-color: white;
+    }
+}
+
+@keyframes error {
+    0% {
+        background-color: white;
+    }
+
+    100% {
+        background-color: red;
+    }
+}
+/*Tinymce Anpassungen*/
+.mce-tinymce {
+    border-radius: 25px;
+    overflow: hidden;
+}
+
+/*MediaQueries*/
+@media screen and (orientation: portrait) {
+    #RezeptTitelDIV > LABEL {
+        display: flex;
+    }
+
+    #RezeptTitelIN {
+        max-width: calc(100% - 1.5em);
+    }
+}
+

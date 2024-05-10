@@ -2,6 +2,7 @@
 <script src="/js/rezept.js" type="text/javascript"></script>
 <script src="/js/qrcode.js" type="text/javascript"></script>
 <script src="/js/send.js" type="text/javascript"></script>
+<script src="/js/tinymce/tinymce.min.js"></script>
 <meta charset="UTF-8" />
 <div class="InsideWrapper">
     <div class="NavigationMenu" onclick="ChangeNavigationMenu(this)">
@@ -61,13 +62,17 @@
         <div id="RezeptZutatenDIV"></div>
         <div id="RezeptKategorienDIV"></div>
         <div id="RezeptBildDIV">
+            <div id="UploadImageList"></div>
             <label for="RezeptBildIN">Bilder:</label><input id="RezeptBildIN" type="file" multiple="multiple" />
+            <div id="BilderWrapperHideShowClick" onclick="Rezept.TogglePictures()" >Bilder Anzeigen/Verstecken</div>
+            <div id="BilderWrapper" class="hideChild"></div>
         </div>
         <div class="paddingbuttom">&nbsp;</div>
     </div>
     <div id="AdminButton" class="adminToggle" onclick="Rezept.ToggleAdminModus()"><img src="~/images/administration.png" /></div>
 </div>
 <script>
+    window.ReceiptUpdateType = new ReceiptUpdateTypeClass();
     window.Rezept = new RezeptObject();
     Rezept.Init();
     setTimeout("LoadParamRezept()", 1000);

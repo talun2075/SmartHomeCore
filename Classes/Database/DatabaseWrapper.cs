@@ -56,7 +56,6 @@ namespace SmartHome.Classes.Database
                 await conReceipt.CloseAsync();
 
         }
-
         public async Task<Boolean> AddCategory(string categoryName)
         {
             Boolean ret = false;
@@ -65,9 +64,9 @@ namespace SmartHome.Classes.Database
                 await OpenReceipt();
                 var rcmd = new SQLiteCommand(conReceipt)
                 {
-                    CommandText = "Insert INTO talun_rezepte_kategorie(kategorie) VALUES('"+categoryName+"')"
+                    CommandText = "Insert INTO talun_rezepte_kategorie(kategorie) VALUES('" + categoryName + "')"
                 };
-                _= await rcmd.ExecuteNonQueryAsync();
+                _ = await rcmd.ExecuteNonQueryAsync();
                 ret = true;
             }
             catch (Exception ex)
@@ -79,6 +78,28 @@ namespace SmartHome.Classes.Database
                 CloseReceipt();
             }
             return ret;
+        }
+        public async Task<long> AddReceipt(string receiptName)
+        {
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Insert INTO talun_rezepte(rezept_titel) VALUES('" + receiptName + "')"
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                return conReceipt.LastInsertRowId;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.AddCategory", ex);
+                return -1;
+            }
+            finally
+            {
+                CloseReceipt();
+            }
         }
         public async Task<Boolean> AddIngredient(string ingridient)
         {
@@ -134,7 +155,7 @@ namespace SmartHome.Classes.Database
                 await OpenReceipt();
                 var rcmd = new SQLiteCommand(conReceipt)
                 {
-                    CommandText = "Update talun_rezepte_kategorie set kategorie = '"+category.Category+"' where kategorie_id ="+category.ID
+                    CommandText = "Update talun_rezepte_kategorie set kategorie = '" + category.Category + "' where kategorie_id =" + category.ID
                 };
                 _ = await rcmd.ExecuteNonQueryAsync();
                 ret = true;
@@ -217,7 +238,7 @@ namespace SmartHome.Classes.Database
             }
             catch (Exception ex)
             {
-                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadIngrediensData",ex);
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadIngrediensData", ex);
             }
             finally
             {
@@ -302,13 +323,19 @@ namespace SmartHome.Classes.Database
                     ReceiptDTO receipt = new ReceiptDTO();
                     try
                     {
-                        var resttimeunit = rdr.GetString(6);
-                        receipt.ID = rdr.GetInt32(0);
-                        receipt.Title = rdr.GetString(1);
-                        receipt.Duration = rdr.GetString(4);
-                        receipt.Decription = rdr.GetString(2);
-                        receipt.RestTime.RestTime = rdr.GetString(5);
-                        receipt.RestTime.Unit = string.IsNullOrEmpty(resttimeunit) ? 0 : Convert.ToInt32(resttimeunit);
+                        try
+                        {
+                            receipt.ID = rdr.GetInt32(0);
+                            receipt.Title = rdr.GetString(1);
+                            receipt.Duration = rdr.IsDBNull(4) ? "" : rdr.GetString(4);
+                            receipt.Decription = rdr.IsDBNull(2) ? "" : rdr.GetString(2);
+                            receipt.RestTime.RestTime = rdr.IsDBNull(5) ? "" : rdr.GetString(5);
+                            receipt.RestTime.Unit = rdr.IsDBNull(6) ? "" : rdr.GetString(6);
+                        }
+                        catch (Exception ex)
+                        {
+                            SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadReceiptList:receipt:RezeptID:" + receipt.ID, ex);
+                        }
 
                         var rkcmd = new SQLiteCommand(conReceipt)
                         {
@@ -319,12 +346,20 @@ namespace SmartHome.Classes.Database
                         while (rkdr.Read())
                         {
                             IngredientPerReceipt ing = new();
-                            ing.Amount = rkdr.GetString(0);
-                            ing.ID = rkdr.GetInt32(1);
-                            ing.Ingredient = rkdr.GetString(2);
-                            ing.Unit = rkdr.GetString(3);
-                            ing.IngredientUnitID = rkdr.GetInt32(4);
-                            ingredients.Add(ing);
+                            try
+                            {
+                                
+                                ing.Amount = rkdr.GetString(0);
+                                ing.ID = rkdr.GetInt32(1);
+                                ing.Ingredient = rkdr.GetString(2);
+                                ing.Unit = rkdr.GetString(3);
+                                ing.IngredientUnitID = rkdr.GetInt32(4);
+                                ingredients.Add(ing);
+                            }
+                            catch (Exception ex)
+                            {
+                                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadReceiptList:ingridiens:RezeptID:" + receipt.ID, ex);
+                            }
                         }
                         receipt.Ingredients = ingredients;
                         var rkatcmd = new SQLiteCommand(conReceipt)
@@ -335,12 +370,19 @@ namespace SmartHome.Classes.Database
                         List<CategoryDTO> categories = new();
                         while (rkatdr.Read())
                         {
-                            CategoryDTO cat = new();
-                            cat.ID = rkatdr.GetInt32(0);
-                            if (cat.ID > 0)
-                                cat.Category = rkatdr.GetString(1);
+                            try
+                            {
+                                CategoryDTO cat = new();
+                                cat.ID = rkatdr.GetInt32(0);
+                                if (cat.ID > 0)
+                                    cat.Category = rkatdr.GetString(1);
 
-                            categories.Add(cat);
+                                categories.Add(cat);
+                            }
+                            catch (Exception ex)
+                            {
+                                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.ReadReceiptList:categories:RezeptID:" + receipt.ID, ex);
+                            }
                         }
                         receipt.Categories = categories;
 
@@ -389,7 +431,215 @@ namespace SmartHome.Classes.Database
 
 
         }
+        public async Task<Boolean> UpdateReceipt(long receiptId, ReceiptUpdateDTO ru)
+        {
+            Boolean ret = false;
+            try
+            {
+                await OpenReceipt();
+                string field = String.Empty;
+                string val=String.Empty;
+                switch (ru.Type)
+                {
+                    case ReceiptUpdateType.Title:
+                        field = "rezept_titel";
+                        val = ru.Value;
+                        break;
+                    case ReceiptUpdateType.Description:
+                        field = "rezept_besch";
+                        val = ru.Value;
+                        break;
+                    case ReceiptUpdateType.Duration:
+                        field = "rezept_dauer";
+                        val = ru.Value;
+                        break;
+                    case ReceiptUpdateType.RestTime:
+                        field = "rezept_ruhezeit";
+                        val = ru.Value;
+                        break;
+                    case ReceiptUpdateType.ResTimeUnit:
+                        field = "rezept_ruhezeit_d";
+                        val = ru.Value;
+                        break;
 
+                }
+                if(string.IsNullOrEmpty(field) || string.IsNullOrEmpty(val)) return false;
+
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Update talun_rezepte set "+field+" = '" + val + "' where rezept_id =" + receiptId
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                ret = true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateUnit", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
+        public async Task<Boolean> UpdateReceiptCategoryAdd(long receiptId, ReceiptUpdateDTO ru)
+        {
+            Boolean ret = false;
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "insert into talun_rezepte_kare(rezept_id,kategorie_id) VALUES (" + receiptId + "," + ru.UnitID + ")"
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                ret = true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryAdd", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
+        public async Task<Boolean> UpdateReceiptCategoryDelete(long receiptId, ReceiptUpdateDTO ru)
+        {
+            Boolean ret = false;
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Delete from talun_rezepte_kare where rezept_id="+receiptId+" AND kategorie_id =" + ru.UnitID
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                ret = true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryDelete", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
+        public async Task<long> UpdateReceiptIngridientUnitAdd(long receiptId, ReceiptUpdateDTO ru)
+        {
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "insert into talun_rezepte_zuei(rezept_id,einheit_id,zutat_id,menge) VALUES (" + receiptId + "," + ru.UnitID + "," + ru.UnitID2 + ",'" + ru.Value + "')"
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                return conReceipt.LastInsertRowId;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryAdd", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return 0;
+        }
+        public async Task<Boolean> UpdateReceiptIngridientUnitUpdate(ReceiptUpdateDTO ru)
+        {
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Update talun_rezepte_zuei set menge ='"+ru.Value+"' where zuei_id="+ru.UnitID
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryAdd", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return false;
+        }
+        public async Task<Boolean> UpdateReceiptIngridientUnitDelete(ReceiptUpdateDTO ru)
+        {
+            Boolean ret = false;
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Delete from talun_rezepte_zuei where zuei_id=" + ru.UnitID
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                ret = true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryDelete", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
+        public async Task<Boolean> UpdateReceiptImageSortOrder(ReceiptUpdateDTO ru)
+        {
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Update talun_rezepte_bilder set bild_ordnen ='" + ru.Value + "' where bild_id=" + ru.UnitID
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptImageSortOrder", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return false;
+        }
+        public async Task<Boolean> UpdateReceiptImageDelete(ReceiptUpdateDTO ru)
+        {
+            Boolean ret = false;
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "Delete from talun_rezepte_bilder where bild_id=" + ru.UnitID
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                ret = true;
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryDelete", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return ret;
+        }
         #endregion Receipt
         #region Buttons
         private async Task<bool> OpenButton()

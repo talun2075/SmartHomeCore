@@ -2,6 +2,7 @@ var slideIndex = 1;
 
 //Neu
 var sendroot = "/receipt/";
+var imageroot = "/rImages/";
 var OptionListSource = "";
 var RezeptListe = [];
 var ZutatenListe = [];
@@ -29,9 +30,25 @@ var DOMOptionsListe;
 var DOMRezeptOptionInformation;
 var DOMEinheitenListe;
 var DOMEinheitenListeButton;
+var DOMRezeptRuheZeitIN;
+var DOMRezeptTitelIN;
+var DOMRezeptBeschreibungIN;
+var DOMRezeptDauerIN;
+var DOMRezeptRuheDauerSelection;
+var DOMRezeptZutatenDIV;
+var DOMRezeptKategorienDIV;
+var DOMRezeptBildIN;
+var DOMBilderWrapperHideShowClick;
+var DOMBilderWrapper;
+var DOMAdminRezept;
+var DOMAdminRezeptBeschreibungDIV;
+var DOMUploadImageList;
+
 function RezeptObject(adminstyle) {
     var t = this;
     this.adminStyle = (typeof adminstyle === "undefined") ? false : adminstyle;
+    this.descriptionChange = false;
+    this.EditReceiptID = 0;
     this.Init = function () {
         DOMRezeptliste = document.getElementById("RezeptListe");
         DOMRezept = document.getElementById("Rezept");
@@ -53,6 +70,20 @@ function RezeptObject(adminstyle) {
         DOMRezeptOptionInformation = document.getElementById("RezeptOptionInformation");
         DOMEinheitenListe = document.getElementById("EinheitenListe");
         DOMEinheitenListeButton = document.getElementById("EinheitenListeButton");
+        DOMRezeptDauerIN = document.getElementById("RezeptDauerIN");
+        DOMRezeptRuheZeitIN = document.getElementById("RezeptRuheZeitIN");
+        DOMRezeptTitelIN = document.getElementById("RezeptTitelIN");
+        DOMRezeptBeschreibungIN = document.getElementById("RezeptBeschreibungIN");
+        DOMRezeptRuheDauerSelection = document.getElementById("RezeptRuheDauerSelection");
+        DOMRezeptZutatenDIV = document.getElementById("RezeptZutatenDIV");
+        DOMRezeptKategorienDIV = document.getElementById("RezeptKategorienDIV");
+        DOMRezeptBildIN = document.getElementById("RezeptBildIN");
+        DOMBilderWrapperHideShowClick = document.getElementById("BilderWrapperHideShowClick");
+        DOMBilderWrapper = document.getElementById("BilderWrapper");
+        DOMAdminRezept = document.getElementById("AdminRezept");
+        DOMAdminRezeptBeschreibungDIV = document.getElementById("RezeptBeschreibungDIV");
+        DOMAdminRezeptZutatenDIV = document.getElementById("RezeptZutatenDIV");
+        DOMUploadImageList = document.getElementById("UploadImageList");
         this.GetRezeptListe();
         DOMSucheInput.addEventListener('input', function (evt) {
             Rezept.Suche("change")
@@ -80,14 +111,14 @@ function RezeptObject(adminstyle) {
             var divEntry = document.createElement("DIV");
             divEntry.classList.add("listenEintrag")
             divEntry.textContent = "Neu";
-            divEntry.setAttribute("onclick", "Rezept.EditRezept('neu')");
+            divEntry.setAttribute("onclick", "Rezept.AddReceipt()");
             divEntry.dataset.name = "neu";
             DOMRezeptliste.appendChild(divEntry);
             RezeptListe.forEach(re => {
                 var divEntry = document.createElement("DIV");
                 divEntry.classList.add("listenEintrag")
                 divEntry.textContent = re.title;
-                divEntry.setAttribute("onclick", "Rezept.EditRezept(" + re.id + ")");
+                divEntry.setAttribute("onclick", "Rezept.EditReceipt(" + re.id + ")");
                 divEntry.dataset.name = re.title.toLowerCase();
                 DOMRezeptliste.appendChild(divEntry);
             });
@@ -120,6 +151,7 @@ function RezeptObject(adminstyle) {
     }
     this.GetRezept = function (id) {
         this.HideLists();
+        this.ResetSearch();
         //Optionlist
         if (id != DOMRezept.dataset.id) {
             DOMRezept.dataset.id = id;
@@ -176,12 +208,12 @@ function RezeptObject(adminstyle) {
                     }
                     DOMRezeptDauer.textContent = rez.duration + " Minuten";
                     if (rez.restTime.restTime !== "" && rez.restTime.restTime !== "0") {
-                        let einheit = rez.restTime.unit == "1" ? "Minuten" : "Stunden";
+                        let einheit = rez.restTime.unit === "1" ? "Minuten" : "Stunden";
                         DOMRezeptRuheZeit.textContent = rez.restTime.restTime + " " + einheit;
-                        if (DOMRezeptRuheZeitWrapper.style.display !== "block")
-                            DOMRezeptRuheZeitWrapper.style.display = "block"
+                        if (DOMRezeptRuheZeitWrapper.style.display !== "flex")
+                            DOMRezeptRuheZeitWrapper.style.display = "flex"
                     } else {
-                        if (DOMRezeptRuheZeitWrapper.style.display === "block")
+                        if (DOMRezeptRuheZeitWrapper.style.display === "flex")
                             DOMRezeptRuheZeitWrapper.style.display = "none"
                     }
                     if (DOMRezeptZutaten.hasChildNodes()) {
@@ -433,7 +465,6 @@ function RezeptObject(adminstyle) {
             }
         }
     }
-
     this.RenderEinheitenListe = function () {
         this.HideLists();
         this.ResetSearch();
@@ -461,7 +492,7 @@ function RezeptObject(adminstyle) {
                 DOMEinheitenListe.appendChild(catDom);
             });
         } else {
-            
+
         }
         DOMEinheitenListe.style.display = "block";
     }
@@ -475,17 +506,29 @@ function RezeptObject(adminstyle) {
             });
         }
     }
-    this.ToggleAdminModus = function(){
+    //AdminReceipt Part
+    this.ToggleAdminModus = function () {
         adminmodus = !adminmodus;
         if (adminmodus === true) {
             DOMEinheitenListeButton.style.display = "block";
         } else {
             DOMEinheitenListeButton.style.display = "none";
         }
+        Send(sendroot + "GetUnits").then(function (data) {
+            EinheitenListe = data;
+            Send(sendroot + "GetCategories").then(function (data) {
+                KategorieListe = data;
+                Send(sendroot + "GetIngrediens").then(function (data) {
+                    ZutatenListe = data;
+                });
+            });
+        });
+
+
         this.HideLists();
         this.RenderRezepListe();
     }
-    this.AddType = function(typ) {
+    this.AddType = function (typ) {
         var value = prompt("Bitte den Wert f" + unescape("%FC") + "r die " + typ + " eingeben:");
         if (value != null) {
             switch (typ) {
@@ -522,7 +565,7 @@ function RezeptObject(adminstyle) {
             }
         }
     }
-    this.EditType = function(id, typ) {
+    this.EditType = function (id, typ) {
         if (isNaN(id)) {
             alert("ID has wrong Syntax");
             return;
@@ -555,40 +598,557 @@ function RezeptObject(adminstyle) {
         //Prompt for new Value
         var value = prompt("Bitte den neuen Wert f" + unescape("%FC") + "r " + listentryt + " eingeben", listentryt);
         if (value != null) {
-                switch (typ) {
-                    case "Einheit":
-                        Send(sendroot + "UpdateUnit/" + id, value, "POST").then(function () {
-                            EinheitenListe = []
-                            t.RenderEinheitenListe();
-                        }).catch(function (jqXHR, textStatus) {
-                            alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
-                        });
-                        break;
-                    case "Zutat":
-                        Send(sendroot + "UpdateIngredient/" + id, value, "POST").then(function () {
-                            ZutatenListe = []
-                            t.RenderZutatenListe();
-                        }).catch(function (jqXHR, textStatus) {
-                            alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
-                        });
-                        break;
-                    case "Kategorie":
-                        Send(sendroot + "UpdateCategory/" + id, value, "POST").then(function () {
-                            KategorieListe = []
-                            t.RenderKategorieListe();
-                        }).catch(function (jqXHR, textStatus) {
-                            alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
-                        });
-                        break;
-                }
-            
+            switch (typ) {
+                case "Einheit":
+                    Send(sendroot + "UpdateUnit/" + id, value, "POST").then(function () {
+                        EinheitenListe = []
+                        t.RenderEinheitenListe();
+                    }).catch(function (jqXHR, textStatus) {
+                        alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                    });
+                    break;
+                case "Zutat":
+                    Send(sendroot + "UpdateIngredient/" + id, value, "POST").then(function () {
+                        ZutatenListe = []
+                        t.RenderZutatenListe();
+                    }).catch(function (jqXHR, textStatus) {
+                        alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                    });
+                    break;
+                case "Kategorie":
+                    Send(sendroot + "UpdateCategory/" + id, value, "POST").then(function () {
+                        KategorieListe = []
+                        t.RenderKategorieListe();
+                    }).catch(function (jqXHR, textStatus) {
+                        alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                    });
+                    break;
+            }
+
 
         }
     }
+    this.AddReceipt = function () {
+        var value = prompt("Bitte den Titel f" + unescape("%FC") + "r das Rezept eingeben:");
+        if (value != null) {
+            Send(sendroot + "AddReceipt", value, "POST").then(function (data) {
+                RezeptListe = [];
+                t.GetRezeptListe();
+                t.EditReceipt(data);
+            }).catch(function (jqXHR, textStatus) {
+                alert("Es ist ein Fehler aufgetreten:" + jqXHR.message);
+            });
+        }
+    }
+    this.EditReceipt = function (id) {
+        this.HideLists();
+        let receipt = RezeptListe.find(x => x.id === id);
+        if (receipt === undefined) {
+            alert("Rezept konnte nicht geladen werden!");
+            return;
+        }
+        this.ClearRezeptFields();
+        this.HideLists();
+        this.EditReceiptID = id;
+        this.RenderAdminReceipt(receipt);
+    }
+    this.RenderAdminReceipt = function (receipt) {
+        
+        if (receipt === undefined) {
+            return;
+        }
+        DOMRezeptDauerIN.value = receipt.duration
+        DOMRezeptRuheZeitIN.value = receipt.restTime.restTime
+        DOMRezeptTitelIN.value = receipt.title
+        DOMRezeptBeschreibungIN.value = receipt.decription
+        DOMRezeptRuheDauerSelection.value = receipt.restTime.unit;
+        DOMAdminRezept.style.display = "block";
+        tinymce.init({
+            selector: '#RezeptBeschreibungIN',
+            plugins: "lists autoresize",
+            toolbar: "bold italic underline numlist bullist fontsizeselect",
+            branding: false,
+            menubar: false,
+            statusbar: false,
+            license_key: "gpl",
+            language: "de",
+            setup: function (ed) {
+                ed.on('input', function (e) {
+                    t.ChangeDescription("start");
+                });
+                ed.on('blur', function (e) {
+                    t.ChangeDescription("lost");
+                });
+            }
+        });
+        this.RenderEditReceiptIngridiens(receipt);
+        this.RenderEditReceiptCategories(receipt);
+        this.RenderEditReceiptPictures(receipt);
+        this.BindEventListener();
+    }
+    this.RenderEditReceiptPictures = function (receipt) {
+        if (DOMBilderWrapper.hasChildNodes()) {
+            DOMBilderWrapper.replaceChildren();
+        }
+        receipt.pictures.forEach(pic => {
+            let DOMElement = document.createElement("DIV");
+            DOMElement.dataset.picid = pic.id;
+            DOMElement.id = "Image_" + pic.id;
+            DOMElement.classList.add("rezeptBilderListe");
+            let im = document.createElement("IMG");
+            im.setAttribute("src", imageroot + pic.image);
+            
+            DOMElement.appendChild(im);
+            let sort = this.CreateImageSortSelection(pic.sortOrder, pic.id)
+            DOMElement.appendChild(sort)
+            let s = document.createElement("SPAN");
+            s.innerHTML = " (L&ouml;schen)";
+            s.setAttribute("OnClick", "Rezept.DeleteImage(" + pic.id + ",'"+pic.image+"')");
+            DOMElement.appendChild(s);
+            DOMBilderWrapper.appendChild(DOMElement);
+        });
+        Array.from(document.getElementsByClassName("imagesort")).forEach(function (element) {
+            element.addEventListener("change", function (event) {
+                Rezept.ChangeImageSortOrder(event);
+            })
+        });
+    }
+    this.CreateImageSortSelection = function (sortorder,imageid) {
+        let sortselection = document.createElement("SELECT");
+        sortselection.dataset.picid = imageid;
+        sortselection.classList.add("imagesort");
+        for (var i = 1; i < 11; i++) {
+            let opt = document.createElement("OPTION");
+            opt.value = i;
+            opt.textContent = i;
+            if (sortorder == i) {
+                opt.setAttribute("selected", "selected");
+            }
+            sortselection.appendChild(opt);
+        }
+        return sortselection;
+    }
+    this.RenderEditReceiptCategories = function (receipt) {
+        if (DOMRezeptKategorienDIV.hasChildNodes()) {
+            DOMRezeptKategorienDIV.replaceChildren();
+        }
+        receipt.categories.forEach(cat => {
+            let DOMElement = document.createElement("DIV");
+            DOMElement.classList.add("kategorieWrapper");
+            DOMElement.id = "Category_" + cat.id;
+            DOMElement.innerHTML= cat.category + " (L&ouml;schen)";
+            DOMElement.setAttribute("OnClick", "Rezept.DeleteCategory(" + cat.id + ","+receipt.id+")");
+            DOMRezeptKategorienDIV.appendChild(DOMElement);
+        })
+        let DOMElement = document.createElement("DIV");
+        DOMElement.classList.add("kategorieWrapper");
+        DOMElement.id = "new_CategoryLink";
+        let selectionElement = document.createElement("SELECT");
+        selectionElement.classList.add("categoriesSelection");
+        selectionElement.id ="NewCategoriesSelection"
+        let opt1 = document.createElement("OPTION");
+        opt1.value = "";
+        selectionElement.appendChild(opt1);
+        KategorieListe.forEach(cat => {
+            let opt = document.createElement("OPTION");
+            opt.value = cat.id;
+            opt.textContent = cat.category;
+            selectionElement.appendChild(opt);
+        });
+        DOMElement.appendChild(selectionElement)
+        let span = document.createElement("SPAN");
+        span.setAttribute("OnClick", "Rezept.AddCategory(" + receipt.id + ")");
+        span.textContent = " Weitere";
+        DOMElement.appendChild(span);
+        DOMRezeptKategorienDIV.appendChild(DOMElement)
+    }
+    this.RenderEditReceiptIngridiens = function (receipt) {
+        if (DOMRezeptZutatenDIV.hasChildNodes()) {
+            Array.from(document.getElementsByClassName("zutatMenge")).forEach(function (element) {
+                element.removeEventListener("change", function (event) { });
+            });
+            DOMRezeptZutatenDIV.replaceChildren();
+        }
+        receipt.ingredients.forEach(ing => {
+            let DOMElement = document.createElement("DIV");
+            DOMElement.classList.add("zutatWrapper");
+            DOMElement.id = "zuei" + ing.ingredientUnitID;
+            DOMElement.dataset.zuei = ing.ingredientUnitID
+            DOMElement.innerHTML = '<input type="text" data-zuei=' + ing.ingredientUnitID + ' class="zutatMenge" value="' + ing.amount + '"> ' + ing.unit + " " + ing.ingredient + ' <span data-receipt="' + receipt.id + '" data-zuei="' + ing.ingredientUnitID + '" OnClick="Rezept.DeleteIngridUnit(this)">(L&ouml;schen)</span>';
+            DOMRezeptZutatenDIV.appendChild(DOMElement);
+        })
+        Array.from(document.getElementsByClassName("zutatMenge")).forEach(function (element) {
+            element.addEventListener("change", function (event) {
+                Rezept.ChangeIngridUnit(event);
+            })
+        });
+        let DOMElementNew = document.createElement("DIV");
+        DOMElementNew.id = "new_zuei";
+        DOMElementNew.classList.add("zutatWrapper")
+        DOMElementNew.innerHTML = '<input id="IngredientNewValue" type="text" value="" /> <select id="UnitSelection" class="unitSelection">' + this.CreateUnitsSelection() + '</select> <select id="IngredientsSelection" class="ingredientsSelection">' + this.CreateIngridientsSelection() + '</select><span id="new_ZuEiLink" onClick="Rezept.AddIngridUnit('+receipt.id+')"> Weitere </span>'
+        DOMRezeptZutatenDIV.appendChild(DOMElementNew);
+    }
+    this.CreateIngridientsSelection = function () {
+        let ingri = document.createElement("SELECTION");
+        let option = document.createElement("OPTION");
+        option.value = "";
+        ingri.appendChild(option);
+        for (var i = 0; i < ZutatenListe.length; i++) {
+            let chele = document.createElement("OPTION");
+            chele.value = ZutatenListe[i].id;
+            chele.textContent = ZutatenListe[i].ingredient
+            ingri.appendChild(chele);
+        }
+        return ingri.innerHTML;
+    }
+    this.CreateUnitsSelection = function () {
+        let units = document.createElement("SELECTION");
+        let option = document.createElement("OPTION");
+        option.value = "";
+        units.appendChild(option);
+        for (var i = 0; i < EinheitenListe.length; i++) {
+            let chele = document.createElement("OPTION");
+            chele.value = EinheitenListe[i].id;
+            chele.textContent = EinheitenListe[i].unit
+            units.appendChild(chele);
+        }
+        return units.innerHTML;
+    }
+    this.BindEventListener = function () {
+        DOMRezeptDauerIN.addEventListener("change", function (event) { t.ChangeDuration(event) }, false);
+        DOMRezeptRuheZeitIN.addEventListener("change", function (event) { t.ChangeRestTimeDuration(event) }, false);
+        DOMRezeptTitelIN.addEventListener("change", function (event) { t.ChangeTitle(event) }, false);
+        DOMRezeptRuheDauerSelection.addEventListener("change", function (event) { t.ChangeRestTimeArt(event) }, false);
+        DOMRezeptBildIN.addEventListener("change", function (event) { t.AddImage(event) }, false);
+    }
+    this.TogglePictures = function () {
+        if (DOMBilderWrapper.classList.contains("hideChild")) {
+            DOMBilderWrapper.classList.remove("hideChild");
+        } else {
+            DOMBilderWrapper.classList.add("hideChild");
+        }
+    }
+    this.ClearRezeptFields = function () {
+        if (tinyMCE.activeEditor !== null) {
+            tinyMCE.activeEditor.off();
+        }
+        tinyMCE.remove();
+        DOMRezeptDauerIN.removeEventListener("change", function () { });
+        DOMRezeptDauerIN.value = "";
+        DOMRezeptRuheZeitIN.removeEventListener("change", function () { });
+        DOMRezeptRuheZeitIN.value = "";
+        DOMRezeptTitelIN.removeEventListener("change", function () { });
+        DOMRezeptTitelIN.value = "";
+        DOMRezeptBeschreibungIN.value = "";
+        DOMRezeptBildIN.value = "";
+        DOMRezeptRuheDauerSelection.removeEventListener("change", function () { });
+        DOMRezeptRuheDauerSelection.value = "";
+        if (DOMRezeptZutatenDIV.hasChildNodes()) {
+            DOMRezeptZutatenDIV.replaceChildren();
+        }
+        if (DOMRezeptKategorienDIV.hasChildNodes()) {
+            DOMRezeptKategorienDIV.replaceChildren();
+        }
+
+    }
+    this.ChangeDescription = function (event) {
+        if (event === "start") {
+            this.descriptionChange = true;
+            return;
+        }
+        if (event === "lost" && this.descriptionChange === true) {
+            this.descriptionChange = false;
+            var content = tinyMCE.get('RezeptBeschreibungIN').getContent();
+            if (content) {
+                let obj = { Type: ReceiptUpdateType.Description, Value: content };
+                Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+                    if (!DOMAdminRezeptBeschreibungDIV.classList.contains("changedDone")) {
+                        DOMAdminRezeptBeschreibungDIV.classList.add("changedDone")
+                        setTimeout(() => {
+                            DOMAdminRezeptBeschreibungDIV.classList.remove("changedDone");
+                        }, 2000)
+                    }
+                }).catch(function (err) {
+                    if (DOMAdminRezeptBeschreibungDIV.classList.contains("changedDone")) {
+                        DOMAdminRezeptBeschreibungDIV.classList.remove("changedDone")
+                        DOMAdminRezeptBeschreibungDIV.classList.add("error")
+                        setTimeout(() => {
+                            DOMAdminRezeptBeschreibungDIV.classList.remove("error");
+                        }, 2000)
+                    }
+                    alert("Es ist ein Fehler aufgetreten:" + err.message);
+                });
+            }
+        }
+    }
+    this.ChangeDuration = function (event) {
+        let obj = { Type: ReceiptUpdateType.Duration, Value: DOMRezeptDauerIN.value };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            if (!DOMRezeptDauerIN.classList.contains("changedDone")) {
+                DOMRezeptDauerIN.classList.add("changedDone")
+                setTimeout(() => {
+                    DOMRezeptDauerIN.classList.remove("changedDone");
+                }, 2000)
+            }
+        }).catch(function (err) {
+            if (DOMRezeptDauerIN.classList.contains("changedDone")) {
+                DOMRezeptDauerIN.classList.remove("changedDone")
+                DOMRezeptDauerIN.classList.add("error")
+                setTimeout(() => {
+                    DOMRezeptDauerIN.classList.remove("error");
+                }, 2000)
+            }
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.ChangeRestTimeDuration = function () {
+        let obj = { Type: ReceiptUpdateType.RestTime, Value: DOMRezeptRuheZeitIN.value };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            if (!DOMRezeptRuheZeitIN.classList.contains("changedDone")) {
+                DOMRezeptRuheZeitIN.classList.add("changedDone")
+                setTimeout(() => {
+                    DOMRezeptRuheZeitIN.classList.remove("changedDone");
+                }, 2000)
+            }
+        }).catch(function (err) {
+            if (DOMRezeptRuheZeitIN.classList.contains("changedDone")) {
+                DOMRezeptRuheZeitIN.classList.remove("changedDone")
+                DOMRezeptRuheZeitIN.classList.add("error")
+                setTimeout(() => {
+                    DOMRezeptRuheZeitIN.classList.remove("error");
+                }, 2000)
+            }
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.ChangeRestTimeArt = function () {
+        let obj = { Type: ReceiptUpdateType.ResTimeUnit, Value: DOMRezeptRuheDauerSelection.value };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            if (!DOMRezeptRuheDauerSelection.classList.contains("changedDone")) {
+                DOMRezeptRuheDauerSelection.classList.add("changedDone")
+                setTimeout(() => {
+                    DOMRezeptRuheDauerSelection.classList.remove("changedDone");
+                }, 2000)
+            }
+        }).catch(function (err) {
+            if (DOMRezeptRuheDauerSelection.classList.contains("changedDone")) {
+                DOMRezeptRuheDauerSelection.classList.remove("changedDone")
+                DOMRezeptRuheDauerSelection.classList.add("error")
+                setTimeout(() => {
+                    DOMRezeptRuheDauerSelection.classList.remove("error");
+                }, 2000)
+            }
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.ChangeTitle = function () {
+        let obj = { Type: ReceiptUpdateType.Title, Value: DOMRezeptTitelIN.value };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            if (!DOMRezeptTitelIN.classList.contains("changedDone")) {
+                DOMRezeptTitelIN.classList.add("changedDone")
+                setTimeout(() => {
+                    DOMRezeptTitelIN.classList.remove("changedDone");
+                }, 2000)
+            }
+        }).catch(function (err) {
+            if (DOMRezeptTitelIN.classList.contains("changedDone")) {
+                DOMRezeptTitelIN.classList.remove("changedDone")
+                DOMRezeptTitelIN.classList.add("error")
+                setTimeout(() => {
+                    DOMRezeptTitelIN.classList.remove("error");
+                }, 2000)
+            }
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.ChangeImageSortOrder = function (event) {
+        let obj = { Type: ReceiptUpdateType.ImageSortOrder, Value: event.originalTarget.value, UnitID: event.originalTarget.dataset.picid };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            event.originalTarget.classList.add("changedDone");
+                setTimeout(() => {
+                    event.originalTarget.classList.remove("changedDone");
+                }, 2000)
+           
+        }).catch(function (err) {
+            event.originalTarget.classList.add("error");
+                setTimeout(() => {
+                    event.originalTarget.classList.add("error");
+                }, 2000)
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.DeleteImage = function (id,image) {
+        let check = confirm("Willst Du das Bild wirklich l" + unescape("%F6") + "schen?");
+        if (!check) {
+            return;
+        }
+        let obj = { Type: ReceiptUpdateType.ImageDelete,UnitID: id, Value: image };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            let delimg = document.getElementById("Image_" + id);
+            delimg.remove();
+        }).catch(function (err) {
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.AddImage = function (event) {
+        //todo:implement
+        console.log("AddImage");
 
 
+        var fi = DOMRezeptBildIN.files;
+        for (var i = 0; i < fi.length; i++) {
+            if (fi[i].type.indexOf("image") !== -1) {
+                var dimid = fi[i].lastModified + "_" + fi[i].size;
+                let newp = document.createElement("DIV");
+                newp.id = "newpic_" + dimid;
+                newp.classList.add("uploadpic");
+                newp.textContent = fi[i].name
+                DOMUploadImageList.appendChild(newp);
+                var formData = new FormData();
+                formData.append('file', fi[i], fi[i].name);
+                //formData.append('id', this._receiptid);
+                //formData.append('dimid', dimid);
+                Send(sendroot + "UploadImage" + "/" + this.EditReceiptID, formData, "POST","multipart/form-data").then(function () {
+                    let newp = document.getElementById("newpic_" + dimid);
+                    newp.classList.add("changedDone");
+
+                })
+                
+                //res.done(function (data) {
+                //    $("#newpic_" + data.dimid).addClass("changedDone").delay(2000).queue(function () { $(this).removeClass("changedDone").remove(); });
+                //    var sortorder = '<select class="sortOrder">';
+                //    this._pictures = (this._pictures + 1);
+                //    for (var l = 1; l < this._pictures + 2; l++) {
+                //        var sel = "";
+                //        sortorder += '<option value="' + l + '"' + sel + '>' + l + '</option>';
+                //    }
+                //    sortorder += "</select>";
+                //    $('<div class="rezeptBilderListe" data-picid="' + data.id + '"><img src="/images/rezepte/' + data.bild + '" />' + sortorder + ' <span onClick="AdminRezept.DeletePicture(this)">L&ouml;schen</span></div>').appendTo($("#BilderWrapper"));
+                //    //$("#newpic_" + data.dimid).delay(2000).queue(function () {$(this).remove();});
+                //}).fail(function (jqXHR, textStatus) {
+                //    alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
+                //});
+
+
+            }
+        }
+
+
+
+    }
+    this.DeleteIngridUnit = function (id) {
+        let check = confirm("Willst Du diesen Eintrag wirklich l" + unescape("%F6") + "schen?");
+        if (!check) {
+            return;
+        }
+        let obj = { Type: ReceiptUpdateType.IngridientUnitDelete, UnitID: id.dataset.zuei };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            let zuei = document.getElementById("zuei" + id.dataset.zuei);
+            zuei.remove();
+            let receipt = RezeptListe.find(x => x.id ==id.dataset.receipt);
+            let ings = receipt.ingredients;
+            let t = ings.find(y => y.ingredientUnitID == id.dataset.zuei);
+            let tin = ings.indexOf(t);
+            ings.splice(tin, 1);
+        }).catch(function (err) {
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+    }
+    this.ChangeIngridUnit = function (event) {
+        let obj = { Type: ReceiptUpdateType.IngridientUnitUpdate, Value: event.originalTarget.value, UnitID: event.originalTarget.dataset.zuei };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            if (!event.originalTarget.classList.contains("changedDone")) {
+                event.originalTarget.classList.add("changedDone")
+                setTimeout(() => {
+                    event.originalTarget.classList.remove("changedDone");
+                }, 2000)
+            }
+        }).catch(function (err) {
+            if (event.originalTarget.classList.contains("changedDone")) {
+                event.originalTarget.classList.remove("changedDone")
+                event.originalTarget.classList.add("error")
+                setTimeout(() => {
+                    event.originalTarget.classList.remove("error");
+                }, 2000)
+            }
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+
+    }
+    this.AddIngridUnit = function (rid) {
+        let IngredientNewValue = document.getElementById("IngredientNewValue");
+        let UnitSelection = document.getElementById("UnitSelection");
+        let IngredientsSelection = document.getElementById("IngredientsSelection");
+        let obj = { Type: ReceiptUpdateType.IngridientUnitADD, Value: IngredientNewValue.value, UnitID: UnitSelection.value, UnitID2: IngredientsSelection.value };
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function (data) {
+            console.log(data);
+            let receipt = RezeptListe.find(x => x.id == rid);
+            let ing = ZutatenListe.find(x => x.id == IngredientsSelection.value)
+            let uni = EinheitenListe.find(x => x.id == UnitSelection.value);
+            let inobj = { amount: IngredientNewValue.value, id: ing.id, ingredient: ing.ingredient, ingredientUnitID: data, unit: uni.unit }
+            receipt.ingredients.push(inobj);
+            Rezept.RenderEditReceiptIngridiens(receipt);
+        }).catch(function (err) {
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+
+
+    }
+    this.DeleteCategory = function (id,rid) {
+        let check = confirm("Willst Du diese Kategorie wirklich l" + unescape("%F6") + "schen?");
+        if (!check) {
+            return;
+        }
+        let obj = { Type: ReceiptUpdateType.CategoryDelete, UnitID: id };
+        Send(sendroot + "UpdateReceipt/" + rid, obj, "POST").then(function () {
+            let c = document.getElementById("Category_" + id);
+            c.remove();
+            let receipt = RezeptListe.find(x => x.id == rid);
+            let ca = receipt.categories;
+            let t = ca.find(y => y.id == id);
+            let tin = ca.indexOf(t);
+            ca.splice(tin, 1);
+        }).catch(function (err) {
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+
+    }
+    this.AddCategory = function (receiptid) {
+        let NewCategoriesSelection = document.getElementById("NewCategoriesSelection");
+        let obj = { Type: ReceiptUpdateType.CategoryAdd, UnitID: NewCategoriesSelection.value};
+        Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
+            let receipt = RezeptListe.find(x => x.id == receiptid);
+            let cat = KategorieListe.find(x => x.id == NewCategoriesSelection.value)
+            receipt.categories.push(cat);
+            Rezept.RenderEditReceiptCategories(receipt);
+        }).catch(function (err) {
+            alert("Es ist ein Fehler aufgetreten:" + err.message);
+        });
+
+
+
+        console.log("AddCategory");
+        console.log(receiptid);
+        console.log(this.EditReceiptID);
+    }
 }//Ende Class
 
+
+function ReceiptUpdateTypeClass() {
+    this.Title = 0;
+    this.Duration = 1;
+    this.Description = 2;
+    this.RestTime = 3;
+    this.ResTimeUnit = 4;
+    this.Ingridient = 5;
+    this.CategoryAdd = 6;
+    this.IngridientUnitUpdate = 7;
+    this.IngridientUnitADD = 8;
+    this.IngridientUnitDelete = 9;
+    this.ImageSortOrder = 10;
+    this.ImageDelete = 11;
+    this.CategoryDelete = 12;
+}
 
 function ChangeNavigationMenu(t) {
     t.classList.toggle("changeShowNav");
@@ -604,7 +1164,6 @@ function plusSlides(n) {
 function currentSlide(n) {
     showSlides(slideIndex = n);
 }
-
 function showSlides(n) {
     var i;
     var slides = document.getElementsByClassName("mySlides");
@@ -615,8 +1174,6 @@ function showSlides(n) {
     }
     slides[slideIndex - 1].style.display = "block";
 }
-
-
 function TouchHandlerCL() {
     this.xDown = null; //Touch x Koordinaten
     this.yDown = null; //Touch Y Koordinaten
@@ -652,7 +1209,6 @@ function TouchHandlerCL() {
     };
 }
 var TouchHandler = new TouchHandlerCL();
-
 function GetURLParameter(sParam) {
     var sPageURL = window.location.search.substring(1);
     var sURLVariables = sPageURL.split('&');

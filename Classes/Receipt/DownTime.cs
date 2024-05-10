@@ -3,6 +3,6 @@
     public class DownTime
     {
         public string RestTime { get; set; }
-        public int Unit { get; set; }
+        public string Unit { get; set; }
     }
 }
