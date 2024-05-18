@@ -49,6 +49,7 @@ function RezeptObject(adminstyle) {
     this.adminStyle = (typeof adminstyle === "undefined") ? false : adminstyle;
     this.descriptionChange = false;
     this.EditReceiptID = 0;
+    this.CurrentReceipt = 0;
     this.Init = function () {
         DOMRezeptliste = document.getElementById("RezeptListe");
         DOMRezept = document.getElementById("Rezept");
@@ -90,7 +91,7 @@ function RezeptObject(adminstyle) {
         });
     }
     this.GetRezeptListe = function () {
-        Send(sendroot + "GetList").then(function (data) {
+    Send(sendroot + "GetList").then(function (data) {
             RezeptListe = data;
             if (RezeptListe !== "") {
                 t.RenderRezepListe();
@@ -141,6 +142,8 @@ function RezeptObject(adminstyle) {
                 listen[i].style.display = "none";
             }
         }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        this.CurrentReceipt = 0;
     }
     this.HideListsEnttries = function () {
         DOMListenEinträge = document.getElementsByClassName("listenEintrag");
@@ -155,6 +158,7 @@ function RezeptObject(adminstyle) {
         //Optionlist
         if (id != DOMRezept.dataset.id) {
             DOMRezept.dataset.id = id;
+            this.CurrentReceipt = id;
             let rez = RezeptListe.find(x => x.id === id);
             if (rez !== undefined) {
                 DOMRezeptPermaLinkA.setAttribute("href", "/receipt/?rezept=" + id);
@@ -194,7 +198,7 @@ function RezeptObject(adminstyle) {
                         DOMRezeptBilder.appendChild(prev);
                         let next = document.createElement("a");
                         next.classList.add("next");
-                        next.setAttribute("onClick", "plusSlides(-1)");
+                        next.setAttribute("onClick", "plusSlides(1)");
                         next.innerHTML = "&#10095;"
                         DOMRezeptBilder.appendChild(next);
                         for (var i = 0; i < rez.pictures.length; i++) {
@@ -227,7 +231,7 @@ function RezeptObject(adminstyle) {
                             ingdomchild.textContent = ingre.amount + " " + ingre.unit + " ";
                             let spandom = document.createElement("SPAN");
                             spandom.textContent = ingre.ingredient;
-                            spandom.setAttribute("OnClick", "Rezept.GetZutatenPerID(" + ingre.id + ")");
+                            spandom.setAttribute("OnClick", "Rezept.GetZutatenPerID(" + ingre.id + ",'" + ingre.ingredient + "')");
                             spandom.classList.add("zeiger");
                             ingdomchild.appendChild(spandom);
                             ingdom.appendChild(ingdomchild);
@@ -263,7 +267,11 @@ function RezeptObject(adminstyle) {
             if (DOMRezeptOptionInformation.style.display === "block")
                 DOMRezeptOptionInformation.style.display = "none"
         }
+
         DOMRezept.style.display = "block";
+        setTimeout(() => { 
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        },200)
     }
     this.RenderZutatenListe = function () {
         this.HideLists();
@@ -523,10 +531,13 @@ function RezeptObject(adminstyle) {
                 });
             });
         });
-
+        let curtemp = this.CurrentReceipt;
 
         this.HideLists();
         this.RenderRezepListe();
+        if (curtemp !== 0) {
+            this.EditReceipt(curtemp);
+        }
     }
     this.AddType = function (typ) {
         var value = prompt("Bitte den Wert f" + unescape("%FC") + "r die " + typ + " eingeben:");
@@ -633,8 +644,15 @@ function RezeptObject(adminstyle) {
         if (value != null) {
             Send(sendroot + "AddReceipt", value, "POST").then(function (data) {
                 RezeptListe = [];
-                t.GetRezeptListe();
-                t.EditReceipt(data);
+                Send(sendroot + "GetList").then(function (data2) {
+                    RezeptListe = data2;
+                    if (RezeptListe !== "") {
+                        t.RenderRezepListe();
+                        t.EditReceipt(data);
+                    } else {
+                        alert("Keine Rezepte Gefunden");
+                    }
+                });
             }).catch(function (jqXHR, textStatus) {
                 alert("Es ist ein Fehler aufgetreten:" + jqXHR.message);
             });
@@ -703,7 +721,7 @@ function RezeptObject(adminstyle) {
             DOMElement.appendChild(sort)
             let s = document.createElement("SPAN");
             s.innerHTML = " (L&ouml;schen)";
-            s.setAttribute("OnClick", "Rezept.DeleteImage(" + pic.id + ",'"+pic.image+"')");
+            s.setAttribute("OnClick", "Rezept.DeleteImage(" + pic.id + ",'" + pic.image + "'," + receipt.id + ")");
             DOMElement.appendChild(s);
             DOMBilderWrapper.appendChild(DOMElement);
         });
@@ -716,6 +734,7 @@ function RezeptObject(adminstyle) {
     this.CreateImageSortSelection = function (sortorder,imageid) {
         let sortselection = document.createElement("SELECT");
         sortselection.dataset.picid = imageid;
+        sortselection.id = "SortSelection_" + imageid;
         sortselection.classList.add("imagesort");
         for (var i = 1; i < 11; i++) {
             let opt = document.createElement("OPTION");
@@ -977,7 +996,7 @@ function RezeptObject(adminstyle) {
             alert("Es ist ein Fehler aufgetreten:" + err.message);
         });
     }
-    this.DeleteImage = function (id,image) {
+    this.DeleteImage = function (id,image,receiptID) {
         let check = confirm("Willst Du das Bild wirklich l" + unescape("%F6") + "schen?");
         if (!check) {
             return;
@@ -986,55 +1005,82 @@ function RezeptObject(adminstyle) {
         Send(sendroot + "UpdateReceipt/" + this.EditReceiptID, obj, "POST").then(function () {
             let delimg = document.getElementById("Image_" + id);
             delimg.remove();
+            let receipt = RezeptListe.find(x => x.id == receiptID);
+            let pics = receipt.pictures;
+            let t = pics.find(y => y.id == id);
+            let tin = pics.indexOf(t);
+            pics.splice(tin, 1);
+
+
         }).catch(function (err) {
             alert("Es ist ein Fehler aufgetreten:" + err.message);
         });
     }
     this.AddImage = function (event) {
-        //todo:implement
-        console.log("AddImage");
-
-
         var fi = DOMRezeptBildIN.files;
         for (var i = 0; i < fi.length; i++) {
             if (fi[i].type.indexOf("image") !== -1) {
-                var dimid = fi[i].lastModified + "_" + fi[i].size;
+                let dimid = fi[i].lastModified + "_" + fi[i].size;
                 let newp = document.createElement("DIV");
                 newp.id = "newpic_" + dimid;
                 newp.classList.add("uploadpic");
                 newp.textContent = fi[i].name
                 DOMUploadImageList.appendChild(newp);
-                var formData = new FormData();
+                let formData = new FormData();
                 formData.append('file', fi[i], fi[i].name);
-                //formData.append('id', this._receiptid);
-                //formData.append('dimid', dimid);
-                Send(sendroot + "UploadImage" + "/" + this.EditReceiptID, formData, "POST","multipart/form-data").then(function () {
-                    let newp = document.getElementById("newpic_" + dimid);
-                    newp.classList.add("changedDone");
+                formData.append('ReceiptID', this.EditReceiptID);
+                formData.append('ImgName', fi[i].name);
+                let url = window.location.protocol + "//" + window.location.host + "/receipt/UploadImage/"+this.EditReceiptID;
+                fetch(url, { method: 'POST', body: formData })
+                    .then(function (data) {
+                        let returnvalue = data.text();
+                        returnvalue.then(function (retpic) {
+                            let newpic = JSON.parse(retpic);
 
-                })
-                
-                //res.done(function (data) {
-                //    $("#newpic_" + data.dimid).addClass("changedDone").delay(2000).queue(function () { $(this).removeClass("changedDone").remove(); });
-                //    var sortorder = '<select class="sortOrder">';
-                //    this._pictures = (this._pictures + 1);
-                //    for (var l = 1; l < this._pictures + 2; l++) {
-                //        var sel = "";
-                //        sortorder += '<option value="' + l + '"' + sel + '>' + l + '</option>';
-                //    }
-                //    sortorder += "</select>";
-                //    $('<div class="rezeptBilderListe" data-picid="' + data.id + '"><img src="/images/rezepte/' + data.bild + '" />' + sortorder + ' <span onClick="AdminRezept.DeletePicture(this)">L&ouml;schen</span></div>').appendTo($("#BilderWrapper"));
-                //    //$("#newpic_" + data.dimid).delay(2000).queue(function () {$(this).remove();});
-                //}).fail(function (jqXHR, textStatus) {
-                //    alert("Es ist ein Fehler aufgetreten:" + textStatus + " " + jqXHR.responseJSON.error);
-                //});
-
-
+                            let newpi = document.getElementById("newpic_" + dimid);
+                            newpi.classList.add("changedDone");
+                            //Add New Pic
+                            let DOMElement = document.createElement("DIV");
+                            DOMElement.dataset.picid = newpic.id;
+                            DOMElement.id = "Image_" + newpic.id;
+                            DOMElement.classList.add("rezeptBilderListe");
+                            let im = document.createElement("IMG");
+                            im.setAttribute("src", imageroot + newpic.image);
+                            DOMElement.appendChild(im);
+                            let sort = Rezept.CreateImageSortSelection(1, newpic.id)
+                            DOMElement.appendChild(sort)
+                            let s = document.createElement("SPAN");
+                            s.innerHTML = " (L&ouml;schen)";
+                            s.setAttribute("OnClick", "Rezept.DeleteImage(" + newpic.id + ",'" + newpic.image + "'," + newpic.receiptID + ")");
+                            DOMElement.appendChild(s);
+                            DOMBilderWrapper.appendChild(DOMElement);
+                            let sortstuff = document.getElementById("SortSelection_" + newpic.id);
+                            sortstuff.addEventListener("change", function (event) {
+                                Rezept.ChangeImageSortOrder(event);
+                            })
+                            let receipt = RezeptListe.find(x => x.id = newpic.receiptID);
+                            receipt.pictures.push(newpic);
+                        });
+                        
+                        setTimeout(function () {
+                            Rezept.RemoveUploadImage(dimid);
+                        }, 1300)
+                    })
+                    .catch(function (err) { /* Error. Inform the user */
+                        console.log("ImageUpload ERRRRRROOOORR");
+                        console.log(err);
+                    });
             }
         }
 
 
 
+    }
+    this.RemoveUploadImage= function(id)
+    {
+        console.log("RemoveUploadImage" + id);
+        let newpi = document.getElementById("newpic_" + id);
+        newpi.remove();
     }
     this.DeleteIngridUnit = function (id) {
         let check = confirm("Willst Du diesen Eintrag wirklich l" + unescape("%F6") + "schen?");
@@ -1124,14 +1170,11 @@ function RezeptObject(adminstyle) {
         }).catch(function (err) {
             alert("Es ist ein Fehler aufgetreten:" + err.message);
         });
-
-
-
-        console.log("AddCategory");
-        console.log(receiptid);
-        console.log(this.EditReceiptID);
     }
 }//Ende Class
+const delay = (delayInms) => {
+    return new Promise(resolve => setTimeout(resolve, delayInms));
+};
 
 
 function ReceiptUpdateTypeClass() {

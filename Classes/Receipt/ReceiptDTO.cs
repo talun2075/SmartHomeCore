@@ -4,7 +4,7 @@ namespace SmartHome.Classes.Receipt
 {
     public class ReceiptDTO
     {
-        public int ID { get; set; }
+        public long ID { get; set; }
         public string Title { get; set; }
         public string Decription { get; set; } = string.Empty;
         public string Duration { get; set; }

@@ -6,6 +6,12 @@ using System;
 using SmartHome.Classes.Receipt;
 using System.Collections.Generic;
 using System.IO;
+using System.Drawing;
+using System.Drawing.Imaging;
+using Microsoft.AspNetCore.Components.Forms;
+using System.Security.Policy;
+using Microsoft.Extensions.Configuration;
+using SmartHome.Classes.SmartHome.Util;
 
 
 namespace SmartHome.Controllers
@@ -15,9 +21,11 @@ namespace SmartHome.Controllers
     public class ReceiptController : Controller
     {
         private readonly IDatabaseWrapper db;
-        public ReceiptController(IDatabaseWrapper _db)
+        private readonly IConfiguration _conf;
+        public ReceiptController(IDatabaseWrapper _db, IConfiguration configuration)
         {
             db = _db;
+            _conf = configuration;
         }
         public IActionResult Index()
         {
@@ -101,7 +109,25 @@ namespace SmartHome.Controllers
                 case ReceiptUpdateType.ImageDelete:
                     if(await db.UpdateReceiptImageDelete(v))
                     {
-                        //todo: delete image from path. v.value
+                        try
+                        {
+                            var path = _conf["ReceiptImagesPath"];
+                            var completepath = path + "\\" + v.Value;
+                            if (System.IO.File.Exists(completepath))
+                            {
+                                System.IO.File.Delete(completepath);
+                            }
+                        }
+                        catch(Exception ex)
+                        {
+                            SmartHomeConstants.log.ServerErrorsAdd("ReceiptController.ImageDelete:ImageID:" + v.UnitID, ex);
+                            return 0;
+                        }
+                        return 1;
+                    }
+                    else
+                    {
+                        return 0;
                     }
                     break;
                 case ReceiptUpdateType.IngridientUnitDelete:
@@ -118,24 +144,50 @@ namespace SmartHome.Controllers
             throw new NotImplementedException("Wrong ReceiptUpdateDTO Type send");
         }
         [HttpPost("UploadImage/{id}")]
-        public async Task<long> UploadImage(int id, [FromForm] IFormFile imfile)
+        public async Task<Picture> UploadImage([FromForm] ImageUploadDTO imfile)
         {
+            Picture pic = new();
+            var path = _conf["ReceiptImagesPath"];
+            var newimagename ="\\"+ imfile.ReceiptID + "_" + imfile.file.FileName;
+            if (string.IsNullOrEmpty(path)) throw new ArgumentNullException("path");
+            if (imfile.file.Length > 0)
+            {
+                
+                using (var stream = imfile.file.OpenReadStream())
+                {
+                    var image = Image.FromStream(stream);
+                    int width = image.Width / 4;
+                    int height = image.Height / 4;
 
-            //foreach (var formFile in files)
-            //{
-            //    if (formFile.Length > 0)
-            //    {
-            //        var filePath = Path.GetTempFileName();
+                    Bitmap newSizeBitmap = new Bitmap(image, new Size(width, height));
+                    using (var ms = new MemoryStream())
+                    {
+                        pic.ReceiptID = imfile.ReceiptID;
+                        pic.SortOrder = "1";
+                        pic.Image = imfile.ReceiptID + "_" + imfile.file.FileName;
+                        try
+                        {
+                            newSizeBitmap.Save(path + newimagename);
+                        }
+                        catch(Exception ex)
+                        {
+                            SmartHomeConstants.log.ServerErrorsAdd("ReceiptController.UploadImage:RezeptID:" + imfile.ReceiptID, ex);
+                        }
+                        try
+                        {
+                            pic = await db.PictureAdd(pic);
+                        }
+                        catch(Exception ex)
+                        {
+                            SmartHomeConstants.log.ServerErrorsAdd("ReceiptController.AddImage:RezeptID:" + imfile.ReceiptID, ex);
+                        }
+                    }
+                }
 
-            //        using (var stream = System.IO.File.Create(filePath))
-            //        {
-            //            await formFile.CopyToAsync(stream);
-            //        }
-            //    }
-            //}
 
-            return 0;
+                
+            }
+            return pic;
         }
-
     }
 }

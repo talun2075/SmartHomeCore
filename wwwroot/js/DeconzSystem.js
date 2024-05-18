@@ -78,7 +78,8 @@ function DeconzSystem() {
             }
             var item = roomGroups.room;
             try {
-                let lightsDOM = '<div class="roomLightsWrapper">';
+                let DOMLights = document.createElement("DIV");
+                DOMLights.classList.add("roomLightsWrapper")
                 var counter = 0;
                 for (let itemLight of item.lightsMerged) {
                     counter++;
@@ -93,15 +94,30 @@ function DeconzSystem() {
                         dis = "disabled=disabled";
                         disclass = " disabledCheckbox";
                     }
-                    let colorbox = "";
+                    let colorbox = document.createElement("DIV");
                     if (itemLight.hasColor && itemLight.state.colorCoordinates !== null && itemLight.state.isReachable) {
                         this.ColorLights.push(itemLight.id);
-                        colorbox = '<DIV id="color_' + itemLight.id + '" class="iroColor"></DIV>';
+                        colorbox.id = "color_" + itemLight.id
+                        colorbox.classList.add("iroColor");
                     }
-                    let lbox = '<div class="switch' + disclass + '"><input type="checkbox" onClick="DS.TogglePowerState(\'l\',' + itemLight.id + ', this.checked, ' + item.id + ');" name="LightCheckbox_' + itemLight.id + '" ' + check + ' ' + dis + '><label for="LightCheckbox_' + itemLight.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label></div>';
-                    lightsDOM += '<DIV id="light_' + itemLight.id + '" class="light"><DIV class="lightWrapperNoColor"><div class="lightName">' + itemLight.name + '</div>' + lbox + '</DIV>' + colorbox + '</DIV>';
+
+                    let DOMSwitch = document.createElement("DIV");
+                    DOMSwitch.classList.add("switch")
+                    DOMSwitch.innerHTML = '<input type="checkbox" onClick="DS.TogglePowerState(\'l\',' + itemLight.id + ', this.checked, ' + item.id + ');" name="LightCheckbox_' + itemLight.id + '" ' + check + ' ' + dis + '><label for="LightCheckbox_' + itemLight.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label>';
+                    let DOMName = document.createElement("DIV");
+                    DOMName.classList.add("lightName");
+                    DOMName.textContent = itemLight.name;
+                    let DOMlightWrapperNoColor = document.createElement("DIV");
+                    DOMlightWrapperNoColor.classList.add("lightWrapperNoColor");
+                    DOMlightWrapperNoColor.appendChild(DOMName);
+                    DOMlightWrapperNoColor.appendChild(DOMSwitch);
+                    let DOMLight = document.createElement("DIV");
+                    DOMLight.id = "light_" + itemLight.id;
+                    DOMLight.classList.add("light");
+                    DOMLight.appendChild(DOMlightWrapperNoColor);
+                    DOMLight.appendChild(colorbox);
+                    DOMLights.appendChild(DOMLight);
                 }
-                lightsDOM += '</div>';
                 var check = "";
                 var dis = "";
                 var disclass = "";
@@ -110,26 +126,56 @@ function DeconzSystem() {
                 }
                 if (counter === 1 && item.lightsMerged[0].state.isReachable === false && item.lightsMerged[0].type !== SV.PowerUnit) {
                     dis = "disabled=disabled";
-                    disclass = " disabledCheckbox";
+                    disclass = "disabledCheckbox";
                 }
                 var anyClass = "";
                 if (item.state.anyOn === true && item.state.allOn === false) {
-                    anyClass = " anyRommLightsOnClass";
+                    anyClass = "anyRommLightsOnClass";
                 }
                 var itemclass = "";
                 if (item.type === "LightGroup") {
-                    itemclass = " lightGroup";
+                    itemclass = "lightGroup";
                 }
-                var box = '<div class="switch' + disclass + anyClass + '"><input type="checkbox" onClick="DS.TogglePowerState(\'r\',' + item.id + ',this.checked,' + item.id + ');" name="RoomCheckbox_' + item.id + '" ' + check + dis + '><label for="RoomCheckbox_' + item.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label></div>';
-                $('<div id="room_' + item.id + '" class="room' + itemclass + '"><div class="roomEveryTimeShowed"><div class="roomName" onClick="DS.ShowRoomChilds(' + item.id + ')"><span class="roomNameSpan">' + item.name + '</span></div><div class="roomPowerState" data-all="' + item.state.allOn + '" data-any="' + item.state.anyOn + '">' + box + '</div></div>' + lightsDOM + '</div>').appendTo(SV.DeconzContentWrapper);
-                this.DOM["r" + item.id] = $("#room_" + item.id);
+                let DOMRoomSwitch = document.createElement("DIV");
+                if (anyClass !=="")
+                    DOMRoomSwitch.classList.add(anyClass);
+                if (disclass !=="")
+                    DOMRoomSwitch.classList.add(disclass);
+
+                DOMRoomSwitch.classList.add("switch");
+                DOMRoomSwitch.innerHTML = '<input type="checkbox" onClick="DS.TogglePowerState(\'r\',' + item.id + ',this.checked,' + item.id + ');" name="RoomCheckbox_' + item.id + '" ' + check + dis + '><label for="RoomCheckbox_' + item.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label>';
+                let DOMroomEveryTimeShowed = document.createElement("DIV");
+                DOMroomEveryTimeShowed.classList.add("roomEveryTimeShowed");
+                let DOMroomName = document.createElement("DIV");
+                DOMroomName.classList.add("roomName");
+                DOMroomName.setAttribute("OnClick", "DS.ShowRoomChilds(" + item.id + ")");
+                let DOMroomNameSpan = document.createElement("SPAN");
+                DOMroomNameSpan.classList.add("roomNameSpan");
+                DOMroomNameSpan.textContent = item.name;
+                DOMroomName.appendChild(DOMroomNameSpan);
+                DOMroomEveryTimeShowed.appendChild(DOMroomName);
+                let DOMRoom = document.createElement("DIV");
+                let DOMroomPowerState = document.createElement("DIV");
+                DOMroomPowerState.dataset.all = item.state.allOn;
+                DOMroomPowerState.dataset.any = item.state.anyOn;
+                DOMroomPowerState.appendChild(DOMRoomSwitch)
+                DOMroomEveryTimeShowed.appendChild(DOMroomPowerState);
+                DOMRoom.id = "room_" + item.id;
+                DOMRoom.classList.add("room");
+                if(itemclass !=="")
+                    DOMRoom.classList.add(itemclass);
+
+                DOMRoom.appendChild(DOMroomEveryTimeShowed);
+                DOMRoom.appendChild(DOMLights);
+                SV.DeconzContentWrapper.appendChild(DOMRoom);
+                this.DOM["r" + item.id] = DOMRoom;
             }
             catch (ex) {
                 console.log(ex);
             }
             //lampen zufügen zu DOM Liste
             for (let item of this.Lights) {
-                this.DOM["l" + item.id] = $("#light_" + item.id);
+                this.DOM["l" + item.id] = document.getElementById("light_" + item.id);
             }
         }
         this.ColorPickerInit();
@@ -201,11 +247,10 @@ function DeconzSystem() {
         }
         var temproom = (this.MergedRoomLights.find(x => x.room.id == id)).room;
         if (temproom.lightsMerged.length < 2 && temproom.lightsMerged[0].hasClass === false) {
-            
             return;
         }
         lastRoomChildShowedid = id;
-        $("#room_" + id + ">.roomLightsWrapper").show(300);
+        document.querySelector("#room_" + id + ">.roomLightsWrapper").style.display = "block";
     }
     this.UpdateRendering = function () {
         for (let item of this.MergedRoomLights) {

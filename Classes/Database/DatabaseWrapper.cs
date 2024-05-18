@@ -325,7 +325,7 @@ namespace SmartHome.Classes.Database
                     {
                         try
                         {
-                            receipt.ID = rdr.GetInt32(0);
+                            receipt.ID = rdr.GetInt64(0);
                             receipt.Title = rdr.GetString(1);
                             receipt.Duration = rdr.IsDBNull(4) ? "" : rdr.GetString(4);
                             receipt.Decription = rdr.IsDBNull(2) ? "" : rdr.GetString(2);
@@ -350,7 +350,7 @@ namespace SmartHome.Classes.Database
                             {
                                 
                                 ing.Amount = rkdr.GetString(0);
-                                ing.ID = rkdr.GetInt32(1);
+                                ing.ID = rkdr.GetInt64(1);
                                 ing.Ingredient = rkdr.GetString(2);
                                 ing.Unit = rkdr.GetString(3);
                                 ing.IngredientUnitID = rkdr.GetInt32(4);
@@ -373,7 +373,7 @@ namespace SmartHome.Classes.Database
                             try
                             {
                                 CategoryDTO cat = new();
-                                cat.ID = rkatdr.GetInt32(0);
+                                cat.ID = rkatdr.GetInt64(0);
                                 if (cat.ID > 0)
                                     cat.Category = rkatdr.GetString(1);
 
@@ -397,9 +397,10 @@ namespace SmartHome.Classes.Database
                             try
                             {
                                 Picture pic = new();
-                                pic.ID = rbatdr.GetInt32(0);
+                                pic.ID = rbatdr.GetInt64(0);
                                 pic.Image = rbatdr.GetString(2);
                                 pic.SortOrder = rbatdr.GetString(3);
+                                pic.ReceiptID= receipt.ID;
                                 pictures.Add(pic);
                             }
                             catch (Exception ex)
@@ -640,6 +641,31 @@ namespace SmartHome.Classes.Database
             }
             return ret;
         }
+
+        public async Task<Picture> PictureAdd(Picture pic)
+        {
+            try
+            {
+                await OpenReceipt();
+                var rcmd = new SQLiteCommand(conReceipt)
+                {
+                    CommandText = "insert into talun_rezepte_bilder(rezept_id,rezept_bild,bild_ordnen) VALUES (" + pic.ReceiptID + ",'" + pic.Image + "','1')"
+                };
+                _ = await rcmd.ExecuteNonQueryAsync();
+                pic.ID = conReceipt.LastInsertRowId;
+
+            }
+            catch (Exception ex)
+            {
+                SmartHomeConstants.log.ServerErrorsAdd("databaseWrapper.UpdateReceiptCategoryAdd", ex);
+            }
+            finally
+            {
+                CloseReceipt();
+            }
+            return pic;
+        }
+
         #endregion Receipt
         #region Buttons
         private async Task<bool> OpenButton()

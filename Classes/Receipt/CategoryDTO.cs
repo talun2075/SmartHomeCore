@@ -2,7 +2,7 @@
 {
     public class CategoryDTO
     {
-        public int ID { get; set; }
+        public long ID { get; set; }
         public string Category { get; set; } = string.Empty;
     }
 }

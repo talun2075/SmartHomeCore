@@ -29,5 +29,6 @@ namespace SmartHome.Classes.Database
         Task<Boolean> UpdateReceiptIngridientUnitUpdate(ReceiptUpdateDTO ru);
         Task<Boolean> UpdateReceiptImageSortOrder(ReceiptUpdateDTO ru);
         Task<Boolean> UpdateReceiptImageDelete(ReceiptUpdateDTO ru);
+        Task<Picture> PictureAdd(Picture pic);
     }
 }
