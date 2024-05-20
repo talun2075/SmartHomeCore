@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\lib\jquery\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\Colo\index.html" />
   </ItemGroup>
 
