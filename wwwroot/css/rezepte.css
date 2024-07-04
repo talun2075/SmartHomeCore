@@ -249,7 +249,9 @@ body {
   from {opacity: .4}
   to {opacity: 1}
 }
-
+a {
+    color: gray;
+}
 
 /*MediaQueries*/
 @media screen and (orientation: portrait) {

@@ -32,6 +32,6 @@ ChildElemts used for Touch Events
 			<SwipeDown Hue="54" Saturation="31" Brightness="15" Value="" Action="SetHSV" />
 		</TouchData>
 	</AuroraKnowingDevice>
-	<AuroraKnowingDevice Room="Wohnzimmer" MacAdress="80:8A:F7:01:22:A3" AuthToken="ctMiYeIMRhOHR7UW1K36fNhH05jyhWpr" DeviceName ="Wohnzimmer Links" KnowingIP="192.168.0.113" Serial="S22170H7987" UseSubscription ="false"/>
+	<AuroraKnowingDevice Room="Wohnzimmer" MacAdress="80:8A:F7:08:62:CA" AuthToken="AWDJxkvq2F7RXjWC495z2W4rneO1wX1Z" DeviceName ="Wohnzimmer Links" KnowingIP="192.168.0.113" Serial="S23140H1329" UseSubscription ="false"/>
 	<AuroraKnowingDevice Room="Wohnzimmer" MacAdress="80:8A:F7:05:EA:7E" AuthToken="3AFO2samaK8lw0tzeAdSUJmfQDtmXpMa" DeviceName ="Wohnzimmer Rechts" KnowingIP="192.168.0.110" Serial="S22150H3322" UseSubscription ="false" />
 </AuroraKnowingDevices>

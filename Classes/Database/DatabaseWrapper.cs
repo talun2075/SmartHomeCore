@@ -224,7 +224,7 @@ namespace SmartHome.Classes.Database
                 await OpenReceipt();
                 var rcmd = new SQLiteCommand(conReceipt)
                 {
-                    CommandText = "select * from talun_rezepte_zutaten order by zutat COLLATE NOCASE ASC"
+                    CommandText = "select * from talun_rezepte_zutaten order by zutat"
                 };
                 var rdr = await rcmd.ExecuteReaderAsync();
 
@@ -244,6 +244,7 @@ namespace SmartHome.Classes.Database
             {
                 CloseReceipt();
             }
+            ret = ret.OrderBy(x => x.Ingredient).ToList();
             return ret;
         }
         public async Task<List<CategoryDTO>> ReadCategoriesData()
@@ -254,7 +255,7 @@ namespace SmartHome.Classes.Database
                 await OpenReceipt();
                 var rcmd = new SQLiteCommand(conReceipt)
                 {
-                    CommandText = "select * from talun_rezepte_kategorie order by kategorie COLLATE NOCASE ASC"
+                    CommandText = "select * from talun_rezepte_kategorie order by kategorie"
                 };
                 var rdr = await rcmd.ExecuteReaderAsync();
 
@@ -274,6 +275,7 @@ namespace SmartHome.Classes.Database
             {
                 CloseReceipt();
             }
+            ret = ret.OrderBy(x => x.Category).ToList();
             return ret;
         }
         public async Task<List<UnitDTO>> ReadUnitsData()
@@ -284,7 +286,7 @@ namespace SmartHome.Classes.Database
                 await OpenReceipt();
                 var rcmd = new SQLiteCommand(conReceipt)
                 {
-                    CommandText = "select * from talun_rezepte_einheit order by einheit COLLATE NOCASE ASC"
+                    CommandText = "select * from talun_rezepte_einheit order by einheit"
                 };
                 var rdr = await rcmd.ExecuteReaderAsync();
 
@@ -304,6 +306,7 @@ namespace SmartHome.Classes.Database
             {
                 CloseReceipt();
             }
+            ret = ret.OrderBy(x => x.Unit).ToList();
             return ret;
         }
         public async Task<List<ReceiptDTO>> ReadReceiptList()

@@ -524,20 +524,20 @@ function RezeptObject(adminstyle) {
         }
         Send(sendroot + "GetUnits").then(function (data) {
             EinheitenListe = data;
-            Send(sendroot + "GetCategories").then(function (data) {
-                KategorieListe = data;
-                Send(sendroot + "GetIngrediens").then(function (data) {
-                    ZutatenListe = data;
+            Send(sendroot + "GetCategories").then(function (data2) {
+                KategorieListe = data2;
+                Send(sendroot + "GetIngrediens").then(function (data3) {
+                    ZutatenListe = data3;
+                    let curtemp = t.CurrentReceipt;
+
+                    t.HideLists();
+                    t.RenderRezepListe();
+                    if (curtemp !== 0) {
+                        t.EditReceipt(curtemp);
+                    }
                 });
             });
         });
-        let curtemp = this.CurrentReceipt;
-
-        this.HideLists();
-        this.RenderRezepListe();
-        if (curtemp !== 0) {
-            this.EditReceipt(curtemp);
-        }
     }
     this.AddType = function (typ) {
         var value = prompt("Bitte den Wert f" + unescape("%FC") + "r die " + typ + " eingeben:");
