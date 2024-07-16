@@ -1,9 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <links>
-	<link Typ="Rezepte" BildPfad="/images/topf.png">
-		<LinkUri Uri="http://talun.tami" Anzeige="Rezepte"/>
-		<LinkUri Uri="http://talun.tami/admin" Anzeige="Admin"/>
-	</link>
 	<link Typ="Ärzte" Column="1" BildPfad="/images/roteskreuz.png">
 		<LinkUri Uri="https://www.kinderaerzte-norderstedt.de/home/" Bild="/images/drlyons.png" Anzeige="Dr. Lyons"/>
 		<LinkUri Uri="https://www.jameda.de/norderstedt/aerzte/innere-allgemeinmediziner/dr-annegret-laporte/uebersicht/80433102_1/" Anzeige="Dr. Laporte"/>
@@ -24,14 +20,15 @@
 		<LinkUri Uri="https://www.grundschule-heidberg.de/termine/" Bild="/images/oggs.jpg" Anzeige="OGGS"></LinkUri>
 		<LinkUri Uri="https://www.norderstedt.de/baui" Bild="/images/baui.jpg" Anzeige="Baui"></LinkUri>
 		<LinkUri Uri="https://www.norderstedt.de/fossi" Bild="/images/fossi.JPG" Anzeige="Fossi"></LinkUri>
+		<LinkUri Uri="https://www.flimmo.de" Anzeige="Flimmo"></LinkUri>
 	</link>
 	<link Typ="Externe Seiten Administration" Column="3">
 		<LinkUri Uri="https://admin.df.eu/" Bild="/images/df.svg" Anzeige="Domainfactory"/>
 		<LinkUri Uri="https://exchange2013.df.eu" Bild="/images/df.svg" Anzeige="Exchange"/>
 		<LinkUri Uri="https://vault.bitwarden.com" Bild="/images/bitwarden.svg" Anzeige="Bitwarden"/>
 	</link>
-	<link Typ="Sonstiges" Column="3" BildPfad="/images/mountain.png">
-		<LinkUri Uri="http://sonos.tami/clock/" Bild="/images/clock.png" Anzeige="Uhr"/>
+	<link Typ="Sonstiges" Column="4" BildPfad="/images/mountain.png">
+		<LinkUri Uri="http://sonos.tami/clock/" Bild="/images/clock.png" Anzeige="Jahres Uhr"/>
 	</link>
 	<link Typ="Externe Seiten Essen &amp; Veranstaltung" Column="2">
 		<LinkUri Uri="https://www.cinemotion-kino.de/norderstedt/kinoprogramm" Anzeige="Kino" Bild="/images/kino.png"/>
@@ -43,27 +40,27 @@
 		<LinkUri Uri="https://www.eistaxi.de/norderstedt" Anzeige="Eistaxi" Bild="/images/eistaxi.png"/>
 		<LinkUri Uri="http://www.elrado-house.de/norderstedt/restaurant.html" Anzeige="Elrado" Bild="/images/elrado.gif"/>
 		<LinkUri Uri="https://www.beialberto.de" Anzeige="Alberto" Bild="/images/alberto.webp"/>
+		<LinkUri Uri="https://www.lapiazza-norderstedt.de/" Anzeige="La Piazza" Bild="/images/lapiazza.webp"/>
 	</link>
-	<link Typ="PDF (Lokal)" Column="2" BildPfad="/images/pdf.png">
+	<link Typ="PDF (Lokal)" Column="4" BildPfad="/images/pdf.png">
 		<LinkUri Uri="/files/hvv.pdf" Anzeige="HVV"/>
 	</link>
 	<link Typ="Entwicklung" Column="4" BildPfad="/images/develop.jpg">
 				<LinkUri Uri="http://deconz.tami:888/api/463608DCF3/sensors/" Anzeige="Deconz"/>
 		<LinkUri Uri="http://192.168.0.110:16021/api/v1/3AFO2samaK8lw0tzeAdSUJmfQDtmXpMa" Anzeige="Shapes Wohnzimmer Rechts"/>
-		<LinkUri Uri="http://192.168.0.113:16021/api/v1/flEeeS56j8AD0S768zqiOi83oMB2YXv2" Anzeige="Shapes Wohnzimmer Links"/>
-		<LinkUri Uri="http://192.168.0.111:16021/api/v1/9ul653pNIxshyPJAETHtxaEFv0imPFHS" Anzeige="Shapes Gästezimmer"/>
+		<LinkUri Uri="http://192.168.0.113:16021/api/v1/AWDJxkvq2F7RXjWC495z2W4rneO1wX1Z" Anzeige="Shapes Wohnzimmer Links"/>
+		<LinkUri Uri="http://192.168.0.111:16021/api/v1/0KMhsarijWVGKkYRTAXu34hfV1DcBicj" Anzeige="Shapes Gästezimmer"/>
 		<LinkUri Uri="http://192.168.0.112:16021/api/v1/vD2YxRQLkLZ8SxhYtVsIhCTMsp3ws5A4" Anzeige="Aurora Esszimmer"/>
 	</link>
 	<link Typ="Administration" Column="3" BildPfad="/images/administration.png">
 		<LinkUri Uri="http://pihole.tami/admin" Bild="/images/pihole.png" Anzeige="Pihole"/>
-		<LinkUri Uri="http://fritz.box" Bild="/images/fritzbox.png" Anzeige="Fritzbox"/>
+		<LinkUri Uri="http://192.168.0.1" Bild="/images/fritzbox.png" Anzeige="Fritzbox"/>
 		<LinkUri Uri="http://192.168.0.205" Bild="/images/fritzrepeater_2400.png" Anzeige="Fritz Repeater Obergeschoß"/>
 		<LinkUri Uri="http://192.168.0.206" Bild="/images/fritzrepeater_3000.png" Anzeige="Fritz Repeater Wohnzimmer"/>
 		<LinkUri Uri="http://192.168.0.15/login.cgi" Bild="/images/netgear.png" Anzeige="Netgear Arbeitszimmer"/>
 		<LinkUri Uri="http://canon.tami/index.html" Bild="/images/canon.png" Anzeige="Drucker Arbeitszimmer"/>
-		<LinkUri Uri="http://sonos.tami:32400/web/index.html#!/dashboard" Bild="/images/plex.png" Anzeige="Plex"/>
-		<LinkUri Uri="http://sh.tami/Buttons" Bild="/images/buttons.png" Anzeige="MyStrom Buttons"/>
-		<LinkUri Uri="http://sh.tami/Shelly" Bild="/images/power.svg" Anzeige="Shelly Übersicht"/>
-		<LinkUri Uri="http://deconz.tami:888" Bild="/images/p.svg" Anzeige="Deconz / Phoscon"/>
+		<LinkUri Uri="http://192.168.0.6:32400/web/index.html#!/dashboard" Bild="/images/plex.png" Anzeige="Plex"/>
+		<LinkUri Uri="http://deconz.tami:888/pwa/login.html" Bild="/images/p.svg" Anzeige="Deconz / Phoscon"/>
+		<LinkUri Uri="http://heizung.tami" Anzeige="Heizung"/>
 	</link>
 </links>

@@ -1,30 +1,34 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Deconz>
-	<RoomSortOrder RoomID="1" SortOrder="8"/>
-	<!--Keller Flur-->
-	<RoomSortOrder RoomID="10" SortOrder="2"/>
-	<!--Finn-->
-	<RoomSortOrder RoomID="14" Hide="true"/>
-	<!--Vorraum-->
-	<RoomSortOrder RoomID="21" SortOrder="3"/>
-	<!--Esszimmer-->
-	<RoomSortOrder RoomID="22" SortOrder="5"/>
-	<!--Küche-->
-	<RoomSortOrder RoomID="3" SortOrder="9"/>
-	<!--Keller Heizung-->
-	<RoomSortOrder RoomID="30" SortOrder="7"/>
-	<!--Flur Erdgeschoss-->
-	<RoomSortOrder RoomID="4" SortOrder="6"/>
-	<!--Treppenhaus-->
-	<RoomSortOrder RoomID="5" SortOrder="5"/>
-	<!--Garten-->
-	<RoomSortOrder RoomID="6" SortOrder="4"/>
-	<!--Wohnzimmer-->
-	<RoomSortOrder RoomID="8" SortOrder="10"/>
-	<!--Schlafzimmer-->
-	<RoomSortOrder RoomID="9" SortOrder="1"/>
 	<!--Ian-->
-	<!--Schalter-->
+	<RoomSortOrder RoomID="9" SortOrder="1"/>
+	<!--Finn-->
+	<RoomSortOrder RoomID="10" SortOrder="2"/>
+	<!--Schlafzimmer-->
+	<RoomSortOrder RoomID="8" SortOrder="3"/>
+	<!--Wohnzimmer-->
+	<RoomSortOrder RoomID="6" SortOrder="4"/>
+	<!--Esszimmer-->
+	<RoomSortOrder RoomID="21" SortOrder="5"/>
+	<!--Küche-->
+	<RoomSortOrder RoomID="22" SortOrder="6"/>
+	<!--Arbeitszimmer-->
+	<RoomSortOrder RoomID="33" SortOrder="7"/>
+	<!--Keller Flur-->
+	<RoomSortOrder RoomID="1" SortOrder="8"/>
+	<!--Keller Heizung-->
+	<RoomSortOrder RoomID="3" SortOrder="9"/>
+	<!--Flur Erdgeschoss-->
+	<RoomSortOrder RoomID="30" SortOrder="10"/>
+	<!--Treppenhaus-->
+	<RoomSortOrder RoomID="4" SortOrder="11"/>
+
+
+
+
+
+
+	<!--Hidden-->
 	<RoomSortOrder RoomID="11300" Hide="true"/>
 	<RoomSortOrder RoomID="17218" Hide="true"/>
 	<RoomSortOrder RoomID="18" Hide="true"/>
@@ -36,4 +40,7 @@
 	<RoomSortOrder RoomID="60687" Hide="true"/>
 	<RoomSortOrder RoomID="23" Hide="true"/>
 	<RoomSortOrder RoomID="17" Hide="true"/>
+	<RoomSortOrder RoomID="25" Hide="true"/>
+	<RoomSortOrder RoomID="2514" Hide="true"/>
+	<RoomSortOrder RoomID="14" Hide="true"/>
 </Deconz>

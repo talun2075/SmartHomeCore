@@ -44,19 +44,20 @@ function DeconzSystem() {
     this.ColorPickerInit = function () {
         for (var i = 0; i < this.ColorLights.length; i++) {
             let lightid = this.ColorLights[i];
-            let light = this.Lights.find(x => x.id === lightid);
-            var lvalue = light.hexColor;
-            var cp = new iro.ColorPicker('#color_' + lightid, { color: lvalue, width:250 });
-
-
             if (typeof this.ColorPickers[lightid] === "undefined") {
-                this.ColorPickers[lightid] = cp;
-            }
-            cp.on('input:end', function () {
-                // log the current color as a HEX string
-                t.UpdateColor(lightid);
 
-            });
+
+                let light = this.Lights.find(x => x.id === lightid);
+                var lvalue = light.hexColor;
+                var cp = new iro.ColorPicker('#color_' + lightid, { color: lvalue, width: 250 });
+                this.ColorPickers[lightid] = cp;
+
+                cp.on('input:end', function () {
+                    // log the current color as a HEX string
+                    t.UpdateColor(lightid);
+
+                });
+            }
         }
     };
     this.UpdateColor = function (id) {
