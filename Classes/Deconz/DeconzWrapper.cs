@@ -14,6 +14,7 @@ using InnerCore.Api.DeConz.ColorConverters;
 using InnerCore.Api.DeConz.ColorConverters.HSB.Extensions;
 using SmartHome.Classes.SmartHome.Data;
 using SmartHome.Classes.SmartHome.Util;
+using System.Drawing;
 
 namespace SmartHome.Classes.Deconz
 {
@@ -24,7 +25,7 @@ namespace SmartHome.Classes.Deconz
     {
         private DeConzClient _client;
         private BridgeConfig _bridgeConfig;
-        private readonly List<DeconzDataConfig> DeconzDataConfigList = new();
+        private readonly List<DeconzDataConfig> DeconzDataConfigList = [];
 
         #region Properties
         /// <summary>
@@ -74,7 +75,7 @@ namespace SmartHome.Classes.Deconz
             {
                 ReadDeconzDataConfig();
             }
-            List<SmartHomeRoom> shrList = new();
+            List<SmartHomeRoom> shrList = [];
             foreach (Group item in g)
             {
                 var shr = new SmartHomeRoom
@@ -230,7 +231,7 @@ namespace SmartHome.Classes.Deconz
         /// <returns></returns>
         public async Task<DeConzResults> ChangeLightState(LightCommand command, string LightId)
         {
-            return await ChangeLightState(command, new List<string>() { LightId });
+            return await ChangeLightState(command, [LightId]);
         }
 
         public async void SetLightColor(string id, string color)
@@ -239,6 +240,7 @@ namespace SmartHome.Classes.Deconz
             RGBColor rGBColor = new(color);
             await ChangeLightState(LightCommand.TurnOn().SetColor(rGBColor, light.State.Hue == null && light.State.Saturation == null), id);
         }
+
         #endregion public Methods
         #region private Methoden
         private void ReadDeconzDataConfig()
@@ -260,7 +262,7 @@ namespace SmartHome.Classes.Deconz
                         RoomID = Convert.ToInt32(item.Attributes["RoomID"].Value),
                         SortOrder = item.Attributes["SortOrder"]?.Value == null ? 100 : Convert.ToInt32(item.Attributes["SortOrder"].Value)
                     };
-                    if (!DeconzDataConfigList.Any())
+                    if (DeconzDataConfigList.Count == 0)
                     {
                         DeconzDataConfigList.Add(st);
                     }

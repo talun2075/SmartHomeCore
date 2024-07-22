@@ -129,7 +129,6 @@ namespace SmartHome.Controllers
                     {
                         return 0;
                     }
-                    break;
                 case ReceiptUpdateType.IngridientUnitDelete:
                     return await db.UpdateReceiptIngridientUnitDelete(v) == true ? 1 : 0;
                 case ReceiptUpdateType.IngridientUnitUpdate:

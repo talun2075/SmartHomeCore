@@ -15,7 +15,7 @@ namespace SmartHome.Controllers
     [Route("[controller]")]
     public class AuroraEventController : ControllerBase
     {
-        private static readonly IMessageRepository _messageRepository = new MessageRepository();
+        private static readonly MessageRepository _messageRepository = new MessageRepository();
 
         private static readonly JsonSerializerOptions _jsonSerializerOptions = new()
         { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
@@ -141,9 +141,9 @@ namespace SmartHome.Controllers
         private void SetServerSentEventHeaders()
         {
             Response.StatusCode = 200;
-            Response.Headers.Add("Content-Type", "text/event-stream");
-            Response.Headers.Add("Cache-Control", "no-cache");
-            Response.Headers.Add("Connection", "keep-alive");
+            Response.Headers.Append("Content-Type", "text/event-stream");
+            Response.Headers.Append("Cache-Control", "no-cache");
+            Response.Headers.Append("Connection", "keep-alive");
         }
         [HttpPost("broadcast")]
         public Task Broadcast([FromBody] Notification notification)

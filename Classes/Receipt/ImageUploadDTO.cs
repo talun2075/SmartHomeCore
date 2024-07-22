@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Http;
-
 namespace SmartHome.Classes.Receipt
 {
     public class ImageUploadDTO

@@ -44,6 +44,13 @@
     display: inline-flex;
     width: 100%;
 }
+.sliderBri {
+    width: calc(100% - 130px);
+    appearance: none;
+    background: linear-gradient(90deg, rgba(99,74,105,0.01) 0%, rgba(113,16,139,1) 80%);
+    border: 1px solid gray;
+    border-radius: 25px;
+}
 .iroColor {
     display: inline-flex;
     justify-content: center;
@@ -55,8 +62,6 @@
 }
 .roomNameSpan {
     vertical-align: sub;
-    vertical-align: -webkit-baseline-middle;
-    vertical-align: -moz-middle-with-baseline;
 }
 .roomPowerState {
     
