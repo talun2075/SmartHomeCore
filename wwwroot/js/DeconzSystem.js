@@ -73,10 +73,11 @@ function DeconzSystem() {
         }
         for (let roomGroups of this.MergedRoomLights) {
             if (roomGroups.hide === true || roomGroups.room.hidden === true || roomGroups.room.lights.length === 0) {
-                console.log("room Wird übersprungen:" + roomGroups.room.name);
+                //console.log("room Wird übersprungen:" + roomGroups.room.name);
                 continue;
             }
-            var item = roomGroups.room;
+            let item = roomGroups.room;
+            let itemid = item.id;
             try {
                 let DOMLights = document.createElement("DIV");
                 DOMLights.classList.add("roomLightsWrapper")
@@ -100,7 +101,36 @@ function DeconzSystem() {
                         colorbox.id = "color_" + itemLight.id
                         colorbox.classList.add("iroColor");
                     }
+                    var DOMSliderWrapper = "init";
+                    //slider Brightnes "Dimmable light"
+                    if (!itemLight.hasColor && itemLight.type === "Dimmable light") {
+                        //create slider for brightness
+                        DOMSliderWrapper = document.createElement("DIV");
+                        DOMSliderWrapper.classList.add("sliderWrapper");
+                        let DOMSlider = document.createElement("input");
+                        DOMSlider.max = 254;
+                        DOMSlider.min = 0;
+                        DOMSlider.type = "range";
+                        DOMSlider.value = itemLight.state.brightness;
+                        DOMSlider.classList.add("sliderBri");
+                        DOMSlider.onchange = function () {
+                            //todo send this value
+                            Send("SetBrightness/" + itemLight.id + "/" + this.value);
+                            if (this.value == 0) {
+                                t.TogglePowerState('l', itemLight.id, false, itemid);
+                            } else {
+                                var light = item.lightsMerged.find(x => x.id == itemLight.id);
+                                if (light.state.on !== true) {
+                                    light.state.on = true;
+                                    t.UpdateRendering();
+                                }
+                                
+                            }
 
+
+                        }
+                        DOMSliderWrapper.appendChild(DOMSlider);
+                    }
                     let DOMSwitch = document.createElement("DIV");
                     DOMSwitch.classList.add("switch")
                     DOMSwitch.innerHTML = '<input type="checkbox" onClick="DS.TogglePowerState(\'l\',' + itemLight.id + ', this.checked, ' + item.id + ');" id="LightCheckbox_' + itemLight.id + '" name="LightCheckbox_' + itemLight.id + '" ' + check + ' ' + dis + '><label for="LightCheckbox_' + itemLight.id + '"><i class="bulb"><span class="bulb-center"></span><span class="filament-1"></span><span class="filament-2"></span><span class="reflections"><span></span></span><span class="sparks"><i class="spark1"></i><i class="spark2"></i><i class="spark3"></i><i class="spark4"></i></span></i></label>';
@@ -115,6 +145,9 @@ function DeconzSystem() {
                     DOMLight.id = "light_" + itemLight.id;
                     DOMLight.classList.add("light");
                     DOMLight.appendChild(DOMlightWrapperNoColor);
+                    if (typeof DOMSliderWrapper !== "undefined" && DOMSliderWrapper !=="init") {
+                        DOMLight.appendChild(DOMSliderWrapper);
+                    }
                     DOMLight.appendChild(colorbox);
                     DOMLights.appendChild(DOMLight);
                 }

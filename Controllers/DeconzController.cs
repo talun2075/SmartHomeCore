@@ -7,6 +7,7 @@ using SmartHome.Classes.Deconz;
 using SmartHome.Classes.SmartHome.Data;
 using SmartHome.Classes.SmartHome.Interfaces;
 using SmartHome.Classes.SmartHome.Util;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,8 +17,8 @@ namespace SmartHome.Controllers
     [Route("/[controller]")]
     public class DeconzController : Controller
     {
-        private ISmartHomeHelper shp;
-        private IDeconzWrapper deconz;
+        private readonly ISmartHomeHelper shp;
+        private readonly IDeconzWrapper deconz;
         public DeconzController(IWebHostEnvironment env, ISmartHomeHelper _shp, IDeconzWrapper _deconz )
         {
             SmartHomeConstants.Env = env;
@@ -69,7 +70,7 @@ namespace SmartHome.Controllers
         public async Task<DeConzResults> ToggleLightPowerStateTo(int id, bool v)
         {
             var comm = v ? deconz.LightCommand.TurnOn() : deconz.LightCommand.TurnOff();
-            return await deconz.ChangeLightState(comm, new List<string> { id.ToString() });
+            return await deconz.ChangeLightState(comm, [id.ToString()]);
         }
 
         [HttpGet("GetLights")]
@@ -114,6 +115,23 @@ namespace SmartHome.Controllers
         public async Task<string> GardenOff()
         {
             return await shp.DeconzGardenOff();
+        }
+        [HttpGet("SetBrightness/{id}/{value}")]
+        public async Task<DeConzResults> SetBrightness(int id, int value)
+        {
+            if (value < 0 || value > 254)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value));
+            } 
+            if(value == 0)
+            {
+              return await ToggleLightPowerStateTo(id, false);
+            }
+            var lc = new LightCommand();
+            lc.TurnOn();
+            lc.Brightness = Convert.ToByte(value);
+            return await deconz.ChangeLightState(lc, id.ToString());
+
         }
 
         [HttpPost("SetColor/{id}")]
