@@ -12,8 +12,6 @@ namespace SmartHome.Classes.Database
         Task<List<CategoryDTO>> ReadCategoriesData();
         Task<List<ReceiptDTO>> ReadReceiptList();
         Task<List<UnitDTO>> ReadUnitsData();
-        Task<bool> ReadButtons();
-        Task<bool> UpdateButton(Button button);
         Task<Boolean> AddUnit(string unit);
         Task<Boolean> AddCategory(string categoryName);
         Task<Boolean> AddIngredient(string ingridient);

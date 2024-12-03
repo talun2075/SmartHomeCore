@@ -44,22 +44,10 @@ namespace SmartHome.Controllers
         {
             return await shw.Long(id);
         }
-        [HttpGet("Generic/{id}")]
-        public async Task<Boolean> Generic(string id)
-        {
-            return await shw.Generic(GetContext());
-        }
         [HttpGet("CheckTimer")]
         public Boolean CheckTimer()
         {
             return false;
-        }
-        [HttpGet("AllButtons")]
-        public async Task<List<Button>> AllButtons()
-        {
-            if (!SmartHomeConstants.KnowingButtons.Any())
-                await shw.ReadButtonXML();
-            return SmartHomeConstants.KnowingButtons;
         }
         [HttpGet("Test")]
         public void Test()

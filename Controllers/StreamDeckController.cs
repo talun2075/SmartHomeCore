@@ -173,14 +173,6 @@ namespace SmartHome.Controllers
             return retval;
 
         }
-        [HttpGet("GetButtonsAsync")]
-        public async Task<List<Button>> GetButtonsAsync()
-        {
-            if (!SmartHomeConstants.KnowingButtons.Any()) await shw.ReadButtonXML();
-            var returnlist = SmartHomeConstants.KnowingButtons;
-            returnlist.RemoveAll(x => x.Visible == false || x.Aktiv == false);
-            return returnlist;
-        }
     }
 
 

@@ -29,7 +29,7 @@ namespace SmartHome.Controllers
             ViewBag.svg = "home.svg";
             ViewBag.png16 = "favicon.png";
             ViewBag.png32 = "favicon.png";
-            ViewBag.NavClass = "navSixt";
+            ViewBag.NavClass = "navThird";
             return View();
         }
 

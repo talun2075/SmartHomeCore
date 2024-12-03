@@ -11,13 +11,14 @@
   Arguments: as String array, ||| as separator
   Logging Boolean for logg a trace, default false
   -->
-	<Time Name="GardenON" Path="http://sh.tami/deconz/gardenon" Method ="DeconzGardenOn" Repeat="false" When="16:30:00" Type="URL" Logging="false" Active="true"/>
-	<Time Name="GardenOff" Path="http://sh.tami/deconz/gardenoff" Method ="DeconzGardenOff" Repeat="false" When="22:00:00" Type="URL" Logging="false" Active="true"/>
-	<Time Name="SonosTimeStuff" Path="http://sonos.tami/settings/FillSonosTimeSettingStuff" Repeat="true" When="12:00:00" Type="URL" Active="true"/>
-	<Time Name="SetPlaylists" Path="http://sonos.tami/zone/SetPlaylists" Repeat="true" When="00:30:00" Type="URL" Active="true"/>
-	<Time Name="CheckDevicesToPlayer" Path="http://sonos.tami/zone/CheckDevicesToPlayer" Repeat="true" When="01:00:00" Type="URL" Active="true"/>
-	<Time Name="FillAllPlayerProperties" Path="http://sonos.tami/zone/FillAllPlayerProperties" Repeat="true" Async="false" When="00:30:00" Type="URL" Active="true"/>
-	<Time Name="FillGenreListWithTimeAndHashes" Path="http://sonos.tami/SmartHome/FillTimeToChildGenreList" Repeat="true" Async="false" When="01:30:00" Type="URL" Active="true"/>
-	<Time Name="IpCheckReachablePlayer" Path="http://sonos.tami/Devices/CheckPlayerReachable" Repeat="true" Async="false" When="00:30:00" Type="URL" Active="true"/>
-	<Time Name="CheckPlayersForHashImages" Path="http://sonos.tami/zone/CheckPlayersForHashImages" Repeat="true" Async="false" When="00:15:00" Type="URL" Active="true"/>
+	<Time Name="GardenON" Path="http://sh.tami/deconz/gardenon" Method ="DeconzGardenOn" Repeat="false" When="16:30:00" Type="URL" Logging="false" Active="false"/>
+	<Time Name="GardenOff" Path="http://sh.tami/deconz/gardenoff" Method ="DeconzGardenOff" Repeat="false" When="22:00:00" Type="URL" Logging="false" Active="false"/>
+	<Time Name="SonosTimeStuff" Path="http://sonos.tami/settings/FillSonosTimeSettingStuff" Repeat="true" When="12:00:00" Type="URL" Active="false"/>
+	<Time Name="SetPlaylists" Path="http://sonos.tami/zone/SetPlaylists" Repeat="true" When="00:30:00" Type="URL" Active="false"/>
+	<Time Name="FillAllPlayerProperties" Path="http://sonos.tami/zone/FillAllPlayerProperties" Repeat="true" Async="false" When="00:30:00" Type="URL" Active="false"/>
+	<Time Name="CheckDevicesToPlayer" Path="http://sonos.tami/zone/CheckDevicesToPlayer" Repeat="true" When="01:00:00" Type="URL" Active="false"/>
+	
+	<Time Name="FillGenreListWithTimeAndHashes" Path="http://sonos.tami/SmartHome/FillTimeToChildGenreList" Repeat="true" Async="false" When="01:30:00" Type="URL" Active="false"/>
+	<Time Name="IpCheckReachablePlayer" Path="http://sonos.tami/Devices/CheckPlayerReachable" Repeat="true" Async="false" When="00:30:00" Type="URL" Active="false"/>
+	<Time Name="CheckPlayersForHashImages" Path="http://sonos.tami/zone/CheckPlayersForHashImages" Repeat="true" Async="false" When="00:15:00" Type="URL" Active="false"/>
 </Times>

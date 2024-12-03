@@ -186,7 +186,7 @@ function RezeptObject(adminstyle) {
 
                     if (rez.pictures.length === 1) {
                         let imagediv = document.createElement("DIV");
-                        let imageDOM = document.createElement("IMAGE");
+                        let imageDOM = document.createElement("IMG");
                         imageDOM.setAttribute("src", "/rImages/" + rez.pictures[0].image);
                         imagediv.appendChild(imageDOM);
                         DOMRezeptBilder.appendChild(imagediv);
@@ -447,6 +447,7 @@ function RezeptObject(adminstyle) {
                 if (DOMSuche.style.display !== "block") {
                     DOMSuche.style.display = "block";
                 }
+                DOMSucheInput.focus({ focusVisible: true });
             }
             var ival = DOMSucheInput.value;
             if (typeof ival === "undefined") {

@@ -12,7 +12,7 @@
 		<LinkUri Uri="http://Denon.tami" Bild="/images/marantz.png" Anzeige="Denon"/>
 	</link>
 	<link Typ="Externe Seiten Kinder" Column="2">
-		<LinkUri Uri="https://www.taskcards.de/#/dashboards/6e2864d8-ab34-4080-b265-f95e7a091007" Bild="/images/wind.png" Anzeige="Pinwand Rückenwind"/>
+		<LinkUri Uri="https://www.taskcards.de/#/board/6e2864d8-ab34-4080-b265-f95e7a091007/view?token=b9b4241a-8ba4-4727-ad16-9d7b65aec8c9" Bild="/images/wind.png" Anzeige="Pinwand Rückenwind"/>
 		<LinkUri Uri="https://www.fbs-hamburg.de/norderstedt/" Bild="/images/efb.png" Anzeige="Familienbildung Norderstedt"/>
 		<LinkUri Uri="https://www.norderstedt.de/Bildung-Kultur/Bildung/Stadtb%C3%BCcherei" Bild="/images/norderstedt.png" Anzeige="Bücherhalle Öffnungszeiten"/>
 		<LinkUri Uri="https://sb-norderstedt.lmscloud.net/" Bild="/images/norderstedt.png" Anzeige="Bücherhalle ausleihe"/>
@@ -21,6 +21,7 @@
 		<LinkUri Uri="https://www.norderstedt.de/baui" Bild="/images/baui.jpg" Anzeige="Baui"></LinkUri>
 		<LinkUri Uri="https://www.norderstedt.de/fossi" Bild="/images/fossi.JPG" Anzeige="Fossi"></LinkUri>
 		<LinkUri Uri="https://www.flimmo.de" Anzeige="Flimmo"></LinkUri>
+		<LinkUri Uri="https://mein.westermann.de/auth/login/token?token=MIoXx3Apfhh5Zl3OUrYXPG3Kekf8FiMOSfnrOc934YfKAOduB0vbnWKGRPTEFDpJK2PN0Wv2WUcx70SDTBwHrQb7XFQ4PbxLxpBCmaeZZThvR4yKJBKyHxcqF6TFcJyO" Anzeige="Antolin Ian"></LinkUri>
 	</link>
 	<link Typ="Externe Seiten Administration" Column="3">
 		<LinkUri Uri="https://admin.df.eu/" Bild="/images/df.svg" Anzeige="Domainfactory"/>
