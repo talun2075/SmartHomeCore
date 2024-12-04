@@ -1,11 +1,9 @@
 ﻿using InnerCore.Api.DeConz.Models;
 using InnerCore.Api.DeConz.Models.Lights;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes.Deconz;
 using SmartHome.Classes.SmartHome.Data;
-using SmartHome.Classes.SmartHome.Interfaces;
 using SmartHome.Classes.SmartHome.Util;
 using System;
 using System.Collections.Generic;
@@ -17,12 +15,10 @@ namespace SmartHome.Controllers
     [Route("/[controller]")]
     public class DeconzController : Controller
     {
-        private readonly ISmartHomeHelper shp;
         private readonly IDeconzWrapper deconz;
-        public DeconzController(IWebHostEnvironment env, ISmartHomeHelper _shp, IDeconzWrapper _deconz )
+        public DeconzController(IWebHostEnvironment env, IDeconzWrapper _deconz )
         {
             SmartHomeConstants.Env = env;
-            shp = _shp;
             deconz = _deconz;
             //todo: Jquery aus oberfläche entfernen
         }
@@ -106,16 +102,6 @@ namespace SmartHome.Controllers
             return true;
         }
 
-        [HttpGet("GardenOn")]
-        public async Task<string> GardenOn()
-        {
-            return await shp.DeconzGardenOn();
-        }
-        [HttpGet("GardenOff")]
-        public async Task<string> GardenOff()
-        {
-            return await shp.DeconzGardenOff();
-        }
         [HttpGet("SetBrightness/{id}/{value}")]
         public async Task<DeConzResults> SetBrightness(int id, int value)
         {

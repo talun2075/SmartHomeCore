@@ -35,18 +35,6 @@ function NanoleafAurora(option) {
             // do stuff with data
             aurora.CheckAuroraEventData(event);
         });
-        //SSE_Event_Source.onmessage = function (event) {
-        //    console.log("Event:Connection message " + event.data);
-        //    try {
-        //        if (typeof event.data === "undefined" || event.data === "") {
-        //            return;
-        //        }
-        //        //aurora.CheckAuroraEventData(event);
-        //    } catch (ex) {
-        //        console.log("Fehlerhafte Event Daten:" + event.data);
-        //        console.log(ex);
-        //    }
-        //};
         console.log("SSE started");
     };
     this.CheckAuroraEventData = function (event) {
@@ -321,61 +309,21 @@ function NanoleafAurora(option) {
                 scen.id = "Scenarios_" + faid;
                 scen.setAttribute("data-serial", faid);
                 scen.classList.add("scenarios");
-                let auroraimage = document.createElement("IMG");
-                auroraimage.setAttribute("src", "/images/lights/" + _data[x].name + ".png")
-                auroraimage.classList.add("layoutimage");
+                //let auroraimage = document.createElement("IMG");
+                //auroraimage.setAttribute("src", "/images/lights/" + _data[x].name + ".png")
+                //auroraimage.classList.add("layoutimage");
                 aurlight.append(aurname);
                 aurlight.append(containerdom);
                 aurlight.append(cp);
                 aurlight.append(scen);
-                aurlight.append(auroraimage);
+                /*aurlight.append(auroraimage);*/
                 auroraWrapper.append(aurlight);
                 this.ColorPickerInit(faid, _data[x].nlj);
             }
             _newData = false;
         }
-        //if (_data.length > 1) {
-        //    let ag = document.createElement("DIV");
-        //    ag.id = "Aurora_Group";
-        //    ag.classList.add("auroraContainer");
+        
 
-        //    for (var i = 0; i < _data.length; i++) {
-        //        let room = _data[i].room;
-        //        if (workedGroupPower.indexOf(room) != -1 || room === null) continue;
-
-        //        workedGroupPower.push(room);
-        //        let agname = document.createElement("DIV");
-        //        agname.classList.add("auroraName");
-        //        agname.innerText = room;
-        //        let agon = document.createElement("DIV");
-        //        agon.innerText = "Power On";
-        //        agon.classList.add("groupcontainer");
-        //        agon.id = "GroupPowerOn";
-        //        agon.addEventListener("click", function () {
-        //            t.Send("SetGroupPowerState/" + room + "/true").then(function () {
-        //                t.UpdateData();
-        //            });
-        //        })
-        //        let agoff = document.createElement("DIV");
-        //        agoff.innerText = "Power Off";
-        //        agoff.classList.add("groupcontainer");
-        //        agoff.id = "GroupPowerOff";
-        //        agoff.addEventListener("click", function () {
-        //            t.Send("SetGroupPowerState/" + room + "/false").then(function () {
-        //                t.UpdateData();
-        //            });
-        //        })
-        //        ag.append(agname);
-        //        ag.append(agon);
-        //        ag.append(agoff);
-        //    }
-            
-        //    auroraWrapper.append(ag);
-        //}
-
-        if (_data.length > 1) {
-            //this.GetGroupScenarios();
-        }
         for (var i = 0; i < _data.length; i++) {
             //Check new Aurora and continue
             if (_data[i].newAurora === true || _data[i].nlj === null) {

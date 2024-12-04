@@ -51,16 +51,16 @@ namespace SmartHome.Controllers
                 EventingInited = true;
             }
             //images creation if in the settings only && is Windows OS
-            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-            Util util = new(_env);
-            if (!isWindows || util.CreateOnlyIfNotExist && util.CheckExist())
-            {
-                return AuroraWrapper.AurorasList;
-            }
-            foreach (AuroraLigth aurora in AuroraWrapper.AurorasList)
-            {
-                util.Start(aurora.NLJ.PanelLayout.Layout, aurora.Name.ToLower());
-            }
+            //bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            //Util util = new(_env);
+            //if (!isWindows || util.CreateOnlyIfNotExist && util.CheckExist())
+            //{
+            //    return AuroraWrapper.AurorasList;
+            //}
+            //foreach (AuroraLigth aurora in AuroraWrapper.AurorasList)
+            //{
+            //    util.Start(aurora.NLJ.PanelLayout.Layout, aurora.Name.ToLower());
+            //}
             return AuroraWrapper.AurorasList;
         }
 

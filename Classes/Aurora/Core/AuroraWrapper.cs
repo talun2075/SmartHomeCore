@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml;
-using Zeroconf;
+
 namespace SmartHome.Classes.Aurora.Core
 {
     public static class AuroraWrapper
@@ -152,28 +152,28 @@ namespace SmartHome.Classes.Aurora.Core
         /// Discover Nanoleafs in Local Network
         /// </summary>
         /// <returns>List of Founded auroras in Network</returns>
-        private static async Task<List<AuroraSearchResults>> FindAuroras()
-        {
-            try
-            {
-                List<AuroraSearchResults> lasr = new();
-                IReadOnlyList<IZeroconfHost> results = await ZeroconfResolver.ResolveAsync("_nanoleafapi._tcp.local.", new TimeSpan(0, 0, 0, 5)).ConfigureAwait(true);
+        //private static async Task<List<AuroraSearchResults>> FindAuroras()
+        //{
+        //    try
+        //    {
+        //        List<AuroraSearchResults> lasr = new();
+        //        IReadOnlyList<IZeroconfHost> results = await ZeroconfResolver.ResolveAsync("_nanoleafapi._tcp.local.", new TimeSpan(0, 0, 0, 5)).ConfigureAwait(true);
 
-                if (results.Count == 0) return lasr;
-                foreach (IZeroconfHost host in results)
-                {
-                    AuroraSearchResults asr = new(host.IPAddress,
-                        host.Services.First().Value.Properties[0].First().Value, host.Services.First().Value.Port);
-                    lasr.Add(asr);
-                }
-                return lasr;
-            }
-            catch (Exception ex)
-            {
-                log.ServerErrorsAdd("error in private Method: " + ex.Message, null);
-                return null;
-            }
-        }
+        //        if (results.Count == 0) return lasr;
+        //        foreach (IZeroconfHost host in results)
+        //        {
+        //            AuroraSearchResults asr = new(host.IPAddress,
+        //                host.Services.First().Value.Properties[0].First().Value, host.Services.First().Value.Port);
+        //            lasr.Add(asr);
+        //        }
+        //        return lasr;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        log.ServerErrorsAdd("error in private Method: " + ex.Message, null);
+        //        return null;
+        //    }
+        //}
         /// <summary>
         /// Start Search for Auroras in NEtwork
         /// Build List of Auroras include New and knowed Devices
@@ -187,48 +187,48 @@ namespace SmartHome.Classes.Aurora.Core
                     AurorasList = new List<AuroraLigth>();
                 //Start to Search
 
-                List<AuroraSearchResults> lasr = new();
+                //List<AuroraSearchResults> lasr = new();
 
-                if (withDiscovery)
-                {
-                    lasr = await FindAuroras();
-                }
-                if (lasr.Count > 0)
-                {
+                //if (withDiscovery)
+                //{
+                //    lasr = await FindAuroras();
+                //}
+                //if (lasr.Count > 0)
+                //{
 
-                    foreach (AuroraSearchResults asrResults in lasr)
-                    {
-                        AuroraKnowingDevices akd = _knowingAuroras.FirstOrDefault(x => x.MacAdress.ToLower() == asrResults.MacAdress.ToLower());
-                        if (akd != null)
-                        {
+                //    foreach (AuroraSearchResults asrResults in lasr)
+                //    {
+                //        AuroraKnowingDevices akd = _knowingAuroras.FirstOrDefault(x => x.MacAdress.ToLower() == asrResults.MacAdress.ToLower());
+                //        if (akd != null)
+                //        {
 
-                            AuroraLigth a = new(akd.AuthToken, asrResults.IP, akd.DeviceName, akd.Serial, akd.UseSubscription, akd.UseTouch);
-                            var t = AurorasList.FirstOrDefault(x => x.Ip == a.Ip);
-                            if (t != null)
-                            {
-                                if (t.NLJ == null)
-                                    await t.GetNanoLeafInformations();
-                            }
-                            else
-                            {
-                                if (a.NLJ == null)
-                                    await a.GetNanoLeafInformations();
-                                a.Aurora_Changed += AuroraChanged;
-                                AurorasList.Add(a);
-                            }
-                        }
-                        else
-                        {
-                            AuroraLigth a = new("new", asrResults.IP, "New");
-                            var t = AurorasList.FirstOrDefault(x => x.Ip == asrResults.IP);
-                            if (t == null)
-                            {
-                                a.Aurora_Changed += AuroraChanged;
-                                AurorasList.Add(a);
-                            }
-                        }
-                    }
-                }
+                //            AuroraLigth a = new(akd.AuthToken, asrResults.IP, akd.DeviceName, akd.Serial, akd.UseSubscription, akd.UseTouch);
+                //            var t = AurorasList.FirstOrDefault(x => x.Ip == a.Ip);
+                //            if (t != null)
+                //            {
+                //                if (t.NLJ == null)
+                //                    await t.GetNanoLeafInformations();
+                //            }
+                //            else
+                //            {
+                //                if (a.NLJ == null)
+                //                    await a.GetNanoLeafInformations();
+                //                a.Aurora_Changed += AuroraChanged;
+                //                AurorasList.Add(a);
+                //            }
+                //        }
+                //        else
+                //        {
+                //            AuroraLigth a = new("new", asrResults.IP, "New");
+                //            var t = AurorasList.FirstOrDefault(x => x.Ip == asrResults.IP);
+                //            if (t == null)
+                //            {
+                //                a.Aurora_Changed += AuroraChanged;
+                //                AurorasList.Add(a);
+                //            }
+                //        }
+                //    }
+                //}
                 //Check for Knowing Devices
                 if (_knowingAuroras.Count > 0)
                 {
