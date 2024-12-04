@@ -1,7 +1,7 @@
 ﻿@{
     var links = ViewBag.Links;
 }
-<link rel="stylesheet" href="/css/link.css" media="all" />
+<link rel="stylesheet" href="/css/link.css" asp-append-version="true" media="all" />
 <div class="columWrapper">
     @for (int col = 1; col < ViewBag.Columns + 1; col++)
     {

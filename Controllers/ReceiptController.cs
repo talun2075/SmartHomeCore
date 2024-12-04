@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using SmartHome.Classes.Database;
 using System.Threading.Tasks;
 using System;
@@ -7,9 +6,6 @@ using SmartHome.Classes.Receipt;
 using System.Collections.Generic;
 using System.IO;
 using System.Drawing;
-using System.Drawing.Imaging;
-using Microsoft.AspNetCore.Components.Forms;
-using System.Security.Policy;
 using Microsoft.Extensions.Configuration;
 using SmartHome.Classes.SmartHome.Util;
 

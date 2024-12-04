@@ -1,5 +1,4 @@
 ﻿using SmartHome.Classes.Aurora.Core.Enums;
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 
