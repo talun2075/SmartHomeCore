@@ -11,9 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="DeconzInnerCore.API">
-      <HintPath>..\CommonCore\HomeCommon\DeconzInnerCore.API\bin\Debug\net8.0\DeconzInnerCore.API.dll</HintPath>
-    </Reference>
     <Reference Include="EvtSource">
       <HintPath>..\CommonCore\HomeCommon\EvtSource\bin\Debug\net8.0\EvtSource.dll</HintPath>
     </Reference>
@@ -27,9 +24,6 @@
 
   <ItemGroup>
     <None Update="Configuration\AuroraKnowingDevices.xml">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Configuration\DeconzConfiguration.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Configuration\Links.xml">

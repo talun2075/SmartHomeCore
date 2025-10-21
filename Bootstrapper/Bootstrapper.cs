@@ -2,7 +2,6 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using SmartHome.Classes.Database;
-using SmartHome.Classes.Deconz;
 
 namespace Bootstrapper
 {
@@ -23,7 +22,6 @@ namespace Bootstrapper
         {
             //todo: add aurora
             services.AddSingleton<IDatabaseWrapper, DatabaseWrapper>();
-            services.AddSingleton<IDeconzWrapper, DeconzWrapper>();
             return services;
 
         }

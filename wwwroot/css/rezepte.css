@@ -10,6 +10,9 @@ body {
 input:focus {
     outline: 0;
 }
+.singleImage{
+    max-width: 999px;
+}
 .bar1, .bar2, .bar3 {
     width: 35px;
     height: 5px;

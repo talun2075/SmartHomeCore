@@ -31,7 +31,7 @@ namespace SmartHome.Controllers
             ViewBag.svg = "topf.svg";
             ViewBag.png16 = "topf16.png";
             ViewBag.png32 = "topf32.png";
-            ViewBag.NavClass = "navFourth";
+            ViewBag.NavClass = "navThird";
             return View();
         }
         [HttpGet("GetCategories")]

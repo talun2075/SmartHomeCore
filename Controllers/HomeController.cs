@@ -44,7 +44,7 @@ namespace SmartHome.Controllers
                 case "rezepte.tami":
                     return RedirectToAction("Index", "receipt");
             }
-            return RedirectToAction("Index", "Deconz"); ;
+            return RedirectToAction("Index", "receipt"); ;
         }
     }
 }
