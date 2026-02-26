@@ -24,14 +24,14 @@ ChildElemts used for Touch Events
 -->
 <AuroraKnowingDevices>
 	<AuroraKnowingDevice Room="Esszimmer" MacAdress="00:55:DA:50:C3:45" AuthToken="vD2YxRQLkLZ8SxhYtVsIhCTMsp3ws5A4" DeviceName ="Esszimmer" KnowingIP="192.168.0.112" Serial="S17122A4899" UseSubscription ="false"/>
-	<AuroraKnowingDevice MacAdress="80:8A:F7:07:47:BF" AuthToken="FUQmmYvziTmF8zMNVBgepGw7iYjtZA7R" DeviceName ="Spielzimmer" KnowingIP="192.168.0.111" Serial="S22380H0021" UseSubscription ="false" UseTouch="false">
+	<!--<AuroraKnowingDevice MacAdress="80:8A:F7:07:47:BF" AuthToken="FUQmmYvziTmF8zMNVBgepGw7iYjtZA7R" DeviceName ="Spielzimmer" KnowingIP="192.168.0.111" Serial="S22380H0021" UseSubscription ="false" UseTouch="false">
 		<TouchData>
 			<SingleTap Hue="54" Saturation="31" Brightness="15" Value="" Action="Nothing" />
 			<DoubleTap Action="SetRandomScenario" />
 			<SwipeUp Value="+20" Action="SetBrightness" />
 			<SwipeDown Hue="54" Saturation="31" Brightness="15" Value="" Action="SetHSV" />
 		</TouchData>
-	</AuroraKnowingDevice>
+	</AuroraKnowingDevice>-->
 	<AuroraKnowingDevice Room="Wohnzimmer" MacAdress="80:8A:F7:08:62:CA" AuthToken="AWDJxkvq2F7RXjWC495z2W4rneO1wX1Z" DeviceName ="Wohnzimmer Links" KnowingIP="192.168.0.113" Serial="S23140H1329" UseSubscription ="false"/>
 	<AuroraKnowingDevice Room="Wohnzimmer" MacAdress="80:8A:F7:05:EA:7E" AuthToken="3AFO2samaK8lw0tzeAdSUJmfQDtmXpMa" DeviceName ="Wohnzimmer Rechts" KnowingIP="192.168.0.110" Serial="S22150H3322" UseSubscription ="false" />
 </AuroraKnowingDevices>
